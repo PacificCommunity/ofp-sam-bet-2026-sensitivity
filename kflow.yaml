@@ -1,4 +1,4 @@
-name: ofp-sam-bet-2026-sensitivity
+name: BET-2026-Diagnostic-sensitivities---tuna-flow-v2.5
 description: Run one BET 2026 sensitivity from the frozen Diagnostic model.
 command: bash run.sh
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
