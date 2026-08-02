@@ -167,8 +167,8 @@ if (!identical(trimws(base_reg), trimws(full_reg[53:72]))) fail("Diagnostic five
 allowed_changes <- list(
   "steepness-0.65" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "steepness-0.95" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
-  "mixing-period-0.1" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
-  "mixing-period-0.3" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
+  "tag-mixing-k-0.1" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
+  "tag-mixing-k-0.3" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "caal-0.5-sub-basin" = c("bet.age_length", "MANIFEST.sha256"),
   "caal-1.0-sub-basin" = c("bet.age_length", "MANIFEST.sha256"),
   "lorenzen-m-scalar-0.062" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
@@ -205,13 +205,13 @@ for (case_key in registry$key) {
         markers[[i]], 1L, columns[[i]]
       )
     }
-  } else if (grepl("^mixing-period", case_key)) {
-    mix <- if (case_key == "mixing-period-0.1") "0.1" else "0.3"
+  } else if (grepl("^tag-mixing-k", case_key)) {
+    mix <- if (case_key == "tag-mixing-k-0.1") "0.1" else "0.3"
     source_tags <- tag_matrix(file.path(repo, "sources/mixing", paste0("bet.2026.mix-", mix, ".ini")))
     for (p in c("bet.ini", checkpoint_names)) {
       actual <- tag_matrix(file.path(staged, p)); original <- tag_matrix(file.path(base, p))
       if (!identical(actual[, 1L], source_tags[, 1L]) || !identical(actual[, -1L], original[, -1L])) {
-        fail("Mixing-period case changed more than tag_flags column 1 in ", p)
+        fail("KS D-statistic cutoff case changed more than tag_flags column 1 in ", p)
       }
       assert_tag_column_only(file.path(base, p), file.path(staged, p), 1L)
     }

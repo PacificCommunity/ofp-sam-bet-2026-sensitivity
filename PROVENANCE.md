@@ -10,7 +10,8 @@ Linux x86-64 binary and is the same executable distributed with that repository.
 
 ## External input sources
 
-- Mixing periods: [`ofp-sam-2026-BET-YFT-build-ini`](https://github.com/PacificCommunity/ofp-sam-2026-BET-YFT-build-ini/tree/SC22-IP10-regionMean/BET/ini.mix-period),
+- KS D-statistic cutoffs and their derived release-group mixing periods:
+  [`ofp-sam-2026-BET-YFT-build-ini`](https://github.com/PacificCommunity/ofp-sam-2026-BET-YFT-build-ini/tree/SC22-IP10-regionMean/BET/ini.mix-period),
   branch `SC22-IP10-regionMean`, commit
   `efe3107c72774ee73b5e6dc45e44cf51f0fc20e8`.
 - CAAL: [`ofp-sam-2026-BET-YFT-age-length-build`](https://github.com/PacificCommunity/ofp-sam-2026-BET-YFT-age-length-build/blob/96a06d21ef3c666f39ce456d3a6818b6c17324c4/BET/bet.2026.sub.basin.1.age_length),

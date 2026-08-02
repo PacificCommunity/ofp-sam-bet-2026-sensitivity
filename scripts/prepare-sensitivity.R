@@ -195,8 +195,8 @@ if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
   value <- if (case_key == "steepness-0.65") "0.65" else "0.95"
   replace_row_field(ini, "^# sv[(]29[)][[:space:]]*$", 1L, 1L, value)
   for (p in checkpoints) replace_row_field(p, "^# Seasonal growth parameters[[:space:]]*$", 1L, 29L, value)
-} else if (case_key %in% c("mixing-period-0.1", "mixing-period-0.3")) {
-  value <- if (case_key == "mixing-period-0.1") "0.1" else "0.3"
+} else if (case_key %in% c("tag-mixing-k-0.1", "tag-mixing-k-0.3")) {
+  value <- if (case_key == "tag-mixing-k-0.1") "0.1" else "0.3"
   source <- file.path(repo, "sources", "mixing", paste0("bet.2026.mix-", value, ".ini"))
   replace_tag_column(ini, source, 1L)
   for (p in checkpoints) replace_tag_column(p, source, 1L)

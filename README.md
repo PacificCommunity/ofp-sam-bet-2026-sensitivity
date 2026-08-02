@@ -8,7 +8,8 @@ when that parameter is stored in the PAR file, and then runs the original
 11-phase `doitall.sh`.
 
 The Diagnostic model is the common reference and is not fitted again here.
-Its checked reference settings are steepness 0.8, mixing period 0.2, CAAL 0.75
+Its checked reference settings are steepness 0.8, tag mixing periods derived at
+KS D-statistic cutoff 0.2, CAAL 0.75
 sub-basin, Lorenzen M scalar 0.078, low effort creep (1% then 0.5%), the
 current five-year regional-scaling window, and pre-mixing reporting exclusion.
 
@@ -20,7 +21,7 @@ fits are:
 | Axis | New fits | Diagnostic reference |
 |---|---|---|
 | Steepness | `Steepness 0.65`, `Steepness 0.95` | 0.8 |
-| Tag mixing period | `Mixing period 0.1`, `Mixing period 0.3` | 0.2 |
+| Tag mixing periods (KS D-statistic cutoff) | `Tag mixing periods - K=0.1`, `Tag mixing periods - K=0.3` | Derived at K=0.2 |
 | Conditional age-at-length | `CAAL 0.5 sub-basin`, `CAAL 1.0 sub-basin` | 0.75 sub-basin |
 | Natural mortality | `Lorenzen M scalar 0.062`, `Lorenzen M scalar 0.1` | 0.078 |
 | Effort creep | `Effort creep high (2.5% / 1.25%)` | 1% / 0.5% |
@@ -66,8 +67,10 @@ input folder.
 
 Notable input rules are:
 
-- Mixing-period runs copy only tag flag column 1 from the pinned 0.1 or 0.3
-  source INI. Tag flag column 2 and reporting-rate matrices remain Diagnostic.
+- KS D-statistic cutoff runs select the pinned 0.1 or 0.3 source INI and copy
+  only its already-derived release-group mixing periods from tag flag column 1.
+  The cutoff itself is not written into MFCL. Tag flag column 2 and
+  reporting-rate matrices remain Diagnostic.
 - CAAL 0.5 multiplies every effective-sample-size value in the authoritative
   1.0 sub-basin file by 0.5; all age-length records remain unchanged.
 - Lorenzen M scalar runs replace only the first Lorenzen M coefficient with

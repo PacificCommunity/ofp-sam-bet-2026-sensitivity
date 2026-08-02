@@ -1,8 +1,8 @@
 key,axis,label,reference,alternative,scientific_change
 steepness-0.65,Steepness,Steepness 0.65,0.8,0.65,Set sv(29) to 0.65
 steepness-0.95,Steepness,Steepness 0.95,0.8,0.95,Set sv(29) to 0.95
-mixing-period-0.1,Tag mixing period,Mixing period 0.1,0.2,0.1,Copy tag_flags column 1 from the authoritative K=0.1 INI
-mixing-period-0.3,Tag mixing period,Mixing period 0.3,0.2,0.3,Copy tag_flags column 1 from the authoritative K=0.3 INI
+tag-mixing-k-0.1,Tag mixing periods (KS D-statistic cutoff),Tag mixing periods - K=0.1,Derived at K=0.2,Derived at K=0.1,Use tag_flags column 1 containing the release-group mixing periods derived at K=0.1 in SC22-IP10
+tag-mixing-k-0.3,Tag mixing periods (KS D-statistic cutoff),Tag mixing periods - K=0.3,Derived at K=0.2,Derived at K=0.3,Use tag_flags column 1 containing the release-group mixing periods derived at K=0.3 in SC22-IP10
 caal-0.5-sub-basin,Conditional age-at-length,CAAL 0.5 sub-basin,0.75 sub-basin,0.5 sub-basin,Use one-half of every effective-sample-size value in the 1.0 sub-basin file
 caal-1.0-sub-basin,Conditional age-at-length,CAAL 1.0 sub-basin,0.75 sub-basin,1.0 sub-basin,Use the authoritative 1.0 sub-basin file unchanged
 lorenzen-m-scalar-0.062,Natural mortality,Lorenzen M scalar 0.062,0.078,0.062,Set the first Lorenzen M coefficient to log(0.062)
