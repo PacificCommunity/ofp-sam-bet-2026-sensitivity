@@ -1,0 +1,17 @@
+name: Validate sensitivities
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable executable files
+        run: chmod +x mfclo64 run.sh scripts/*
+      - name: Validate one-at-a-time changes
+        run: Rscript scripts/validate-sensitivities.R
+      - name: Smoke-test every generated MFCL input
+        run: ./scripts/smoke-test

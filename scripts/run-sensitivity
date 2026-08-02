@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+  echo "Usage: ./scripts/run-sensitivity CASE [RUN_DIR]" >&2
+  exit 2
+fi
+
+case_key=$1
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+run_dir=${2:-$repo_dir/runs/$case_key}
+
+if [ -e "$run_dir" ]; then
+  echo "Run directory already exists: $run_dir" >&2
+  echo "Move or remove it before starting a fresh fit." >&2
+  exit 2
+fi
+
+Rscript "$repo_dir/scripts/prepare-sensitivity.R" "$case_key" "$run_dir"
+cd "$run_dir"
+PROGRAM_PATH=${PROGRAM_PATH:-./mfclo64} ./doitall.sh
+cp 11.par final.par
+echo "Completed $case_key: $run_dir/final.par"

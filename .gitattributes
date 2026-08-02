@@ -1,0 +1,10 @@
+# Checksum-locked scientific inputs: preserve exact bytes.
+model/bet.* -text -diff
+model/checkpoints/*.par -text -diff
+sources/** -text -diff
+mfclo64 -text -diff
+
+*.sh text eol=lf
+run.sh text eol=lf
+scripts/run-sensitivity text eol=lf
+scripts/smoke-test text eol=lf

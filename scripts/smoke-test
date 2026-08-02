@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+test_root=$(mktemp -d /tmp/bet-sensitivity-makepar.XXXXXX)
+trap 'rm -r "$test_root"' EXIT HUP INT TERM
+
+awk -F, 'NR > 1 {print $1}' "$repo_dir/sensitivities.csv" | while IFS= read -r case_key; do
+  Rscript "$repo_dir/scripts/prepare-sensitivity.R" "$case_key" "$test_root/$case_key" >/dev/null
+  (
+    cd "$test_root/$case_key"
+    ./mfclo64 bet.frq bet.ini smoke.par -makepar >makepar.log 2>&1
+    test -s smoke.par
+  )
+  echo "makepar passed: $case_key"
+done

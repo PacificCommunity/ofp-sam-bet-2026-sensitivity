@@ -1,0 +1,28 @@
+name: ofp-sam-bet-2026-sensitivity
+description: Run one BET 2026 sensitivity from the frozen Diagnostic model.
+command: bash run.sh
+docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
+remote_host: suva
+remote_user: kyuhank
+remote_base_dir: /home/kyuhank/KflowOutput
+slot_requirements: 'regexp("^suvofp", Machine)'
+resources:
+  cpus: 2
+  memory: 8GB
+  disk: 20GB
+exclude_machines: []
+exclude_slots: []
+env:
+  SENSITIVITY_SELECT: steepness-0.65
+  PROGRAM_PATH: /home/mfcl/mfclo64
+  BET_PHASE10_11_CONVERGENCE: "-4"
+  TUNA_FLOW_RUNTIME_UPDATE: never
+tags:
+  stage: sensitivity
+  species: BET
+  assessment_year: "2026"
+output_patterns:
+  - outputs/**
+metadata:
+  reference_model: Diagnostic model
+  design: one-at-a-time

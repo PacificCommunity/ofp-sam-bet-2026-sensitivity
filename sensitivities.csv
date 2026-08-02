@@ -1,0 +1,12 @@
+key,axis,label,reference,alternative,scientific_change
+steepness-0.65,Steepness,Steepness 0.65,0.8,0.65,Set sv(29) to 0.65
+steepness-0.95,Steepness,Steepness 0.95,0.8,0.95,Set sv(29) to 0.95
+mixing-period-0.1,Tag mixing period,Mixing period 0.1,0.2,0.1,Copy tag_flags column 1 from the authoritative K=0.1 INI
+mixing-period-0.3,Tag mixing period,Mixing period 0.3,0.2,0.3,Copy tag_flags column 1 from the authoritative K=0.3 INI
+caal-0.5-sub-basin,Conditional age-at-length,CAAL 0.5 sub-basin,0.75 sub-basin,0.5 sub-basin,Use one-half of every effective-sample-size value in the 1.0 sub-basin file
+caal-1.0-sub-basin,Conditional age-at-length,CAAL 1.0 sub-basin,0.75 sub-basin,1.0 sub-basin,Use the authoritative 1.0 sub-basin file unchanged
+m-scaler-0.062,Natural mortality,M scaler 0.062,0.078,0.062,Set the first Lorenzen M coefficient to log(0.062)
+m-scaler-0.1,Natural mortality,M scaler 0.1,0.078,0.1,Set the first Lorenzen M coefficient to log(0.1)
+effort-creep-high,Effort creep,Effort creep high (2.5% / 1.25%),1% / 0.5%,2.5% / 1.25%,Replace only the effort field for F29-F33 from the authoritative high-creep FRQ
+regional-scaling-whole-period,Regional scaling,Regional scaling whole period,Current 5-year window,periods 3-292,Use all 290 mutually supported periods and parest flags 77-81 = 100 1 290 0 1
+tag-reporting-inclusion,Tag reporting rates,Tag reporting inclusion,tag_flags column 2 = 1,tag_flags column 2 = 0,Set only tag_flags column 2 to zero
