@@ -80,3 +80,13 @@ Notable input rules are:
 - Reporting inclusion changes only tag flag column 2 from 1 to 0.
 
 See `PROVENANCE.md` for source commits and file hashes.
+
+## Joint ensemble
+
+The reproducible 100-model joint distribution is documented in
+[`ensemble/README.md`](ensemble/README.md). Its machine-readable design is
+generated with:
+
+```sh
+Rscript scripts/create-ensemble-design.R
+```
