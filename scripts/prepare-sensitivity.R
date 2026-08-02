@@ -206,8 +206,8 @@ if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
 } else if (case_key == "caal-1.0-sub-basin") {
   invisible(file.copy(file.path(repo, "sources", "age-length", "bet.2026.sub.basin.1.age_length"),
                       file.path(output, "bet.age_length"), overwrite = TRUE))
-} else if (case_key %in% c("m-scaler-0.062", "m-scaler-0.1")) {
-  value <- if (case_key == "m-scaler-0.062") 0.062 else 0.1
+} else if (case_key %in% c("lorenzen-m-scalar-0.062", "lorenzen-m-scalar-0.1")) {
+  value <- if (case_key == "lorenzen-m-scalar-0.062") 0.062 else 0.1
   log_value <- sprintf("%.14e", log(value))
   replace_row_field(ini, "^# age_pars[[:space:]]*$", 5L, 1L, log_value)
   for (p in checkpoints) replace_row_field(p, "^# age-class related parameters [(]age_pars[)][[:space:]]*$", 5L, 1L, log_value)
@@ -250,6 +250,18 @@ metadata <- data.frame(
   stringsAsFactors = FALSE
 )
 write.csv(metadata, file.path(output, "sensitivity-metadata.csv"), row.names = FALSE, quote = TRUE)
+
+write_lines(c(
+  paste0("# ", row$label),
+  "",
+  paste0("- Diagnostic reference: ", row$reference),
+  paste0("- Sensitivity value: ", row$alternative),
+  paste0("- Input change: ", row$scientific_change),
+  "",
+  "This folder is a complete, frozen model input set. The shared `mfclo64`",
+  "executable is copied here automatically when the model is run from the",
+  "repository root with `./run.sh <case-key>`."
+), file.path(output, "README.md"))
 
 files <- list.files(output, recursive = TRUE, full.names = TRUE)
 files <- files[file.info(files)$isdir %in% FALSE]

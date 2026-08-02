@@ -29,6 +29,6 @@ file. A source change therefore cannot silently alter a sensitivity.
 This is a one-at-a-time design. The Diagnostic model is the single reference;
 no alternative combines two sensitivity axes. Parameters represented in
 `bet.ini` and the seed-23 phase checkpoints are changed in both locations so
-the checkpoint restoration cannot reset the selected sensitivity. Every staged
-run contains `sensitivity-metadata.csv`, a refreshed `MANIFEST.sha256`, and an
-`INPUTS.sha256` audit.
+the checkpoint restoration cannot reset the selected sensitivity. Every
+materialized model folder contains `sensitivity-metadata.csv`, a refreshed
+`MANIFEST.sha256`, and an `INPUTS.sha256` audit.

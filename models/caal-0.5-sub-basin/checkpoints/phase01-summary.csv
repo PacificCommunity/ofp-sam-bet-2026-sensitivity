@@ -1,0 +1,2 @@
+"phase","family","base_seed","applied_seed","cv","n_parameters","input_md5","probe_md5","output_md5","mapping_md5","mfclkit_version","mfclkit_remote_sha","FLR4MFCL_version","status"
+1,"final-active variables represented after Phase 1",23,23,0.1,1964,"d6e0464187da0af8142e21070eff0a41",NA,"42fbc2f4b19d127df30ffdeaecbc007e","82affa14b50ee5ca624084a9e5e81cfc","0.0.0.9040","34c56de25afecdd13e9f8e94f2e421e37d9c2f9b","1.7.2","passed"

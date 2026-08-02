@@ -62,6 +62,79 @@ assert_only_rows <- function(base_path, staged_path, allowed_rows, token_rule = 
   if (!is.null(token_rule)) for (i in changed) token_rule(fields(a[[i]]), fields(b[[i]]), i)
 }
 
+assert_marker_fields_only <- function(base_path, staged_path, marker, row_number, allowed_fields) {
+  original <- read_file(base_path)
+  actual <- read_file(staged_path)
+  original_row <- rows_after(original, marker, row_number)[[row_number]]
+  actual_row <- rows_after(actual, marker, row_number)[[row_number]]
+  if (original_row != actual_row) fail("Marker row moved in ", staged_path)
+  assert_only_rows(
+    base_path, staged_path, original_row,
+    function(before, after, line) {
+      if (length(before) != length(after) || !identical(before[-allowed_fields], after[-allowed_fields])) {
+        fail("Unexpected field changed at line ", line, " in ", staged_path)
+      }
+    }
+  )
+}
+
+assert_tag_column_only <- function(base_path, staged_path, column) {
+  original <- read_file(base_path)
+  actual <- read_file(staged_path)
+  original_rows <- rows_after(original, "^# tag flags[[:space:]]*$", 98L)
+  actual_rows <- rows_after(actual, "^# tag flags[[:space:]]*$", 98L)
+  if (!identical(original_rows, actual_rows)) fail("Tag flag block moved in ", staged_path)
+  assert_only_rows(
+    base_path, staged_path, original_rows,
+    function(before, after, line) {
+      if (length(before) != 10L || length(after) != 10L || !identical(before[-column], after[-column])) {
+        fail("Unexpected tag flag field changed at line ", line, " in ", staged_path)
+      }
+    }
+  )
+}
+
+assert_doitall_changes <- function(case_key, staged_path) {
+  original_path <- file.path(base, "doitall.sh")
+  original <- read_file(original_path)
+  allowed <- grep("^[[:space:]]*expected_output=[0-9a-f]{32}[[:space:]]*$", original)
+  if (case_key %in% c("lorenzen-m-scalar-0.062", "lorenzen-m-scalar-0.1")) {
+    allowed <- c(allowed, grep("^[[:space:]]*expected = -2[.]54930339768360[[:space:]]*$", original))
+  }
+  if (case_key == "regional-scaling-whole-period") {
+    allowed <- c(
+      allowed,
+      grep("^[[:space:]]*1[[:space:]]+79[[:space:]]+240([[:space:]]|$)", original),
+      grep("^[[:space:]]*1[[:space:]]+80[[:space:]]+220([[:space:]]|$)", original)
+    )
+  }
+  assert_only_rows(original_path, staged_path, unique(allowed))
+}
+
+assert_published_folder <- function(case_key, staged) {
+  published <- file.path(repo, "models", case_key)
+  if (!dir.exists(published)) fail("Missing materialized model folder: models/", case_key)
+  expected_files <- sort(setdiff(
+    substring(list.files(staged, recursive = TRUE, full.names = TRUE), nchar(staged) + 2L),
+    "mfclo64"
+  ))
+  actual_files <- sort(substring(
+    list.files(published, recursive = TRUE, full.names = TRUE), nchar(published) + 2L
+  ))
+  if (!identical(expected_files, actual_files)) fail("Published file set differs for ", case_key)
+  comparable <- setdiff(expected_files, "INPUTS.sha256")
+  for (relative in comparable) {
+    if (hash(file.path(staged, relative)) != hash(file.path(published, relative))) {
+      fail("Published input differs from validated generator output: ", case_key, "/", relative)
+    }
+  }
+  previous_directory <- getwd()
+  setwd(published)
+  status <- system2("sha256sum", c("-c", "INPUTS.sha256"), stdout = FALSE, stderr = FALSE)
+  setwd(previous_directory)
+  if (!identical(status, 0L)) fail("Published INPUTS.sha256 failed for ", case_key)
+}
+
 checkpoint_names <- paste0("checkpoints/", c("phase01", "phase02", "phase05"), "-seed23.par")
 manifest_files <- c(read.table(file.path(base, "MANIFEST.sha256"), stringsAsFactors = FALSE)[[2L]],
                     "MANIFEST.sha256")
@@ -79,7 +152,7 @@ if (!identical(base_tags[, 1L], mix02_tags[, 1L])) fail("Diagnostic tag mixing f
 if (any(base_tags[, 2L] != 1)) fail("Diagnostic reporting-exclusion flag is not 1.")
 
 base_m <- as.numeric(value_after(file.path(base, "bet.ini"), "^# age_pars$", 5L, 1L))
-if (abs(base_m - (-2.54930339768360)) > 1e-12) fail("Unexpected Diagnostic M scaler.")
+if (abs(base_m - (-2.54930339768360)) > 1e-12) fail("Unexpected Diagnostic Lorenzen M scalar.")
 if (hash(file.path(base, "bet.age_length")) != hash(file.path(repo, "sources/age-length/bet.2026.sub.basin.0.75.age_length"))) {
   fail("Diagnostic CAAL input is not the authoritative 0.75 sub-basin file.")
 }
@@ -98,8 +171,8 @@ allowed_changes <- list(
   "mixing-period-0.3" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "caal-0.5-sub-basin" = c("bet.age_length", "MANIFEST.sha256"),
   "caal-1.0-sub-basin" = c("bet.age_length", "MANIFEST.sha256"),
-  "m-scaler-0.062" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
-  "m-scaler-0.1" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
+  "lorenzen-m-scalar-0.062" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
+  "lorenzen-m-scalar-0.1" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "effort-creep-high" = c("bet.frq", "MANIFEST.sha256"),
   "regional-scaling-whole-period" = c("bet.reg_scaling", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "pre-mixing-tag-reporting-inclusion" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names)
@@ -127,6 +200,10 @@ for (case_key in registry$key) {
     for (i in seq_along(paths)) {
       observed <- as.numeric(value_after(file.path(staged, paths[[i]]), markers[[i]], 1L, columns[[i]]))
       if (observed != expected_value) fail("Steepness did not persist in ", paths[[i]])
+      assert_marker_fields_only(
+        file.path(base, paths[[i]]), file.path(staged, paths[[i]]),
+        markers[[i]], 1L, columns[[i]]
+      )
     }
   } else if (grepl("^mixing-period", case_key)) {
     mix <- if (case_key == "mixing-period-0.1") "0.1" else "0.3"
@@ -136,28 +213,39 @@ for (case_key in registry$key) {
       if (!identical(actual[, 1L], source_tags[, 1L]) || !identical(actual[, -1L], original[, -1L])) {
         fail("Mixing-period case changed more than tag_flags column 1 in ", p)
       }
+      assert_tag_column_only(file.path(base, p), file.path(staged, p), 1L)
     }
   } else if (grepl("^caal", case_key)) {
     source <- read_file(file.path(repo, "sources/age-length/bet.2026.sub.basin.1.age_length"))
+    source_reference <- read_file(file.path(repo, "sources/age-length/bet.2026.sub.basin.0.75.age_length"))
     actual <- read_file(file.path(staged, "bet.age_length"))
+    source_row <- rows_after(source, "^# effective sample size$", 1L)[[1L]]
+    reference_row <- rows_after(source_reference, "^# effective sample size$", 1L)[[1L]]
+    if (source_row != reference_row || !identical(source[-source_row], source_reference[-reference_row])) {
+      fail("Authoritative CAAL 0.75 and 1.0 files differ outside the ESS row.")
+    }
     if (case_key == "caal-1.0-sub-basin") {
       if (!identical(source, actual)) fail("CAAL 1.0 is not an exact source copy.")
     } else {
-      row_index <- rows_after(source, "^# effective sample size$", 1L)[[1L]]
+      row_index <- source_row
       if (!identical(source[-row_index], actual[-row_index])) fail("CAAL 0.5 changed records outside the ESS row.")
       if (max(abs(as.numeric(fields(actual[[row_index]])) - 0.5 * as.numeric(fields(source[[row_index]])))) > 1e-12) {
         fail("CAAL 0.5 ESS values are not exactly half of sub-basin 1.0.")
       }
     }
-  } else if (grepl("^m-scaler", case_key)) {
-    expected_value <- log(if (case_key == "m-scaler-0.062") 0.062 else 0.1)
+  } else if (grepl("^lorenzen-m-scalar", case_key)) {
+    expected_value <- log(if (case_key == "lorenzen-m-scalar-0.062") 0.062 else 0.1)
     paths <- c("bet.ini", checkpoint_names)
     markers <- c("^# age_pars[[:space:]]*$", rep("^# age-class related parameters [(]age_pars[)][[:space:]]*$", 3L))
     for (i in seq_along(paths)) {
       observed <- as.numeric(value_after(file.path(staged, paths[[i]]), markers[[i]], 5L, 1L))
-      if (abs(observed - expected_value) > 1e-12) fail("M scaler did not persist in ", paths[[i]])
+      if (abs(observed - expected_value) > 1e-12) fail("Lorenzen M scalar did not persist in ", paths[[i]])
       second <- as.numeric(value_after(file.path(staged, paths[[i]]), markers[[i]], 5L, 2L))
       if (second != -1) fail("Lorenzen length coefficient changed in ", paths[[i]])
+      assert_marker_fields_only(
+        file.path(base, paths[[i]]), file.path(staged, paths[[i]]),
+        markers[[i]], 5L, 1L
+      )
     }
   } else if (case_key == "effort-creep-high") {
     original <- read_file(file.path(base, "bet.frq")); actual <- read_file(file.path(staged, "bet.frq"))
@@ -198,6 +286,10 @@ for (case_key in registry$key) {
           as.integer(value_after(file.path(staged, p), "^# The parest_flags[[:space:]]*$", 1L, 80L)) != 0L) {
         fail("Whole-period regional flags did not persist in ", p)
       }
+      assert_marker_fields_only(
+        file.path(base, p), file.path(staged, p),
+        "^# The parest_flags[[:space:]]*$", 1L, c(79L, 80L)
+      )
     }
   } else if (case_key == "pre-mixing-tag-reporting-inclusion") {
     for (p in c("bet.ini", checkpoint_names)) {
@@ -205,8 +297,11 @@ for (case_key in registry$key) {
       if (any(actual[, 2L] != 0) || !identical(actual[, -2L], original[, -2L])) {
         fail("Reporting-rate case changed more than tag_flags column 2 in ", p)
       }
+      assert_tag_column_only(file.path(base, p), file.path(staged, p), 2L)
     }
   }
+
+  assert_doitall_changes(case_key, file.path(staged, "doitall.sh"))
 
   previous_directory <- getwd()
   setwd(staged)
@@ -214,6 +309,7 @@ for (case_key in registry$key) {
                              stdout = FALSE, stderr = FALSE)
   setwd(previous_directory)
   if (!identical(manifest_status, 0L)) fail("Generated manifest failed for ", case_key)
+  assert_published_folder(case_key, staged)
   audit[[length(audit) + 1L]] <- data.frame(key = case_key, label = registry$label[registry$key == case_key], status = "passed")
 }
 

@@ -6,7 +6,11 @@ test_root=$(mktemp -d /tmp/bet-sensitivity-makepar.XXXXXX)
 trap 'rm -r "$test_root"' EXIT HUP INT TERM
 
 awk -F, 'NR > 1 {print $1}' "$repo_dir/sensitivities.csv" | while IFS= read -r case_key; do
-  Rscript "$repo_dir/scripts/prepare-sensitivity.R" "$case_key" "$test_root/$case_key" >/dev/null
+  test -d "$repo_dir/models/$case_key"
+  mkdir -p "$test_root/$case_key"
+  cp -a "$repo_dir/models/$case_key/." "$test_root/$case_key/"
+  cp "$repo_dir/mfclo64" "$test_root/$case_key/mfclo64"
+  chmod +x "$test_root/$case_key/mfclo64"
   (
     cd "$test_root/$case_key"
     ./mfclo64 bet.frq bet.ini smoke.par -makepar >makepar.log 2>&1

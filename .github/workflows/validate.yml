@@ -14,5 +14,5 @@ jobs:
         run: chmod +x mfclo64 run.sh scripts/*
       - name: Validate one-at-a-time changes
         run: Rscript scripts/validate-sensitivities.R
-      - name: Smoke-test every generated MFCL input
+      - name: Smoke-test every committed MFCL input
         run: ./scripts/smoke-test

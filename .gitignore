@@ -3,3 +3,6 @@ outputs/
 *.log
 *.par
 !model/checkpoints/*.par
+!models/*/checkpoints/*.par
+.models-staging-*/
+.models-backup-*/

@@ -1,6 +1,8 @@
 # Checksum-locked scientific inputs: preserve exact bytes.
 model/bet.* -text -diff
 model/checkpoints/*.par -text -diff
+models/*/bet.* -text -diff
+models/*/checkpoints/*.par -text -diff
 sources/** -text -diff
 mfclo64 -text -diff
 

@@ -16,7 +16,16 @@ if [ -e "$run_dir" ]; then
   exit 2
 fi
 
-Rscript "$repo_dir/scripts/prepare-sensitivity.R" "$case_key" "$run_dir"
+model_dir=$repo_dir/models/$case_key
+if [ ! -d "$model_dir" ]; then
+  echo "Unknown or unmaterialized sensitivity: $case_key" >&2
+  echo "Run Rscript scripts/list-sensitivities.R to list valid names." >&2
+  exit 2
+fi
+mkdir -p "$run_dir"
+cp -a "$model_dir/." "$run_dir/"
+cp "$repo_dir/mfclo64" "$run_dir/mfclo64"
+chmod +x "$run_dir/mfclo64" "$run_dir/doitall.sh"
 cd "$run_dir"
 PROGRAM_PATH=${PROGRAM_PATH:-./mfclo64} ./doitall.sh
 cp 11.par final.par

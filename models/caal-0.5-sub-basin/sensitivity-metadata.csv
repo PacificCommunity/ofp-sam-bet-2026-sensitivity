@@ -1,0 +1,2 @@
+"key","axis","label","reference","alternative","scientific_change","diagnostic_source_commit"
+"caal-0.5-sub-basin","Conditional age-at-length","CAAL 0.5 sub-basin","0.75 sub-basin","0.5 sub-basin","Use one-half of every effective-sample-size value in the 1.0 sub-basin file","be953e4271e7f8119f982d5efebb21a5e8e364b3"
