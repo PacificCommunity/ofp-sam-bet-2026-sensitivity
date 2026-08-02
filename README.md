@@ -25,7 +25,7 @@ fits are:
 | Natural mortality | `M scaler 0.062`, `M scaler 0.1` | 0.078 |
 | Effort creep | `Effort creep high (2.5% / 1.25%)` | 1% / 0.5% |
 | Regional scaling | `Regional scaling whole period` | current five-year window |
-| Tag reporting rates | `Tag reporting inclusion` | exclusion |
+| Pre-mixing tag reporting | `Pre-mixing tag reporting inclusion` | pre-mixing exclusion |
 
 Dirichlet-multinomial settings are unchanged from the Diagnostic model.
 

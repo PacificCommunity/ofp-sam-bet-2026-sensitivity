@@ -102,7 +102,7 @@ allowed_changes <- list(
   "m-scaler-0.1" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
   "effort-creep-high" = c("bet.frq", "MANIFEST.sha256"),
   "regional-scaling-whole-period" = c("bet.reg_scaling", "doitall.sh", "MANIFEST.sha256", checkpoint_names),
-  "tag-reporting-inclusion" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names)
+  "pre-mixing-tag-reporting-inclusion" = c("bet.ini", "doitall.sh", "MANIFEST.sha256", checkpoint_names)
 )
 
 audit <- list()
@@ -199,7 +199,7 @@ for (case_key in registry$key) {
         fail("Whole-period regional flags did not persist in ", p)
       }
     }
-  } else if (case_key == "tag-reporting-inclusion") {
+  } else if (case_key == "pre-mixing-tag-reporting-inclusion") {
     for (p in c("bet.ini", checkpoint_names)) {
       actual <- tag_matrix(file.path(staged, p)); original <- tag_matrix(file.path(base, p))
       if (any(actual[, 2L] != 0) || !identical(actual[, -2L], original[, -2L])) {

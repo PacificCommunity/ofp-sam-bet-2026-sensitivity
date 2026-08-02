@@ -232,7 +232,7 @@ if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
     replace_row_field(p, "^# The parest_flags[[:space:]]*$", 1L, 79L, "290")
     replace_row_field(p, "^# The parest_flags[[:space:]]*$", 1L, 80L, "0")
   }
-} else if (case_key == "tag-reporting-inclusion") {
+} else if (case_key == "pre-mixing-tag-reporting-inclusion") {
   replace_tag_column(ini, column = 2L, constant = "0")
   for (p in checkpoints) replace_tag_column(p, column = 2L, constant = "0")
 } else {

@@ -9,4 +9,4 @@ m-scaler-0.062,Natural mortality,M scaler 0.062,0.078,0.062,Set the first Lorenz
 m-scaler-0.1,Natural mortality,M scaler 0.1,0.078,0.1,Set the first Lorenzen M coefficient to log(0.1)
 effort-creep-high,Effort creep,Effort creep high (2.5% / 1.25%),1% / 0.5%,2.5% / 1.25%,Replace only the effort field for F29-F33 from the authoritative high-creep FRQ
 regional-scaling-whole-period,Regional scaling,Regional scaling whole period,Current 5-year window,periods 3-292,Use all 290 mutually supported periods and parest flags 77-81 = 100 1 290 0 1
-tag-reporting-inclusion,Tag reporting rates,Tag reporting inclusion,tag_flags column 2 = 1,tag_flags column 2 = 0,Set only tag_flags column 2 to zero
+pre-mixing-tag-reporting-inclusion,Pre-mixing tag reporting,Pre-mixing tag reporting inclusion,Pre-mixing exclusion,Pre-mixing inclusion,Set only tag_flags column 2 to zero
