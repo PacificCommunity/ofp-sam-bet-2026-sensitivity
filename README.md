@@ -57,6 +57,19 @@ Rscript scripts/list-sensitivities.R
 Set `SENSITIVITY_SELECT` to the same key for Kflow. The pinned Tuna Flow 2.5
 image and current report package revisions are recorded in `kflow.yaml`.
 
+To register the `BET-2026-sensitivity-tau2` task and submit all 17 fits as
+independent concurrent jobs through Suva, first inspect the payload and then
+submit it:
+
+```sh
+./scripts/submit-kflow-grid
+KFLOW_API_TOKEN=... ./scripts/submit-kflow-grid --submit
+```
+
+The submitter uses `sensitivities.csv` for every job title, description and
+scientific-change field, skips existing `JOB_KEY` values on rerun, and verifies
+each accepted job against the Kflow API.
+
 ## Validate before fitting
 
 ```sh
