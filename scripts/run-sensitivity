@@ -22,6 +22,10 @@ if [ ! -d "$model_dir" ]; then
   echo "Run Rscript scripts/list-sensitivities.R to list valid names." >&2
   exit 2
 fi
+(
+  cd "$model_dir"
+  sha256sum -c INPUTS.sha256 >/dev/null
+)
 mkdir -p "$run_dir"
 cp -a "$model_dir/." "$run_dir/"
 cp "$repo_dir/mfclo64" "$run_dir/mfclo64"

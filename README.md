@@ -1,56 +1,61 @@
 # BET 2026 sensitivity models
 
-This repository runs one-at-a-time sensitivities from the frozen BET 2026
-**Diagnostic model**. Every run starts from the same Diagnostic inputs and the
-same deterministic seed-23 initialization path. The preparation script changes
-only the selected sensitivity setting, including the archived phase checkpoint
-when that parameter is stored in the PAR file, and then runs the original
-11-phase `doitall.sh`.
+This repository runs one-at-a-time sensitivities from the BET 2026
+**Diagnostic model** reproduced by Kflow Job 21641. The previous main branch is
+preserved unchanged on
+[`tau=1`](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/tree/tau%3D1).
 
-The Diagnostic model is the common reference and is not fitted again here.
-Its checked reference settings are steepness 0.8, tag mixing periods derived at
-KS D-statistic cutoff 0.2, CAAL 0.75
-sub-basin, Lorenzen M scalar 0.078, low effort creep (1% then 0.5%), the
-current five-year regional-scaling window, and pre-mixing reporting exclusion.
+The common reference has fixed steepness `h=0.90`, 33 independent selectivity
+groups with weak non-decreasing penalties 10,000 on F10 and F33, and the direct
+negative-binomial tag parameter fixed at `tau=2`. Every fit starts from ordinary
+`bet.ini -makepar`; no seed, jitter or fitted checkpoint is used.
 
 ## Sensitivities
 
-`sensitivities.csv` is the machine-readable source of truth. The eleven new
-fits are:
+`sensitivities.csv` is the machine-readable source of truth. The 17 new fits
+are:
 
 | Axis | New fits | Diagnostic reference |
 |---|---|---|
-| Steepness | `Steepness 0.65`, `Steepness 0.95` | 0.8 |
-| Tag mixing periods (KS D-statistic cutoff) | `Tag mixing periods - K=0.1`, `Tag mixing periods - K=0.3` | Derived at K=0.2 |
-| Conditional age-at-length | `CAAL 0.5 sub-basin`, `CAAL 1.0 sub-basin` | 0.75 sub-basin |
-| Natural mortality | `Lorenzen M scalar 0.062`, `Lorenzen M scalar 0.1` | 0.078 |
-| Effort creep | `Effort creep high (2.5% / 1.25%)` | 1% / 0.5% |
-| Regional scaling | `Regional scaling whole period` | current five-year window |
-| Pre-mixing tag reporting | `Pre-mixing tag reporting inclusion` | pre-mixing exclusion |
+| Steepness | `0.65`, `0.80`, `0.95` | `0.90` fixed |
+| Tag overdispersion tau | `1.006737947`, `1.2`, `1.4`, `1.6`, `1.8` | `2.0` fixed |
+| Tag mixing periods | K=`0.1`, K=`0.3` | K=`0.2` |
+| Conditional age-at-length | 0.5, 1.0 sub-basin | 0.75 sub-basin |
+| Natural mortality | Lorenzen scalar 0.062, 0.1 | 0.078 |
+| Effort creep | 2.5% then 1.25% | 1% then 0.5% |
+| Regional scaling | whole period | current five-year window |
+| Pre-mixing tag reporting | inclusion | exclusion |
 
-Dirichlet-multinomial settings are unchanged from the Diagnostic model.
+The tau runs retain the Diagnostic direct parameterization
+`tau = 1 + exp(fish_pars(4))`, `parest 305=1`, and fixed fish flags 43/44. The
+lowest supported direct value uses the MFCL default lower bound
+`fish_pars(4)=-5`, giving `tau=1.006737947`; it is not labelled as exactly 1.
+The other four values use `fish_pars(4)=log(tau-1)`. No tau is estimated.
 
-## Run one model
+Each fit changes only its named axis. Data, selectivity, DM settings, mixing
+period, biology and all other Diagnostic controls remain unchanged unless they
+are the selected sensitivity axis.
 
-Linux x86-64 and R are required. The repository includes the statically linked
-MFCL executable.
+## Inspect and run one model
+
+Every complete frozen input set is committed under `models/`, so the effective
+INI, FRQ, TAG, age-length, regional-scaling, selectivity and fitting controls can
+be inspected before submission.
 
 ```sh
 chmod +x mfclo64 run.sh scripts/*
 ./run.sh steepness-0.65
 ```
 
-Each complete frozen input set is also available directly under `models/` for
-inspection. The fit is written to `outputs/models/steepness-0.65/`, with the
-final PAR at `outputs/models/steepness-0.65/final.par`. To list all valid names:
+The fit is written to `outputs/models/steepness-0.65/`, with the final PAR at
+`outputs/models/steepness-0.65/final.par`. To list all valid names:
 
 ```sh
 Rscript scripts/list-sensitivities.R
 ```
 
-Set `SENSITIVITY_SELECT` to the same name when submitting through Kflow. Each
-Kflow job runs one sensitivity and uses the pinned tuna-flow v2.5 image in
-`kflow.yaml`.
+Set `SENSITIVITY_SELECT` to the same key for Kflow. The pinned Tuna Flow 2.5
+image and current report package revisions are recorded in `kflow.yaml`.
 
 ## Validate before fitting
 
@@ -59,27 +64,23 @@ Rscript scripts/validate-sensitivities.R
 ./scripts/smoke-test
 ```
 
-The first command independently rebuilds all eleven inputs in temporary
-directories, checks that each differs from the Diagnostic model only in its
-permitted fields, and byte-compares it with the corresponding committed
-`models/<case>/` folder. The second runs MFCL `-makepar` from every committed
-input folder.
+Validation rebuilds all 17 model folders, checks that each differs from the
+Diagnostic model only in its permitted fields, verifies all manifests, and
+byte-compares the generated files with the committed inputs. The smoke test
+runs makepar and the fixed-value audits for every model, including the actual
+tau and steepness written into the Phase-0 PAR.
 
 Notable input rules are:
 
-- KS D-statistic cutoff runs select the pinned 0.1 or 0.3 source INI and copy
-  only its already-derived release-group mixing periods from tag flag column 1.
-  The cutoff itself is not written into MFCL. Tag flag column 2 and
-  reporting-rate matrices remain Diagnostic.
-- CAAL 0.5 multiplies every effective-sample-size value in the authoritative
-  1.0 sub-basin file by 0.5; all age-length records remain unchanged.
-- Lorenzen M scalar runs replace only the first Lorenzen M coefficient with
-  `log(0.062)` or `log(0.1)` and retain the length coefficient of -1.
-- High effort creep copies only field 6 for F29-F33 from the authoritative high
-  FRQ, matched by year, month, week and fishery. All 1,458 records are checked;
-  1,440 change and the 18 records in the 1952 baseline year remain equal.
-- Whole-period regional scaling uses the headerless 290 by 5 matrix for periods
-  3-292. F32 begins in period 3. Flags 77-81 are `100, 1, 290, 0, 1`.
-- Reporting inclusion changes only tag flag column 2 from 1 to 0.
+- K runs copy only release-group mixing periods from tag flag column 1 of the
+  pinned K=0.1 or K=0.3 source INI.
+- CAAL 0.5 halves every effective-sample-size value in the authoritative 1.0
+  sub-basin file; all age-length observations remain unchanged.
+- Lorenzen M runs replace only the first fixed coefficient; the length slope
+  remains -1.
+- High effort creep replaces only the effort field for F29-F33.
+- Whole-period regional scaling uses source periods 3-292 and changes only the
+  matching regional-scaling controls.
+- Reporting inclusion changes only tag flag column 2.
 
-See `PROVENANCE.md` for source commits and file hashes.
+See `PROVENANCE.md` for source commits, formulas and file provenance.

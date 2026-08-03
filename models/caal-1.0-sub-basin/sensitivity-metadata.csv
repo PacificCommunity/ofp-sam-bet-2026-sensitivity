@@ -1,2 +1,2 @@
-"key","axis","label","reference","alternative","scientific_change","diagnostic_source_commit"
-"caal-1.0-sub-basin","Conditional age-at-length","CAAL 1.0 sub-basin","0.75 sub-basin","1.0 sub-basin","Use the authoritative 1.0 sub-basin file unchanged","be953e4271e7f8119f982d5efebb21a5e8e364b3"
+"key","axis","label","reference","alternative","scientific_change","diagnostic_source_job","diagnostic_source_commit"
+"caal-1.0-sub-basin","Conditional age-at-length","CAAL 1.0 sub-basin","0.75 sub-basin","1.0 sub-basin","Use the authoritative 1.0 sub-basin file unchanged",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"

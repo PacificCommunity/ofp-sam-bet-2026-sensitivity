@@ -1,2 +1,0 @@
-"phase","family","base_seed","applied_seed","cv","n_parameters","input_md5","probe_md5","output_md5","mapping_md5","mfclkit_version","mfclkit_remote_sha","FLR4MFCL_version","status"
-2,"fish_pars23",23,2410802,0.1,8,"42fbc2f4b19d127df30ffdeaecbc007e","acf11f080de93b971f50d3e886cb5c92","6e5d6637d7e12d33eac34981ec261734","7fedc95d89e7308e0e1d689fefcc7a47","0.0.0.9040","34c56de25afecdd13e9f8e94f2e421e37d9c2f9b","1.7.2","passed"

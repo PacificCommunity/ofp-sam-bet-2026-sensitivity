@@ -1,2 +1,2 @@
-"key","axis","label","reference","alternative","scientific_change","diagnostic_source_commit"
-"tag-mixing-k-0.1","Tag mixing periods (KS D-statistic cutoff)","Tag mixing periods - K=0.1","Derived at K=0.2","Derived at K=0.1","Use tag_flags column 1 containing the release-group mixing periods derived at K=0.1 in SC22-IP10","be953e4271e7f8119f982d5efebb21a5e8e364b3"
+"key","axis","label","reference","alternative","scientific_change","diagnostic_source_job","diagnostic_source_commit"
+"tag-mixing-k-0.1","Tag mixing periods (KS D-statistic cutoff)","Tag mixing periods - K=0.1","Derived at K=0.2","Derived at K=0.1","Use tag_flags column 1 containing the release-group mixing periods derived at K=0.1 in SC22-IP10",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"

@@ -9,113 +9,11 @@ if [ ! -x "$program_path" ]; then
   exit 1
 fi
 
-# ---------------------------------------------------------------------------
-# Deterministic seed-23 base initialization
-# ---------------------------------------------------------------------------
-# This is the exact CV=0.1 active-parameter perturbation path used by the
-# selected best-objective converged seed-23 fit. Parameters already represented
-# after Phase 1 are initialized there. The eight DM CEST parameters represented in
-# Phase 2 and the 25 regional-index selectivity coefficients first represented
-# after the Phase-5 group split are initialized immediately before their first
-# optimization. A parameter is initialized once, never once per phase.
-#
-# mfclkit's ordinary phase1/doitall jitter runner stages
-# mfk_phase1_baseline.par before resuming the script. In that context this base
-# bootstrap is deliberately skipped: downstream jitter therefore remains the
-# existing makepar-based seed ensemble and does not add seed 23 a second time.
-seed23_audit_dir=seed23-initialization
-seed23_initialization=${SEED23_INITIALIZATION:-1}
-case "$seed23_initialization" in
-  1|true|TRUE|yes|YES)
-    seed23_apply=true
-    ;;
-  0|false|FALSE|no|NO)
-    seed23_apply=false
-    echo "Standard makepar initialization selected: seed-23 checkpoints will not be applied."
-    ;;
-  *)
-    echo "SEED23_INITIALIZATION must be 1/true/yes or 0/false/no." >&2
-    exit 1
-    ;;
-esac
-if [ -s mfk_phase1_baseline.par ] || [ -s mfk_fitted_baseline.par ]; then
-  seed23_apply=false
-  echo "Existing jitter resume detected: seed-23 base initialization will not be applied again."
-fi
-
-# The exact Phase 1, 2 and 5 seed-23 checkpoints are archived here. Reusing
-# those byte-verified checkpoints removes the private mfclkit runtime dependency
-# while retaining the fitted path.
-seed23_initialize()
-{
-  mode=$1
-  input_par=$2
-  probe_par=$3
-  output_par=$4
-  phase=$7
-  checkpoint_root=${SEED23_CHECKPOINT_DIR:-checkpoints}
-
-  case "$phase" in
-    1)
-      phase_tag=phase01
-      expected_input=d6e0464187da0af8142e21070eff0a41
-      expected_probe=
-      expected_output=6fc77c46c1dd3e71fbc869f966f0e347
-      ;;
-    2)
-      phase_tag=phase02
-      expected_input=42fbc2f4b19d127df30ffdeaecbc007e
-      expected_probe=acf11f080de93b971f50d3e886cb5c92
-      expected_output=057a5d8ae24f1134c2d2c488dcf7cf50
-      ;;
-    5)
-      phase_tag=phase05
-      expected_input=5c77e7d1dcccf6333e51d0b61772ff2a
-      expected_probe=85e9c638132ed2a4e3671e91a6d5003d
-      expected_output=4fb331cf3ee1d8742473c2d1dbcd463a
-      ;;
-    *)
-      echo "Unsupported seed-23 checkpoint phase: $phase" >&2
-      exit 46
-      ;;
-  esac
-
-  checkpoint=$checkpoint_root/$phase_tag-seed23.par
-  summary=$checkpoint_root/$phase_tag-summary.csv
-  mapping=$checkpoint_root/$phase_tag-mapping.csv
-  for required in "$checkpoint" "$summary" "$mapping"; do
-    if [ ! -s "$required" ]; then
-      echo "Missing archived seed-23 checkpoint file: $required" >&2
-      exit 46
-    fi
-  done
-
-  observed_input=$(md5sum "$input_par" | awk '{print $1}')
-  if [ "$observed_input" != "$expected_input" ]; then
-    echo "Warning: seed-23 $phase_tag pre-checkpoint hash differs across runtimes." >&2
-    echo "Expected $expected_input; observed $observed_input; applying the verified checkpoint." >&2
-  fi
-  if [ -n "$expected_probe" ]; then
-    observed_probe=$(md5sum "$probe_par" | awk '{print $1}')
-    if [ "$observed_probe" != "$expected_probe" ]; then
-      echo "Warning: seed-23 $phase_tag probe hash differs across runtimes." >&2
-      echo "Expected $expected_probe; observed $observed_probe; applying the verified checkpoint." >&2
-    fi
-  fi
-  observed_output=$(md5sum "$checkpoint" | awk '{print $1}')
-  if [ "$observed_output" != "$expected_output" ]; then
-    echo "Seed-23 $phase_tag checkpoint hash mismatch." >&2
-    echo "Expected $expected_output; observed $observed_output." >&2
-    exit 46
-  fi
-
-  cp "$checkpoint" "$output_par"
-  cp "$summary" "$seed23_audit_dir/$phase_tag-summary.csv"
-  cp "$mapping" "$seed23_audit_dir/$phase_tag-mapping.csv"
-  echo "Seed-23 initialization: $phase_tag checkpoint verified and applied."
-}
+# This Diagnostic model always starts from ordinary bet.ini -makepar values.
+# No jitter, random seed or archived fitted checkpoint is applied.
 
 phase10_11_convergence=${BET_PHASE10_11_CONVERGENCE:--4}
+mfcl_par_scalar_tolerance=5e-7
 case "$phase10_11_convergence" in
   -[0-9]|-[0-9][0-9]|[0-9]|[0-9][0-9]) ;;
   *)
@@ -145,38 +43,471 @@ dm_nmax=25
 dm_concentration=7
 echo "DM controls: Nmax=$dm_nmax; grouped fish_pars(22) fixed at $dm_concentration; fish_pars(23) estimated"
 
+requested_model_id=${MODEL_ID:-Diagnostic}
+if [ "$requested_model_id" != Diagnostic ]; then
+  echo "MODEL_ID must remain Diagnostic (the Job 21641 model recipe)." >&2
+  exit 40
+fi
+
+model_input="model-inputs/$requested_model_id.conf"
+if [ ! -s "$model_input" ]; then
+  echo "Model input not found: $model_input" >&2
+  exit 40
+fi
+# Each short model input is committed separately and names the fixed steepness
+# and the complete 33-row selectivity input used by this run.
+. "./$model_input"
+if [ "$MODEL_ID" != "$requested_model_id" ]; then
+  echo "Model input identity mismatch: requested $requested_model_id, found $MODEL_ID." >&2
+  exit 40
+fi
+case "$STEEPNESS" in
+  0.65|0.80|0.90|0.95) ;;
+  *)
+    echo "STEEPNESS must be one of 0.65, 0.80, 0.90 or 0.95 in $model_input." >&2
+    exit 40
+    ;;
+esac
+if ! awk -v tau="$TAU" -v par="$TAU_FISH_PARS4" 'BEGIN {
+     if (par < -5 || par > 5 || tau <= 1) exit 1
+     reconstructed=1+exp(par)
+     difference=reconstructed-tau
+     if (difference < 0) difference=-difference
+     exit(difference <= 5e-9 ? 0 : 1)
+   }'; then
+  echo "TAU/TAU_FISH_PARS4 is invalid or outside the supported direct-parameter range [-5,5] in $model_input." >&2
+  exit 40
+fi
+if ! awk -v value="$M_LOG_INTERCEPT" 'BEGIN { exit(value < -10 || value > 0 ? 1 : 0) }'; then
+  echo "M_LOG_INTERCEPT is invalid in $model_input." >&2
+  exit 40
+fi
+case "$SELECTIVITY_MODEL" in
+  Diagnostic) ;;
+  *)
+    echo "Invalid SELECTIVITY_MODEL in $model_input: $SELECTIVITY_MODEL" >&2
+    exit 40
+    ;;
+esac
+if [ "$SELECTIVITY_INPUT" != "selectivity-models/$SELECTIVITY_MODEL.csv" ] ||
+   [ ! -s "$SELECTIVITY_INPUT" ]; then
+  echo "Invalid SELECTIVITY_INPUT in $model_input: $SELECTIVITY_INPUT" >&2
+  exit 40
+fi
+
+model_id=Diagnostic
+display_model_id=Diagnostic
+fixed_steepness=$STEEPNESS
+fixed_tau=$TAU
+fixed_tau_par=$TAU_FISH_PARS4
+fixed_m_log_intercept=$M_LOG_INTERCEPT
+selectivity_model=Diagnostic
+display_selectivity_model=Diagnostic
+selectivity_file=$SELECTIVITY_INPUT
+
+if ! awk -F, '
+  NR == 1 {
+    if ($0 != "fishery,fishery_name,flag16,flag24,flag56,flag57,flag61") failures++
+    next
+  }
+  {
+    fishery=NR-1
+    if (NF != 7 || $1 != fishery || $2 == "" ||
+        ($3 != 0 && $3 != 1) || $4 < 1 || $4 > 33 ||
+        ($5 != 0 && $5 != 10000) || ($6 != 1 && $6 != 3) ||
+        ($7 != 4 && $7 != 5 && $7 != 7)) failures++
+  }
+  END { exit(NR == 34 && failures == 0 ? 0 : 1) }
+' "$selectivity_file"; then
+  echo "Invalid 33-row selectivity input: $selectivity_file" >&2
+  exit 40
+fi
+case "$selectivity_model" in
+  Diagnostic)
+    selectivity_label="Diagnostic: F10 and F33 weak non-decreasing"
+    ;;
+esac
+echo "Model: $display_model_id"
+echo "Fixed steepness: $fixed_steepness (INI sv(29); age flag 162=0)"
+echo "Tag overdispersion: tau fixed at $fixed_tau under the direct parameterization (parest 305=1; fish_pars(4)=$fixed_tau_par; fish flags 43/44=0)"
+echo "Selectivity model: $display_selectivity_model - $selectivity_label"
+
+emit_selectivity_phase1_controls()
+{
+  awk -F, 'NR > 1 {
+    printf "  -%d 16 %s  # %s flag 16 from explicit input\n", $1, $3, $2
+    printf "  -%d 24 %s  # %s selectivity-sharing group\n", $1, $4, $2
+    printf "  -%d 56 %s  # %s selectivity-penalty weight\n", $1, $5, $2
+    printf "  -%d 57 %s  # %s selectivity form\n", $1, $6, $2
+    printf "  -%d 61 %s  # %s spline-node count\n", $1, $7, $2
+  }' "$selectivity_file"
+}
+
+emit_selectivity_phase5_controls()
+{
+  awk -F, 'NR > 1 {
+    printf "  -%d 24 %s  # %s final selectivity-sharing group\n", $1, $4, $2
+  }' "$selectivity_file"
+}
+
+selectivity_phase1_controls=$(emit_selectivity_phase1_controls)
+selectivity_phase5_controls=$(emit_selectivity_phase5_controls)
+
+if [ "${SELECTIVITY_PRINT_CONTROLS:-0}" = 1 ]; then
+  printf '%s\n' "# $display_model_id: fixed steepness $fixed_steepness; $selectivity_label"
+  printf '%s\n' "$selectivity_phase1_controls"
+  printf '%s\n' "$selectivity_phase5_controls"
+  exit 0
+fi
+
+if [ -z "${SELECTIVITY_AUDIT_PAR:-}" ] && [ -z "${MODEL_AUDIT_PAR:-}" ]; then
+  cp "$model_input" selected-model-input.conf
+  cp "$selectivity_file" selected-selectivity-input.csv
+fi
+
+audit_tau_fixed()
+{
+  par_file=$1
+  phase_label=$2
+  if [ ! -s "$par_file" ]; then
+    echo "$phase_label fixed-tau audit: missing PAR file $par_file" >&2
+    exit 42
+  fi
+
+  tau_audit=$(awk -v expected_par="$fixed_tau_par" -v tolerance="$mfcl_par_scalar_tolerance" '
+    /^# The parest_flags/ {
+      getline
+      parest111=$111
+      parest305=$305
+      parest306=$306
+    }
+    !fish_flags_done && /^# fish flags/ {
+      in_fish_flags=1
+      next
+    }
+    in_fish_flags && /^#/ {
+      in_fish_flags=0
+    }
+    in_fish_flags && NF {
+      fisheries++
+      active43 += $43
+      grouping44 += $44
+      if (fisheries == 33) {
+        in_fish_flags=0
+        fish_flags_done=1
+      }
+      next
+    }
+    /^# extra fishery parameters/ {
+      in_fish_pars=1
+      next
+    }
+    in_fish_pars && /^#/ {
+      next
+    }
+    in_fish_pars && NF {
+      fish_par_row++
+      if (fish_par_row == 4) {
+        fish_par4_count=NF
+        for (i=1; i<=NF; i++) {
+          difference=$i-expected_par
+          if (difference < 0) difference=-difference
+          if (difference > tolerance) fish_par4_mismatch++
+        }
+        in_fish_pars=0
+      }
+    }
+    END {
+      print parest111 + 0 "," parest305 + 0 "," parest306 + 0 "," fisheries + 0 "," active43 + 0 "," grouping44 + 0 "," fish_par4_count + 0 "," fish_par4_mismatch + 0
+    }
+  ' "$par_file")
+
+  if [ "$tau_audit" != "4,1,0,33,0,0,33,0" ]; then
+    echo "$phase_label fixed-tau audit failed: $tau_audit" >&2
+    echo "Expected parest111=4, parest305=1, parest306=0, 33 fisheries, fish flags 43/44=0, and all fish_pars(4)=$fixed_tau_par (tau=$fixed_tau)." >&2
+    exit 42
+  fi
+  echo "$phase_label fixed-tau audit: tau=$fixed_tau passed."
+}
+
+audit_tau_value_fixed()
+{
+  par_file=$1
+  phase_label=$2
+  if [ ! -s "$par_file" ]; then
+    echo "$phase_label fixed-tau value audit: missing PAR file $par_file" >&2
+    exit 42
+  fi
+
+  tau_value_audit=$(awk -v expected_par="$fixed_tau_par" -v tolerance="$mfcl_par_scalar_tolerance" '
+    !fish_flags_done && /^# fish flags/ {
+      in_fish_flags=1
+      next
+    }
+    in_fish_flags && /^#/ {
+      in_fish_flags=0
+    }
+    in_fish_flags && NF {
+      fisheries++
+      active43 += $43
+      grouping44 += $44
+      if (fisheries == 33) {
+        in_fish_flags=0
+        fish_flags_done=1
+      }
+      next
+    }
+    /^# extra fishery parameters/ {
+      in_fish_pars=1
+      next
+    }
+    in_fish_pars && /^#/ {
+      next
+    }
+    in_fish_pars && NF {
+      fish_par_row++
+      if (fish_par_row == 4) {
+        fish_par4_count=NF
+        for (i=1; i<=NF; i++) {
+          difference=$i-expected_par
+          if (difference < 0) difference=-difference
+          if (difference > tolerance) fish_par4_mismatch++
+        }
+        in_fish_pars=0
+      }
+    }
+    END {
+      print fisheries + 0 "," active43 + 0 "," grouping44 + 0 "," fish_par4_count + 0 "," fish_par4_mismatch + 0
+    }
+  ' "$par_file")
+
+  if [ "$tau_value_audit" != "33,0,0,33,0" ]; then
+    echo "$phase_label fixed-tau value audit failed: $tau_value_audit" >&2
+    echo "Expected 33 fisheries, fish flags 43/44=0, and all fish_pars(4)=$fixed_tau_par (tau=$fixed_tau)." >&2
+    exit 42
+  fi
+  echo "$phase_label fixed-tau value audit: tau=$fixed_tau passed (estimation switches are applied in Phase 1)."
+}
+
+audit_steepness_fixed()
+{
+  par_file=$1
+  phase_label=$2
+  steepness_audit=$(awk '
+    /^# age flags/ {
+      getline
+      age162=$162
+    }
+    /^# Seasonal growth parameters/ {
+      getline
+      steepness=$29
+    }
+    END { print steepness + 0 "," age162 + 0 }
+  ' "$par_file")
+  observed_steepness=${steepness_audit%,*}
+  observed_age162=${steepness_audit#*,}
+  if [ "$observed_age162" != 0 ] ||
+     ! awk -v observed="$observed_steepness" -v expected="$fixed_steepness" \
+         -v tolerance="$mfcl_par_scalar_tolerance" 'BEGIN {
+       difference=observed-expected
+       if (difference < 0) difference=-difference
+       exit(difference <= tolerance ? 0 : 1)
+     }'; then
+    echo "$phase_label fixed-steepness audit failed: sv(29)/age_flag(162)=$steepness_audit; expected $fixed_steepness/0." >&2
+    exit 41
+  fi
+  echo "$phase_label fixed-steepness audit: $fixed_steepness passed."
+}
+
+audit_natural_mortality_fixed()
+{
+  par_file=$1
+  phase_label=$2
+  natural_mortality_audit=$(awk '
+    /^# age_pars/ || /^# age-class related parameters [(]age_pars[)]/ {
+      in_age=1
+      next
+    }
+    in_age && /^#/ { next }
+    in_age && NF {
+      row++
+      if (row == 5) {
+        print $1 "," $2
+        exit
+      }
+    }
+  ' "$par_file")
+  observed_m=${natural_mortality_audit%,*}
+  observed_slope=${natural_mortality_audit#*,}
+  if ! awk -v observed="$observed_m" -v slope="$observed_slope" \
+      -v expected="$fixed_m_log_intercept" 'BEGIN {
+       difference = observed - expected
+       if (difference < 0) difference = -difference
+       slope_difference = slope + 1
+       if (slope_difference < 0) slope_difference = -slope_difference
+       exit(difference <= 1e-12 && slope_difference <= 1e-12 ? 0 : 1)
+     }'; then
+    echo "$phase_label fixed-M audit failed: log(M0)/Lorenzen slope=$natural_mortality_audit." >&2
+    exit 48
+  fi
+  echo "$phase_label fixed-M audit: log(M0)=$observed_m and Lorenzen slope=-1 passed."
+}
+
+audit_dm_concentration_fixed()
+{
+  par_file=$1
+  phase_label=$2
+  dm22_audit=$(awk -v expected="$dm_concentration" '
+    /^# extra fishery parameters/ { in_extra=1; next }
+    in_extra && /^#/ { next }
+    in_extra && NF {
+      row++
+      if (row == 22) {
+        copies=NF
+        for (i=1; i<=NF; i++) {
+          difference=$i-expected
+          if (difference < 0) difference=-difference
+          if (difference > 1e-12) changed++
+        }
+        print copies "," changed + 0
+        exit
+      }
+    }
+  ' "$par_file")
+  if [ "$dm22_audit" != "33,0" ]; then
+    echo "$phase_label fixed-DM audit failed: fish_pars(22) count/non-7=$dm22_audit; expected 33,0." >&2
+    exit 47
+  fi
+  echo "$phase_label fixed-DM concentration audit: 33 fish_pars(22)=7 passed."
+}
+
+audit_selectivity_model()
+{
+  par_file=$1
+  phase_label=$2
+  if ! awk '
+    FILENAME == ARGV[1] {
+      if (FNR == 1) next
+      split($0, values, ",")
+      expected_fishery=values[1]
+      expected16[expected_fishery]=values[3]
+      expected24[expected_fishery]=values[4]
+      expected56[expected_fishery]=values[5]
+      expected57[expected_fishery]=values[6]
+      expected61[expected_fishery]=values[7]
+      expected_rows++
+      next
+    }
+    /^# fish flags/ { in_fish=1; next }
+    in_fish && /^#/ { in_fish=0 }
+    in_fish && NF {
+      observed_fishery++
+      if ($16 != expected16[observed_fishery] ||
+          $24 != expected24[observed_fishery] ||
+          $56 != expected56[observed_fishery] ||
+          $57 != expected57[observed_fishery] ||
+          $61 != expected61[observed_fishery]) {
+        printf "F%d observed 16/24/56/57/61=%s/%s/%s/%s/%s; expected %s/%s/%s/%s/%s\n",
+          observed_fishery, $16, $24, $56, $57, $61,
+          expected16[observed_fishery], expected24[observed_fishery],
+          expected56[observed_fishery], expected57[observed_fishery],
+          expected61[observed_fishery] > "/dev/stderr"
+        failures++
+      }
+      if (observed_fishery == 33) exit
+    }
+    END {
+      if (expected_rows != 33 || observed_fishery != 33) {
+        print "Expected 33 fishery-flag rows; found " observed_fishery > "/dev/stderr"
+        failures++
+      }
+      exit(failures > 0 ? 1 : 0)
+    }
+  ' "$selectivity_file" "$par_file"; then
+    echo "$phase_label selectivity audit failed for $display_selectivity_model." >&2
+    exit 43
+  fi
+  echo "$phase_label selectivity audit: $display_selectivity_model passed."
+}
+
+if [ -n "${MODEL_AUDIT_PAR:-}" ]; then
+  audit_tau_fixed "$MODEL_AUDIT_PAR" "Standalone"
+  audit_steepness_fixed "$MODEL_AUDIT_PAR" "Standalone"
+  audit_natural_mortality_fixed "$MODEL_AUDIT_PAR" "Standalone"
+  audit_dm_concentration_fixed "$MODEL_AUDIT_PAR" "Standalone"
+  audit_selectivity_model "$MODEL_AUDIT_PAR" "Standalone"
+  exit 0
+fi
+
+if [ -n "${SELECTIVITY_AUDIT_PAR:-}" ]; then
+  audit_selectivity_model "$SELECTIVITY_AUDIT_PAR" "Standalone"
+  exit 0
+fi
+
 
 # -----------------------------------
 #  PHASE 0 - create initial par file
 # -----------------------------------
 
+# The committed INI is the actual MFCL input. Sensitivity preparation writes
+# the selected fixed steepness into both this file and the explicit model
+# configuration; no runtime input patch is applied.
+ini_steepness=$(awk '/^# sv[(]29[)]/{getline; print $1; exit}' bet.ini)
+if ! awk -v observed="$ini_steepness" -v expected="$fixed_steepness" 'BEGIN {
+  difference=observed-expected
+  if (difference < 0) difference=-difference
+  exit(difference <= 1e-12 ? 0 : 1)
+}'; then
+  echo "Committed bet.ini does not contain fixed steepness $fixed_steepness." >&2
+  exit 37
+fi
+
 $program_path bet.frq bet.ini 00.par -makepar
 
-# The diagnostic model fixes the eight grouped fish_pars(22) concentration
-# intercepts after they had converged to their upper bound (7). Set all
-# fishery copies explicitly before applying the same G8 grouping and flag 69=0.
-awk -v concentration="$dm_concentration" '
+# Fix the direct negative-binomial parameter at fish_pars(4)=log(tau-1).
+# The Diagnostic reference uses zero for tau=2; tau sensitivities retain the
+# same parameterization and estimation switches and change only this value.
+# The diagnostic model also fixes the eight grouped fish_pars(22)
+# concentration intercepts at 7. Set every fishery copy explicitly in the
+# makepar output before Phase 1 so neither value depends on bet.ini defaults.
+awk -v concentration="$dm_concentration" -v tau_par="$fixed_tau_par" '
   /^# extra fishery parameters/ { in_fish = 1; print; next }
   in_fish && /^#/ { print; next }
   in_fish && NF {
     fish_row++
+    if (fish_row == 4) {
+      if (NF != 33) exit 38
+      for (i = 1; i <= NF; i++)
+        printf "%s%s", tau_par, (i == NF ? "\n" : " ")
+      changed_tau = 1
+      next
+    }
     if (fish_row == 22) {
       if (NF != 33) exit 38
       for (i = 1; i <= NF; i++)
         printf "%s%s", concentration, (i == NF ? "\n" : " ")
-      changed = 1
+      changed_dm = 1
       next
     }
   }
   { print }
-  END { if (changed != 1) exit 38 }
-' 00.par > 00.dm-fixed.par
+  END { if (changed_tau != 1 || changed_dm != 1) exit 38 }
+' 00.par > 00.fixed.par
+audit_tau_value_fixed 00.fixed.par "Phase 0"
+audit_steepness_fixed 00.fixed.par "Phase 0"
+audit_natural_mortality_fixed 00.fixed.par "Phase 0"
+audit_dm_concentration_fixed 00.fixed.par "Phase 0"
+
+if [ "${MODEL_STOP_AFTER_PHASE0:-0}" = 1 ]; then
+  echo "Phase-0 validation requested; stopping after makepar and fixed-control audits."
+  exit 0
+fi
 
 # -----------------------
 #  PHASE 1 - initial par
 # -----------------------
 
-$program_path bet.frq 00.dm-fixed.par 01.par -file - <<PHASE1
+$program_path bet.frq 00.fixed.par 01.par -file - <<PHASE1
 # Use default quasi-Newton minimizer
   1 351 0
   1 192 0
@@ -246,6 +577,7 @@ $program_path bet.frq 00.dm-fixed.par 01.par -file - <<PHASE1
 # Recruitment and initial population settings
   1 149 100        # recruitment deviation penalty
   1 400 6          # final six recruitment deviates set to zero
+  2 162 0          # keep sv(29) steepness fixed at the model-input value
 # Fixed terminal recruitments are arithmetic mean of remaining period (not default geometric mean)
   1 398 1
   2 177 1          # use old totpop scaling method
@@ -256,6 +588,8 @@ $program_path bet.frq 00.dm-fixed.par 01.par -file - <<PHASE1
   2 94 1 2 128 100  # initial Z = 1.0*M, i.e. initial F = 0
 # Likelihood component settings
   1 111 4     # set likelihood function for tags to negative binomial
+  1 305 1     # direct parameterization: tau = 1 + exp(fish_pars(4))
+  1 306 0     # default bounds; inactive because fish flags 43/44 are fixed at zero
   1 141 11  # length-frequency likelihood: Dirichlet-multinomial without random effects
   1 139 3     # set likelihood function for WF data to normal
   -999 49 20  # divide LF sample sizes by 20
@@ -279,8 +613,8 @@ $program_path bet.frq 00.dm-fixed.par 01.par -file - <<PHASE1
   2 96 30    # pool tags after 30 quarters at liberty
 # Mixing periods are read from bet.ini tag flags for this step.
   2 198 1    # activate release group reporting rates
-  -999 43 0  # estimate tag variance if = 1
-  -999 44 0  # group all tags for variance estimation if = 1
+  -999 43 0  # keep fish_pars(4) fixed; 1 would estimate tau
+  -999 44 0  # no grouping is needed for a fixed common value
 # Grouping of fisheries for tag return data, mapped from BET_PHrev_FNL.xlsx.
 # New labels with region 4 in the workbook are treated as region 5 here.
    -1 32 1   # LL.WEST.1, old1
@@ -454,61 +788,19 @@ $program_path bet.frq 00.dm-fixed.par 01.par -file - <<PHASE1
   -33 68 8  # G8PSSET DM group for F33
   -999 69 0  # fix grouped fish_pars(22) concentration intercepts at 7
   -999 89 0  # stage relative sample-size exponent fixed at zero
+# Model-specific selectivity controls are last so they override the common
+# Diagnostic defaults without altering any non-selectivity setting.
+$selectivity_phase1_controls
 PHASE1
-
-if [ "$seed23_apply" = true ]; then
-  mkdir -p "$seed23_audit_dir"
-  cp 01.par "$seed23_audit_dir/phase01-before.par"
-  seed23_initialize \
-    phase1 \
-    01.par \
-    - \
-    "$seed23_audit_dir/phase01-seed23.par" \
-    - \
-    all \
-    1
-  cp "$seed23_audit_dir/phase01-seed23.par" 01.par
-fi
+audit_tau_fixed 01.par "Phase 1"
+audit_steepness_fixed 01.par "Phase 1"
+audit_natural_mortality_fixed 01.par "Phase 1"
+audit_dm_concentration_fixed 01.par "Phase 1"
+audit_selectivity_model 01.par "Phase 1"
 
 # ---------
 #  PHASE 2
 # ---------
-
-if [ "$seed23_apply" = true ]; then
-  if $program_path bet.frq 01.par seed23-phase02-probe.par -file - <<SEED23_PHASE2_PROBE
-  1 1 100
-  1 50 0
-  2 113 0
-  1 190 1
-  -999 89 1
-  1 1 0
-  1 246 1
-SEED23_PHASE2_PROBE
-  then
-    seed23_probe_status=0
-  else
-    seed23_probe_status=$?
-  fi
-  if [ "$seed23_probe_status" -ne 0 ] && [ "$seed23_probe_status" -ne 3 ]; then
-    echo "Seed-23 Phase-2 zero-evaluation probe failed with status $seed23_probe_status." >&2
-    exit "$seed23_probe_status"
-  fi
-  if [ ! -s seed23-phase02-probe.par ] || [ ! -s xinit.rpt ]; then
-    echo "Seed-23 Phase-2 probe did not create its PAR and xinit report." >&2
-    exit 47
-  fi
-  mv seed23-phase02-probe.par "$seed23_audit_dir/phase02-probe.par"
-  cp xinit.rpt "$seed23_audit_dir/phase02-xinit.rpt"
-  seed23_initialize \
-    deferred \
-    01.par \
-    "$seed23_audit_dir/phase02-probe.par" \
-    "$seed23_audit_dir/phase02-seed23.par" \
-    "$seed23_audit_dir/phase02-xinit.rpt" \
-    fish_pars23 \
-    2
-  cp "$seed23_audit_dir/phase02-seed23.par" 01.par
-fi
 
 $program_path bet.frq 01.par 02.par -file - <<PHASE2
   1 1 100  # set max. number of function evaluations per phase to 100
@@ -517,6 +809,11 @@ $program_path bet.frq 01.par 02.par -file - <<PHASE2
   1 190 1  # write plot-xxx.par.rep
   -999 89 1  # estimate group-specific DM relative sample-size exponent (CEST)
 PHASE2
+audit_tau_fixed 02.par "Phase 2"
+audit_steepness_fixed 02.par "Phase 2"
+audit_natural_mortality_fixed 02.par "Phase 2"
+audit_dm_concentration_fixed 02.par "Phase 2"
+audit_selectivity_model 02.par "Phase 2"
 
 # ---------
 #  PHASE 3
@@ -528,6 +825,11 @@ $program_path bet.frq 02.par 03.par -file - <<PHASE3
   2 178 1  # constrain regional recruitments
   1 1 200
 PHASE3
+audit_tau_fixed 03.par "Phase 3"
+audit_steepness_fixed 03.par "Phase 3"
+audit_natural_mortality_fixed 03.par "Phase 3"
+audit_dm_concentration_fixed 03.par "Phase 3"
+audit_selectivity_model 03.par "Phase 3"
 
 # ---------
 #  PHASE 4
@@ -538,66 +840,15 @@ $program_path bet.frq 03.par 04.par -file - <<PHASE4
   2 69 1
   2 27 -1  # penalty wt 0.1 computed against prior
 PHASE4
+audit_tau_fixed 04.par "Phase 4"
+audit_steepness_fixed 04.par "Phase 4"
+audit_natural_mortality_fixed 04.par "Phase 4"
+audit_dm_concentration_fixed 04.par "Phase 4"
+audit_selectivity_model 04.par "Phase 4"
 
 # ---------
 #  PHASE 5
 # ---------
-
-if [ "$seed23_apply" = true ]; then
-  if $program_path bet.frq 04.par seed23-phase05-probe.par -file - <<SEED23_PHASE5_PROBE
-  -100000 1 1
-  -100000 2 1
-  -100000 3 1
-  -100000 4 1
-  -100000 5 1
-  1 77 100
-  1 78 1
-  1 79 240
-  1 80 220
-  1 81 1
-  -29 99 29
-  -30 99 30
-  -31 99 31
-  -32 99 32
-  -33 99 33
-  -29 94 0
-  -30 94 0
-  -31 94 0
-  -32 94 0
-  -33 94 0
-  -29 24 29
-  -30 24 30
-  -31 24 31
-  -32 24 32
-  -33 24 33
-  1 1 0
-  1 246 1
-SEED23_PHASE5_PROBE
-  then
-    seed23_probe_status=0
-  else
-    seed23_probe_status=$?
-  fi
-  if [ "$seed23_probe_status" -ne 0 ] && [ "$seed23_probe_status" -ne 3 ]; then
-    echo "Seed-23 Phase-5 zero-evaluation probe failed with status $seed23_probe_status." >&2
-    exit "$seed23_probe_status"
-  fi
-  if [ ! -s seed23-phase05-probe.par ] || [ ! -s xinit.rpt ]; then
-    echo "Seed-23 Phase-5 probe did not create its PAR and xinit report." >&2
-    exit 48
-  fi
-  mv seed23-phase05-probe.par "$seed23_audit_dir/phase05-probe.par"
-  cp xinit.rpt "$seed23_audit_dir/phase05-xinit.rpt"
-  seed23_initialize \
-    deferred \
-    04.par \
-    "$seed23_audit_dir/phase05-probe.par" \
-    "$seed23_audit_dir/phase05-seed23.par" \
-    "$seed23_audit_dir/phase05-xinit.rpt" \
-    selectivity_coff \
-    5
-  cp "$seed23_audit_dir/phase05-seed23.par" 04.par
-fi
 
 $program_path bet.frq 04.par 05.par -file - <<PHASE5
   -100000 1 1  # estimate
@@ -609,8 +860,8 @@ $program_path bet.frq 04.par 05.par -file - <<PHASE5
 # These controls persist in subsequent runs through the carried parameter file.
   1 77 100  # REGW regional-scaling penalty weight
   1 78 1  # use mean regional-scaling target
-  1 79 240  # start bound: 240 periods back from model end, mapping to source period 53
-  1 80 220  # end bound: 220 periods back from model end, mapping to source period 72
+  1 79 240  # regional-scaling start bound
+  1 80 220  # regional-scaling end bound
   1 81 1  # enable the multivariate-normal regional-scaling penalty
   -29 99 29  # Index R1; separate stationary-catchability/likelihood group from staged run 5
   -30 99 30  # Index R2; separate stationary-catchability/likelihood group from staged run 5
@@ -628,7 +879,15 @@ $program_path bet.frq 04.par 05.par -file - <<PHASE5
   -31 24 31  # Index R3; separate selectivity coefficient-sharing group from staged run 5
   -32 24 32  # Index R4; separate selectivity coefficient-sharing group from staged run 5
   -33 24 33  # Index R5; separate selectivity coefficient-sharing group from staged run 5
+# P-series models retain the two documented extraction-fishery sharing pairs
+# and independent index groups after the staged-run-5 controls above.
+$selectivity_phase5_controls
 PHASE5
+audit_tau_fixed 05.par "Phase 5"
+audit_steepness_fixed 05.par "Phase 5"
+audit_natural_mortality_fixed 05.par "Phase 5"
+audit_dm_concentration_fixed 05.par "Phase 5"
+audit_selectivity_model 05.par "Phase 5"
 
 # ---------
 #  PHASE 6
@@ -641,6 +900,11 @@ $program_path bet.frq 05.par 06.par -file - <<PHASE6
   1 13 1   # estimate length of age n
   1 1 300  # function evaluations
 PHASE6
+audit_tau_fixed 06.par "Phase 6"
+audit_steepness_fixed 06.par "Phase 6"
+audit_natural_mortality_fixed 06.par "Phase 6"
+audit_dm_concentration_fixed 06.par "Phase 6"
+audit_selectivity_model 06.par "Phase 6"
 
 # ---------
 #  PHASE 7
@@ -654,6 +918,11 @@ $program_path bet.frq 06.par 07.par -file - <<PHASE7
   1 184 0  # estimate parameters
   1 1 500  # function evaluations
 PHASE7
+audit_tau_fixed 07.par "Phase 7"
+audit_steepness_fixed 07.par "Phase 7"
+audit_natural_mortality_fixed 07.par "Phase 7"
+audit_dm_concentration_fixed 07.par "Phase 7"
+audit_selectivity_model 07.par "Phase 7"
 
 # ---------
 #  PHASE 8
@@ -681,6 +950,11 @@ $program_path bet.frq 07.par 08.par -file - <<PHASE8
   1 50 -2    # convergence criteria
   2 116 100  # increase F bound for NR to 1.0
 PHASE8
+audit_tau_fixed 08.par "Phase 8"
+audit_steepness_fixed 08.par "Phase 8"
+audit_natural_mortality_fixed 08.par "Phase 8"
+audit_dm_concentration_fixed 08.par "Phase 8"
+audit_selectivity_model 08.par "Phase 8"
 
 # ---------
 #  PHASE 9
@@ -692,44 +966,80 @@ $program_path bet.frq 08.par 09.par -file - <<PHASE9
   1 50 -2    # convergence criteria
   2 116 300  # increase F bound for NR to 3.0
 PHASE9
+audit_tau_fixed 09.par "Phase 9"
+audit_steepness_fixed 09.par "Phase 9"
+audit_natural_mortality_fixed 09.par "Phase 9"
+audit_dm_concentration_fixed 09.par "Phase 9"
+audit_selectivity_model 09.par "Phase 9"
 
 # ------------------------------------------------------------------
-#  TAG-TAU TREATMENT - negative binomial, tau not estimated
+#  TAG-TAU TREATMENT - direct negative binomial, tau fixed at selected value
 # ------------------------------------------------------------------
 
-# Parest flag 111 remains 4 (negative binomial), while fish flags 43/44
-# remain zero and fish_pars(4) is not opened as an independent variable.
-# All inherited diagnostic-model controls applied above remain unchanged.
-$program_path bet.frq 09.par 10.par -file - <<PHASE10_NO_TAU_EST
+# Parest flags 111/305 remain 4/1, fish flags 43/44 remain zero and
+# fish_pars(4)=log(tau-1) remains fixed. All other Diagnostic settings carry.
+$program_path bet.frq 09.par 10.par -file - <<PHASE10_TAU_FIXED
   1 1 10000
   1 50 $phase10_11_convergence
   1 121 0
-PHASE10_NO_TAU_EST
+PHASE10_TAU_FIXED
+audit_tau_fixed 10.par "Phase 10"
+audit_steepness_fixed 10.par "Phase 10"
+audit_natural_mortality_fixed 10.par "Phase 10"
+audit_dm_concentration_fixed 10.par "Phase 10"
+audit_selectivity_model 10.par "Phase 10"
 
-$program_path bet.frq 10.par 11.par -file - <<PHASE11_NO_TAU_EST
+$program_path bet.frq 10.par 11.par -file - <<PHASE11_TAU_FIXED
   1 1 5000
   1 50 $phase10_11_convergence
   1 121 0
   1 246 1
-PHASE11_NO_TAU_EST
+PHASE11_TAU_FIXED
+audit_tau_fixed 11.par "Phase 11"
+audit_steepness_fixed 11.par "Phase 11"
+audit_natural_mortality_fixed 11.par "Phase 11"
+audit_dm_concentration_fixed 11.par "Phase 11"
+audit_selectivity_model 11.par "Phase 11"
 
 final_par=11.par
 parest_111=$(awk '/^# The parest_flags/{getline; print $111; exit}' "$final_par")
 parest_121=$(awk '/^# The parest_flags/{getline; print $121; exit}' "$final_par")
 parest_141=$(awk '/^# The parest_flags/{getline; print $141; exit}' "$final_par")
+parest_305=$(awk '/^# The parest_flags/{getline; print $305; exit}' "$final_par")
+parest_306=$(awk '/^# The parest_flags/{getline; print $306; exit}' "$final_par")
 parest_320=$(awk '/^# The parest_flags/{getline; print $320; exit}' "$final_par")
 parest_342=$(awk '/^# The parest_flags/{getline; print $342; exit}' "$final_par")
 estimated_tau_count=$(awk '$2 ~ /^fish_pars[(]4[)]/ {n++} END {print n+0}' indepvar.rpt)
 dm22_active=$(awk '$2 ~ /^fish_pars[(]22[)]/ {n++} END {print n+0}' indepvar.rpt)
 dm23_active=$(awk '$2 ~ /^fish_pars[(]23[)]/ {n++} END {print n+0}' indepvar.rpt)
-active_tau_fisheries=$(awk '
+estimated_steepness_count=$(awk '$2 == "sv(29)" {n++} END {print n+0}' indepvar.rpt)
+tau_fish_flag_summary=$(awk '
   /^# fish flags/ {in_fish=1; next}
   in_fish && /^#/ {exit}
   in_fish && NF {
     fishery++
-    active += $43
+    active43 += $43
+    grouping44 += $44
     if (fishery == 33) {
-      print active + 0
+      print active43 + 0 "," grouping44 + 0
+      exit
+    }
+  }
+' "$final_par")
+active_tau_fisheries=${tau_fish_flag_summary%,*}
+grouped_tau_fisheries=${tau_fish_flag_summary#*,}
+fish_par4_summary=$(awk -v expected="$fixed_tau_par" -v tolerance="$mfcl_par_scalar_tolerance" '
+  /^# extra fishery parameters/ {in_fish=1; next}
+  in_fish && /^#/ {next}
+  in_fish && NF {
+    row++
+    if (row == 4) {
+      for (i=1; i<=NF; i++) {
+        difference=$i-expected
+        if (difference < 0) difference=-difference
+        if (difference > tolerance) mismatch++
+      }
+      print NF "," mismatch + 0
       exit
     }
   }
@@ -748,6 +1058,8 @@ final_m=$(awk '
     }
   }
 ' "$final_par")
+final_steepness=$(awk '/^# Seasonal growth parameters/{getline; print $29; exit}' "$final_par")
+final_age162=$(awk '/^# age flags/{getline; print $162; exit}' "$final_par")
 
 dm_control_summary=$(awk '
   /^# fish flags/ { in_fish=1; next }
@@ -762,53 +1074,59 @@ dm_control_summary=$(awk '
   }
 ' "$final_par")
 
-if [ "$parest_111" != 4 ] || [ "$parest_121" != 0 ] ||
+if [ "$parest_111" != 4 ] || [ "$parest_305" != 1 ] ||
+   [ "$parest_306" != 0 ] || [ "$parest_121" != 0 ] ||
    [ "$parest_141" != 11 ] || [ "$parest_320" != 5 ] ||
    [ "$parest_342" != "$dm_nmax" ] ||
    [ "$dm22_active" != 0 ] || [ "$dm23_active" != 8 ] ||
    [ "$dm_control_summary" != "33,8,0,33" ] ||
-   [ "$estimated_tau_count" != 0 ] || [ "$active_tau_fisheries" != 0 ]; then
-  echo "Final fit did not retain the required DM and negative-binomial tau-not-estimated controls." >&2
+   [ "$estimated_steepness_count" != 0 ] || [ "$final_age162" != 0 ] ||
+   [ "$estimated_tau_count" != 0 ] || [ "$active_tau_fisheries" != 0 ] ||
+   [ "$grouped_tau_fisheries" != 0 ] || [ "$fish_par4_summary" != "33,0" ]; then
+  echo "Final fit did not retain the required DM and fixed tau=$fixed_tau controls." >&2
   exit 44
 fi
-if ! awk -v observed="$final_m" 'BEGIN {
-  expected = -2.54930339768360
-  difference = observed - expected
-  if (difference < 0) difference = -difference
-  exit(difference <= 1e-12 ? 0 : 1)
+if ! awk -v observed="$final_steepness" -v expected="$fixed_steepness" \
+    -v tolerance="$mfcl_par_scalar_tolerance" 'BEGIN {
+  difference=observed-expected
+  if (difference < 0) difference=-difference
+  exit(difference <= tolerance ? 0 : 1)
 }'; then
-  echo "Fixed Lorenzen natural mortality changed: $final_m" >&2
-  exit 45
+  echo "Final fit changed fixed steepness: observed $final_steepness; expected $fixed_steepness." >&2
+  exit 46
 fi
-
 printf '%s\n' \
-  'mode,tag_likelihood,parest111,estimated_tau_count,active_tau_fisheries,parest121,dm_nmax,dm_concentration,dm22_active,dm23_active,parest141,parest320,parest342,final_m,status' \
-  "tau-not-estimated,negative-binomial,$parest_111,$estimated_tau_count,$active_tau_fisheries,$parest_121,$dm_nmax,$dm_concentration,$dm22_active,$dm23_active,$parest_141,$parest_320,$parest_342,$final_m,passed" \
+  'mode,tag_likelihood,tau,fish_pars4,parest111,parest305,parest306,estimated_tau_count,active_tau_fisheries,grouped_tau_fisheries,parest121,dm_nmax,dm_concentration,dm22_active,dm23_active,parest141,parest320,parest342,final_m,status' \
+  "tau-fixed,direct-negative-binomial,$fixed_tau,$fixed_tau_par,$parest_111,$parest_305,$parest_306,$estimated_tau_count,$active_tau_fisheries,$grouped_tau_fisheries,$parest_121,$dm_nmax,$dm_concentration,$dm22_active,$dm23_active,$parest_141,$parest_320,$parest_342,$final_m,passed" \
   > tag-tau-audit.csv
 
-if [ "$seed23_apply" = true ]; then
-  for seed23_phase in 01 02 05; do
-    if [ ! -s "$seed23_audit_dir/phase${seed23_phase}-summary.csv" ]; then
-      echo "Seed-23 initialization audit is missing Phase $seed23_phase." >&2
-      exit 49
-    fi
-  done
-  {
-    sed -n '1,2p' "$seed23_audit_dir/phase01-summary.csv"
-    sed -n '2p' "$seed23_audit_dir/phase02-summary.csv"
-    sed -n '2p' "$seed23_audit_dir/phase05-summary.csv"
-  } > seed23-initialization-summary.csv
-  sha256sum \
-    "$seed23_audit_dir/phase01-before.par" \
-    "$seed23_audit_dir/phase01-seed23.par" \
-    "$seed23_audit_dir/phase01-mapping.csv" \
-    "$seed23_audit_dir/phase02-probe.par" \
-    "$seed23_audit_dir/phase02-seed23.par" \
-    "$seed23_audit_dir/phase02-mapping.csv" \
-    "$seed23_audit_dir/phase05-probe.par" \
-    "$seed23_audit_dir/phase05-seed23.par" \
-    "$seed23_audit_dir/phase05-mapping.csv" \
-    > "$seed23_audit_dir/SHA256SUMS"
-  echo "Seed-23 base initialization audit: passed."
-fi
+printf '%s\n' \
+  'model_id,steepness,selectivity_model,label,selectivity_groups,four_node_flags,five_node_flags,seven_node_flags,logistic_flags,weak_penalty_flags,status' \
+  > selectivity-audit.csv
+awk -v model_id="$display_model_id" -v steepness="$fixed_steepness" \
+    -v model="$display_selectivity_model" -v label="$selectivity_label" '
+  /^# fish flags/ { in_fish=1; next }
+  in_fish && /^#/ { in_fish=0 }
+  in_fish && NF {
+    fishery++
+    groups[$24]=1
+    if ($61 == 4) four++
+    if ($61 == 5) five++
+    if ($61 == 7) seven++
+    if ($57 == 1) logistic++
+    if ($16 == 1 && $56 == 10000) weak++
+    if (fishery == 33) exit
+  }
+  END {
+    for (group in groups) group_count++
+    printf "\"%s\",%s,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,passed\n",
+      model_id, steepness, model, label, group_count, four + 0, five + 0, seven + 0,
+      logistic + 0, weak + 0
+  }
+' "$final_par" >> selectivity-audit.csv
+
+printf '%s\n' \
+  'model_id,fixed_steepness,age_flag_162,estimated_steepness_count,selectivity_model,tau,initialization,status' \
+  "$display_model_id,$fixed_steepness,$final_age162,$estimated_steepness_count,$display_selectivity_model,$fixed_tau,ordinary-makepar-no-seed,passed" \
+  > model-input-audit.csv
 exit 0

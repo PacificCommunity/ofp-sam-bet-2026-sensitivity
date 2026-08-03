@@ -10,11 +10,15 @@ awk -F, 'NR > 1 {print $1}' "$repo_dir/sensitivities.csv" | while IFS= read -r c
   mkdir -p "$test_root/$case_key"
   cp -a "$repo_dir/models/$case_key/." "$test_root/$case_key/"
   cp "$repo_dir/mfclo64" "$test_root/$case_key/mfclo64"
-  chmod +x "$test_root/$case_key/mfclo64"
+  chmod +x "$test_root/$case_key/mfclo64" "$test_root/$case_key/doitall.sh"
   (
     cd "$test_root/$case_key"
-    ./mfclo64 bet.frq bet.ini smoke.par -makepar >makepar.log 2>&1
-    test -s smoke.par
+    MODEL_STOP_AFTER_PHASE0=1 PROGRAM_PATH=./mfclo64 ./doitall.sh >phase0-validation.log 2>&1
+    test -s 00.par
+    test -s 00.fixed.par
+    grep -q 'fixed-tau value audit: tau=.* passed' phase0-validation.log
+    grep -q 'fixed-steepness audit: .* passed' phase0-validation.log
+    grep -q 'fixed-DM concentration audit: 33 fish_pars(22)=7 passed' phase0-validation.log
   )
-  echo "makepar passed: $case_key"
+  echo "makepar and fixed-value audits passed: $case_key"
 done

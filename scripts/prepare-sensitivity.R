@@ -159,15 +159,6 @@ make_caal_half <- function(source_path, output_path) {
   write_lines(lines, output_path)
 }
 
-refresh_checkpoint_md5 <- function(doitall, checkpoints) {
-  lines <- readLines(doitall, warn = FALSE)
-  hits <- grep("^[[:space:]]*expected_output=[0-9a-f]{32}[[:space:]]*$", lines)
-  if (length(hits) != 3L) stop("Expected three checkpoint output hashes.", call. = FALSE)
-  md5 <- unname(tools::md5sum(checkpoints))
-  lines[hits] <- paste0("      expected_output=", md5)
-  write_lines(lines, doitall)
-}
-
 refresh_model_manifest <- function(run_dir) {
   manifest_path <- file.path(run_dir, "MANIFEST.sha256")
   manifest <- read.table(manifest_path, col.names = c("sha256", "file"), stringsAsFactors = FALSE)
@@ -189,17 +180,33 @@ Sys.chmod(file.path(output, c("mfclo64", "doitall.sh")), mode = "0755")
 
 ini <- file.path(output, "bet.ini")
 doitall <- file.path(output, "doitall.sh")
-checkpoints <- file.path(output, "checkpoints", paste0(c("phase01", "phase02", "phase05"), "-seed23.par"))
+model_config <- file.path(output, "model-inputs", "Diagnostic.conf")
 
-if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
-  value <- if (case_key == "steepness-0.65") "0.65" else "0.95"
+if (grepl("^steepness-", case_key)) {
+  value <- sprintf("%.2f", as.numeric(row$alternative))
   replace_row_field(ini, "^# sv[(]29[)][[:space:]]*$", 1L, 1L, value)
-  for (p in checkpoints) replace_row_field(p, "^# Seasonal growth parameters[[:space:]]*$", 1L, 29L, value)
+  replace_shell_assignment(model_config, "STEEPNESS", value)
+} else if (grepl("^tau-", case_key)) {
+  tau_values <- c(
+    "tau-1.006738" = "1.006737947",
+    "tau-1.2" = "1.2",
+    "tau-1.4" = "1.4",
+    "tau-1.6" = "1.6",
+    "tau-1.8" = "1.8"
+  )
+  tau_pars <- c(
+    "tau-1.006738" = "-5",
+    "tau-1.2" = "-1.60943791243410",
+    "tau-1.4" = "-0.916290731874155",
+    "tau-1.6" = "-0.510825623765991",
+    "tau-1.8" = "-0.223143551314210"
+  )
+  replace_shell_assignment(model_config, "TAU", unname(tau_values[[case_key]]))
+  replace_shell_assignment(model_config, "TAU_FISH_PARS4", unname(tau_pars[[case_key]]))
 } else if (case_key %in% c("tag-mixing-k-0.1", "tag-mixing-k-0.3")) {
   value <- if (case_key == "tag-mixing-k-0.1") "0.1" else "0.3"
   source <- file.path(repo, "sources", "mixing", paste0("bet.2026.mix-", value, ".ini"))
   replace_tag_column(ini, source, 1L)
-  for (p in checkpoints) replace_tag_column(p, source, 1L)
 } else if (case_key == "caal-0.5-sub-basin") {
   make_caal_half(file.path(repo, "sources", "age-length", "bet.2026.sub.basin.1.age_length"),
                  file.path(output, "bet.age_length"))
@@ -210,12 +217,7 @@ if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
   value <- if (case_key == "lorenzen-m-scalar-0.062") 0.062 else 0.1
   log_value <- sprintf("%.14e", log(value))
   replace_row_field(ini, "^# age_pars[[:space:]]*$", 5L, 1L, log_value)
-  for (p in checkpoints) replace_row_field(p, "^# age-class related parameters [(]age_pars[)][[:space:]]*$", 5L, 1L, log_value)
-  lines <- readLines(doitall, warn = FALSE)
-  hit <- grep("^[[:space:]]*expected = -2[.]54930339768360[[:space:]]*$", lines)
-  if (length(hit) != 1L) stop("Could not locate final M audit.", call. = FALSE)
-  lines[[hit]] <- paste0("  expected = ", log_value)
-  write_lines(lines, doitall)
+  replace_shell_assignment(model_config, "M_LOG_INTERCEPT", log_value)
 } else if (case_key == "effort-creep-high") {
   replace_high_effort(file.path(output, "bet.frq"),
                       file.path(repo, "sources", "effort-creep",
@@ -228,25 +230,20 @@ if (case_key %in% c("steepness-0.65", "steepness-0.95")) {
   write_lines(full[3:292], file.path(output, "bet.reg_scaling"))
   replace_flag_lines(doitall, 79L, 240L, 290L)
   replace_flag_lines(doitall, 80L, 220L, 0L)
-  for (p in checkpoints) {
-    replace_row_field(p, "^# The parest_flags[[:space:]]*$", 1L, 79L, "290")
-    replace_row_field(p, "^# The parest_flags[[:space:]]*$", 1L, 80L, "0")
-  }
 } else if (case_key == "pre-mixing-tag-reporting-inclusion") {
   replace_tag_column(ini, column = 2L, constant = "0")
-  for (p in checkpoints) replace_tag_column(p, column = 2L, constant = "0")
 } else {
   stop("Unimplemented sensitivity: ", case_key, call. = FALSE)
 }
 
-refresh_checkpoint_md5(doitall, checkpoints)
 refresh_model_manifest(output)
 
 metadata <- data.frame(
   key = row$key, axis = row$axis, label = row$label,
   reference = row$reference, alternative = row$alternative,
   scientific_change = row$scientific_change,
-  diagnostic_source_commit = "be953e4271e7f8119f982d5efebb21a5e8e364b3",
+  diagnostic_source_job = 21641L,
+  diagnostic_source_commit = "e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5",
   stringsAsFactors = FALSE
 )
 write.csv(metadata, file.path(output, "sensitivity-metadata.csv"), row.names = FALSE, quote = TRUE)

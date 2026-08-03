@@ -1,2 +1,2 @@
-"key","axis","label","reference","alternative","scientific_change","diagnostic_source_commit"
-"steepness-0.65","Steepness","Steepness 0.65","0.8","0.65","Set sv(29) to 0.65","be953e4271e7f8119f982d5efebb21a5e8e364b3"
+"key","axis","label","reference","alternative","scientific_change","diagnostic_source_job","diagnostic_source_commit"
+"steepness-0.65","Steepness","Steepness 0.65","0.90","0.65","Set fixed sv(29) to 0.65",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"

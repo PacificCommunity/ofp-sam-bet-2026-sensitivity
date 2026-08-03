@@ -1,2 +1,2 @@
-"key","axis","label","reference","alternative","scientific_change","diagnostic_source_commit"
-"lorenzen-m-scalar-0.1","Natural mortality","Lorenzen M scalar 0.1","0.078","0.1","Set the first Lorenzen M coefficient to log(0.1)","be953e4271e7f8119f982d5efebb21a5e8e364b3"
+"key","axis","label","reference","alternative","scientific_change","diagnostic_source_job","diagnostic_source_commit"
+"lorenzen-m-scalar-0.1","Natural mortality","Lorenzen M scalar 0.1","0.078","0.1","Set the first Lorenzen M coefficient to log(0.1)",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"

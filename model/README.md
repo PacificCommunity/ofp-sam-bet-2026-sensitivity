@@ -1,15 +1,18 @@
-# Frozen Diagnostic model
+# Frozen Job 21641 sensitivity reference
 
-This directory contains the unmodified Diagnostic inputs, eleven-phase
-`doitall.sh`, and seed-23 checkpoints used as the reference for every
-sensitivity.
+This directory is the common BET 2026 Diagnostic Job 21641 input recipe. It is
+copied into a fresh run directory before one permitted sensitivity change is
+applied. Do not fit it in place.
 
-Do not edit these files. Run a sensitivity from the repository root:
+The reference is fixed `h=0.90`, direct negative-binomial `tau=2`, and the
+explicit 33-independent-group Diagnostic selectivity with weak non-decreasing
+penalties 10,000 on F10 and F33. `doitall.sh` starts from ordinary
+`bet.ini -makepar`; it applies no seed, jitter or fitted checkpoint.
 
-```sh
-./run.sh steepness-0.65
-```
+`model-inputs/Diagnostic.conf` records the fixed steepness, tau row-4 value and
+Lorenzen M intercept used by the audits. Materialized folders contain their
+actual sensitivity values in both the relevant MFCL input and this short
+configuration file. Tau remains fixed and direct in every model.
 
-`scripts/prepare-sensitivity.R` verifies `MANIFEST.sha256`, copies this directory
-to a new run directory, applies one selected change, and refreshes the run
-manifest before fitting.
+The script audits tau, steepness, M, DM concentration and selectivity after
+every fitted phase. The final fitted file is `11.par`.

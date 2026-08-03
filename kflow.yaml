@@ -1,5 +1,5 @@
 name: BET-2026-Diagnostic-sensitivities---tuna-flow-v2.5
-description: Run one BET 2026 sensitivity from the frozen Diagnostic model.
+description: Run one BET 2026 one-at-a-time sensitivity from the Job 21641 Diagnostic reference (h=0.90, F10/F33 weak selectivity penalties, direct negative-binomial tau=2 fixed, ordinary makepar with no seed or checkpoint).
 command: bash run.sh
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 remote_host: suva
@@ -14,15 +14,210 @@ exclude_machines: []
 exclude_slots: []
 env:
   SENSITIVITY_SELECT: steepness-0.65
+  JOB_TITLE: BET 2026 Sensitivity | h=0.65 | Diagnostic reference h=0.90 tau=2
+  JOB_DESCRIPTION: One-at-a-time steepness sensitivity from Job 21641 Diagnostic; only fixed sv(29) changes from 0.90 to 0.65; direct negative-binomial tau=2, 33 independent selectivity groups with weak F10/F33 penalties, DM, M, K=0.20, data, biology and all other controls remain unchanged; ordinary makepar with no seed or checkpoint.
+  MODEL_LABEL: Steepness 0.65
+  JOB_KEY: sensitivity-steepness-0.65
+  FLOW_GROUP: bet-2026-sensitivity-tau2
+  FLOW_SPECIES: BET
+  FLOW_SPECIES_LABEL: bigeye tuna
+  FLOW_ASSESSMENT_YEAR: "2026"
   PROGRAM_PATH: /home/mfcl/mfclo64
+  MODEL_ID: Diagnostic
   BET_PHASE10_11_CONVERGENCE: "-4"
-  TUNA_FLOW_RUNTIME_UPDATE: never
+  KFLOW_RUNTIME_REQUIRE_PRIVATE_PACKAGES: "true"
+  KFLOW_RUNTIME_UPDATE: auto
+  TUNA_FLOW_RUNTIME_UPDATE: auto
+  KFLOW_RUNTIME_FORCE_UPDATE: "1"
+  KFLOW_RUNTIME_PACKAGES: mfclkit=PacificCommunity/ofp-sam-mfclkit@cf786007b5261f84faac8f3d24f7084bd323119d,mfclshiny=PacificCommunity/mfclshiny@a8dffd78de61c99af8cf5b1f6995e861157dc96c
+  MFCLKIT_GITHUB_REF: cf786007b5261f84faac8f3d24f7084bd323119d
+  MFCLSHINY_GITHUB_REF: a8dffd78de61c99af8cf5b1f6995e861157dc96c
+  KFLOW_RUNTIME_GITHUB_AUTH: "true"
+  KFLOW_FORWARD_GITHUB_TOKEN_TO_RUNTIME: "true"
 tags:
   stage: sensitivity
   species: BET
   assessment_year: "2026"
 output_patterns:
   - outputs/**
+local_apps:
+  - key: mfclshiny
+    label: MFCL Shiny
+    icon: chart-no-axes-combined
+    runner: local-docker
+    memory: 8g
+    archive_sources:
+      - outputs
+    package_sources:
+      - name: mfclkit
+        type: github
+        repo: PacificCommunity/ofp-sam-mfclkit
+        ref_env: MFCLKIT_GITHUB_REF
+      - name: mfclshiny
+        type: github
+        repo: PacificCommunity/mfclshiny
+        ref_env: MFCLSHINY_GITHUB_REF
+    container_port: 3838
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: "true"
+      KFLOW_LOCAL_APP_PACKAGE_UPDATE: never
+      MFCLSHINY_AUTO_LOAD: "true"
+      MFCLSHINY_LOAD_MODE: core
+      MFCLSHINY_INITIAL_RENDER: "true"
+      MFCLSHINY_LIVE_UPDATE: "false"
+      MFCLSHINY_REPORT_DPI: "96"
+      MFCLSHINY_OPTIMIZE_FIGURES: "true"
+      MFCLSHINY_PREVIEW_DPI: "48"
+      MFCLSHINY_PREVIEW_MAX_WIDTH: "980"
+      MFCLSHINY_PREVIEW_MAX_HEIGHT: "980"
+      MFCLSHINY_REPORT_CARD_LIMIT: "60"
+    command: |
+      Rscript - <<'RS'
+      Sys.setenv(
+        OMP_NUM_THREADS = "1",
+        OPENBLAS_NUM_THREADS = "1",
+        MKL_NUM_THREADS = "1",
+        VECLIB_MAXIMUM_THREADS = "1",
+        NUMEXPR_NUM_THREADS = "1"
+      )
+      options(bitmapType = "cairo")
+
+      package_lib <- Sys.getenv(
+        "KFLOW_LOCAL_APP_R_LIBS",
+        "/kflow/package-cache/R-library"
+      )
+      if (dir.exists(package_lib)) {
+        .libPaths(unique(c(package_lib, .libPaths())))
+      }
+      if (!requireNamespace("mfclshiny", quietly = TRUE)) {
+        stop("The pinned mfclshiny package is not available.", call. = FALSE)
+      }
+
+      normalize_loose <- function(path) {
+        normalizePath(path, winslash = "/", mustWork = FALSE)
+      }
+      link_or_copy <- function(source, destination) {
+        unlink(destination, recursive = TRUE, force = TRUE)
+        linked <- tryCatch(
+          file.symlink(source, destination),
+          warning = function(w) FALSE,
+          error = function(e) FALSE
+        )
+        if (!isTRUE(linked)) {
+          linked <- file.copy(
+            source,
+            destination,
+            recursive = TRUE,
+            overwrite = TRUE,
+            copy.date = TRUE
+          )
+        }
+        if (!isTRUE(linked)) {
+          stop("Could not stage model output: ", source, call. = FALSE)
+        }
+        invisible(destination)
+      }
+
+      roots <- unique(normalize_loose(c(
+        Sys.getenv("KFLOW_LOCAL_APP_OUTPUT_DIR", "/kflow/outputs"),
+        Sys.getenv("KFLOW_LOCAL_APP_INPUT_DIR", "/kflow/inputs")
+      )))
+      roots <- roots[dir.exists(roots)]
+      payloads <- unique(unlist(lapply(roots, function(root) {
+        list.files(
+          root,
+          pattern = "^model_payload[.]rds$",
+          recursive = TRUE,
+          full.names = TRUE
+        )
+      }), use.names = FALSE))
+
+      if (!length(payloads)) {
+        final_pars <- unique(unlist(lapply(roots, function(root) {
+          list.files(
+            root,
+            pattern = "^final[.]par$",
+            recursive = TRUE,
+            full.names = TRUE
+          )
+        }), use.names = FALSE))
+        model_dirs <- unique(dirname(final_pars))
+        model_dirs <- model_dirs[vapply(model_dirs, function(folder) {
+          length(list.files(folder, pattern = "[.]rep$", full.names = TRUE)) > 0L
+        }, logical(1L))]
+        if (length(model_dirs) != 1L) {
+          stop(
+            "Expected exactly one completed raw MFCL model; found ",
+            length(model_dirs),
+            call. = FALSE
+          )
+        }
+
+        staging_root <- "/kflow/work/model-root"
+        staged_model <- file.path(staging_root, basename(model_dirs[[1L]]))
+        unlink(staging_root, recursive = TRUE, force = TRUE)
+        dir.create(staged_model, recursive = TRUE, showWarnings = FALSE)
+        entries <- list.files(
+          model_dirs[[1L]],
+          all.files = TRUE,
+          no.. = TRUE,
+          full.names = TRUE
+        )
+        for (entry in entries) {
+          link_or_copy(entry, file.path(staged_model, basename(entry)))
+        }
+        mfclshiny::build_model_payload(
+          staged_model,
+          output_file = file.path(staged_model, "model_payload.rds"),
+          overwrite = TRUE,
+          recursive = FALSE,
+          object_cache = "all",
+          artifacts = "core"
+        )
+        payloads <- file.path(staged_model, "model_payload.rds")
+      }
+
+      if (length(payloads) != 1L || !file.exists(payloads[[1L]])) {
+        stop("Expected exactly one MFCL Shiny payload; found ", length(payloads), call. = FALSE)
+      }
+      model_dir <- dirname(payloads[[1L]])
+      dir.create("/kflow/work/export", recursive = TRUE, showWarnings = FALSE)
+      dir.create("/kflow/work/state", recursive = TRUE, showWarnings = FALSE)
+      mfclshiny::run_mfclshiny(
+        model_dir = model_dir,
+        export_dir = "/kflow/work/export",
+        report_ready_export = FALSE,
+        load_mode = "core",
+        state_dir = "/kflow/work/state",
+        host = "0.0.0.0",
+        port = as.integer(Sys.getenv("PORT", "3838")),
+        launch.browser = FALSE
+      )
+      RS
 metadata:
-  reference_model: Diagnostic model
+  public_reproducible_model: true
+  reference_model: Diagnostic
+  reference_job: 21641
+  diagnostic_source_commit: e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5
   design: one-at-a-time
+  initialization: ordinary-makepar
+  selected_sensitivity: steepness-0.65
+  reference_tau: "2"
+  parest_305: "1"
+  fish_flag_43: "0"
+  model_id: Diagnostic
+  reference_steepness: "0.90"
+  selectivity_model: Diagnostic
+  selectivity_groups: 33-independent
+  weak_non_decreasing_fisheries: F10,F33
+  dm_concentration: "7"
+  dm_nmax: "25"
+  tag_mixing_k: "0.20"
+  mfclkit_ref: cf786007b5261f84faac8f3d24f7084bd323119d
+  mfclshiny_ref: a8dffd78de61c99af8cf5b1f6995e861157dc96c
+  model_label: Steepness 0.65
