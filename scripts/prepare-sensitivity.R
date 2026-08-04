@@ -192,20 +192,14 @@ if (grepl("^steepness-", case_key)) {
     "tau-1.2" = "1.2",
     "tau-1.4" = "1.4",
     "tau-1.6" = "1.6",
-    "tau-1.8" = "1.8",
-    "tau-4" = "4.0",
-    "tau-8" = "8.0",
-    "tau-16" = "16.0"
+    "tau-1.8" = "1.8"
   )
   tau_pars <- c(
     "tau-1.006738" = "-5",
     "tau-1.2" = "-1.60943791243410",
     "tau-1.4" = "-0.916290731874155",
     "tau-1.6" = "-0.510825623765991",
-    "tau-1.8" = "-0.223143551314210",
-    "tau-4" = "1.09861228866811",
-    "tau-8" = "1.94591014905531",
-    "tau-16" = "2.70805020110221"
+    "tau-1.8" = "-0.223143551314210"
   )
   replace_shell_assignment(model_config, "TAU", unname(tau_values[[case_key]]))
   replace_shell_assignment(model_config, "TAU_FISH_PARS4", unname(tau_pars[[case_key]]))
