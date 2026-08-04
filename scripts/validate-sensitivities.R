@@ -202,6 +202,9 @@ allowed_changes <- list(
   "tau-1.4" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
   "tau-1.6" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
   "tau-1.8" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
+  "tau-3" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
+  "tau-5" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
+  "tau-7" = c("model-inputs/Diagnostic.conf", "MANIFEST.sha256"),
   "tag-mixing-k-0.1" = c("bet.ini", "MANIFEST.sha256"),
   "tag-mixing-k-0.3" = c("bet.ini", "MANIFEST.sha256"),
   "caal-0.5-sub-basin" = c("bet.age_length", "MANIFEST.sha256"),
@@ -216,11 +219,13 @@ if (!setequal(names(allowed_changes), registry$key)) fail("Sensitivity registry 
 
 tau_values <- c(
   "tau-1.006738" = 1 + exp(-5), "tau-1.2" = 1.2, "tau-1.4" = 1.4,
-  "tau-1.6" = 1.6, "tau-1.8" = 1.8
+  "tau-1.6" = 1.6, "tau-1.8" = 1.8, "tau-3" = 3, "tau-5" = 5,
+  "tau-7" = 7
 )
 tau_pars <- c(
   "tau-1.006738" = -5, "tau-1.2" = log(0.2), "tau-1.4" = log(0.4),
-  "tau-1.6" = log(0.6), "tau-1.8" = log(0.8)
+  "tau-1.6" = log(0.6), "tau-1.8" = log(0.8), "tau-3" = log(2),
+  "tau-5" = log(4), "tau-7" = log(6)
 )
 
 audit <- list()

@@ -12,13 +12,13 @@ negative-binomial tag parameter fixed at `tau=2`. Every fit starts from ordinary
 
 ## Sensitivities
 
-`sensitivities.csv` is the machine-readable source of truth. The 17 new fits
+`sensitivities.csv` is the machine-readable source of truth. The 20 fits
 are:
 
 | Axis | New fits | Diagnostic reference |
 |---|---|---|
 | Steepness | `0.65`, `0.80`, `0.95` | `0.90` fixed |
-| Tag overdispersion tau | `1.006737947`, `1.2`, `1.4`, `1.6`, `1.8` | `2.0` fixed |
+| Tag overdispersion tau | `1.006737947`, `1.2`, `1.4`, `1.6`, `1.8`, `3`, `5`, `7` | `2.0` fixed |
 | Tag mixing periods | K=`0.1`, K=`0.3` | K=`0.2` |
 | Conditional age-at-length | 0.5, 1.0 sub-basin | 0.75 sub-basin |
 | Natural mortality | Lorenzen scalar 0.062, 0.1 | 0.078 |
@@ -30,7 +30,7 @@ The tau runs retain the Diagnostic direct parameterization
 `tau = 1 + exp(fish_pars(4))`, `parest 305=1`, and fixed fish flags 43/44. The
 lowest supported direct value uses the MFCL default lower bound
 `fish_pars(4)=-5`, giving `tau=1.006737947`; it is not labelled as exactly 1.
-The other four values use `fish_pars(4)=log(tau-1)`. No tau is estimated.
+The other seven values use `fish_pars(4)=log(tau-1)`. No tau is estimated.
 
 Each fit changes only its named axis. Data, selectivity, DM settings, mixing
 period, biology and all other Diagnostic controls remain unchanged unless they
@@ -57,7 +57,7 @@ Rscript scripts/list-sensitivities.R
 Set `SENSITIVITY_SELECT` to the same key for Kflow. The pinned Tuna Flow 2.5
 image and current report package revisions are recorded in `kflow.yaml`.
 
-To register the `BET-2026-sensitivity-tau2` task and submit all 17 fits as
+To register the `BET-2026-sensitivity-tau2` task and submit all 20 fits as
 independent concurrent jobs through Suva, first inspect the payload and then
 submit it:
 
@@ -77,7 +77,7 @@ Rscript scripts/validate-sensitivities.R
 ./scripts/smoke-test
 ```
 
-Validation rebuilds all 17 model folders, checks that each differs from the
+Validation rebuilds all 20 model folders, checks that each differs from the
 Diagnostic model only in its permitted fields, verifies all manifests, and
 byte-compares the generated files with the committed inputs. The smoke test
 runs makepar and the fixed-value audits for every model, including the actual

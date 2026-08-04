@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Register and submit the 17 independent BET sensitivity fits to Kflow."""
+"""Register and submit the 20 independent BET sensitivity fits to Kflow."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ REGISTRY_PATH = ROOT / "sensitivities.csv"
 EXPECTED_TASK = "BET-2026-sensitivity-tau2"
 EXPECTED_REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
 EXPECTED_BRANCH = "main"
-EXPECTED_CASES = 17
+EXPECTED_CASES = 20
 
 
 def api_json(
@@ -267,7 +267,7 @@ def verify_job(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--submit", action="store_true", help="Create the task and jobs.")
-    parser.add_argument("--max-workers", type=int, default=17)
+    parser.add_argument("--max-workers", type=int, default=20)
     args = parser.parse_args()
 
     config, rows = load_inputs()
