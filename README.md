@@ -18,7 +18,7 @@ are:
 | Axis | New fits | Diagnostic reference |
 |---|---|---|
 | Steepness | `0.65`, `0.80`, `0.95` | `0.90` fixed |
-| Tag overdispersion tau | `1.006737947`, `1.2`, `1.4`, `1.6`, `1.8`, `3`, `5`, `7` | `2.0` fixed |
+| Tag overdispersion tau | `1.006737947`, `1.2`, `1.4`, `1.6`, `1.8`, `4`, `8`, `16` | `2.0` fixed |
 | Tag mixing periods | K=`0.1`, K=`0.3` | K=`0.2` |
 | Conditional age-at-length | 0.5, 1.0 sub-basin | 0.75 sub-basin |
 | Natural mortality | Lorenzen scalar 0.062, 0.1 | 0.078 |

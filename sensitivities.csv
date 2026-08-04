@@ -7,9 +7,9 @@ tau-1.2,Tag overdispersion,Tau 1.2,2.0,1.2,Set all fixed fish_pars(4) to log(1.2
 tau-1.4,Tag overdispersion,Tau 1.4,2.0,1.4,Set all fixed fish_pars(4) to log(1.4-1)
 tau-1.6,Tag overdispersion,Tau 1.6,2.0,1.6,Set all fixed fish_pars(4) to log(1.6-1)
 tau-1.8,Tag overdispersion,Tau 1.8,2.0,1.8,Set all fixed fish_pars(4) to log(1.8-1)
-tau-3,Tag overdispersion,Tau 3,2.0,3.0,Set all fixed fish_pars(4) to log(3-1)
-tau-5,Tag overdispersion,Tau 5,2.0,5.0,Set all fixed fish_pars(4) to log(5-1)
-tau-7,Tag overdispersion,Tau 7,2.0,7.0,Set all fixed fish_pars(4) to log(7-1)
+tau-4,Tag overdispersion,Tau 4,2.0,4.0,Set all fixed fish_pars(4) to log(4-1)
+tau-8,Tag overdispersion,Tau 8,2.0,8.0,Set all fixed fish_pars(4) to log(8-1)
+tau-16,Tag overdispersion,Tau 16,2.0,16.0,Set all fixed fish_pars(4) to log(16-1)
 tag-mixing-k-0.1,Tag mixing periods (KS D-statistic cutoff),Tag mixing periods - K=0.1,Derived at K=0.2,Derived at K=0.1,Use tag_flags column 1 containing the release-group mixing periods derived at K=0.1 in SC22-IP10
 tag-mixing-k-0.3,Tag mixing periods (KS D-statistic cutoff),Tag mixing periods - K=0.3,Derived at K=0.2,Derived at K=0.3,Use tag_flags column 1 containing the release-group mixing periods derived at K=0.3 in SC22-IP10
 caal-0.5-sub-basin,Conditional age-at-length,CAAL 0.5 sub-basin,0.75 sub-basin,0.5 sub-basin,Use one-half of every effective-sample-size value in the 1.0 sub-basin file

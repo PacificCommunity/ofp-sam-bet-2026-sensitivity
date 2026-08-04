@@ -1,8 +1,8 @@
-# Tau 7
+# Tau 8
 
 - Diagnostic reference: 2.0
-- Sensitivity value: 7.0
-- Input change: Set all fixed fish_pars(4) to log(7-1)
+- Sensitivity value: 8.0
+- Input change: Set all fixed fish_pars(4) to log(8-1)
 
 This folder is a complete, frozen model input set. The shared `mfclo64`
 executable is copied here automatically when the model is run from the
