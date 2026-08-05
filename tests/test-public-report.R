@@ -55,12 +55,15 @@ for (value in forbidden) {
   if (grepl(value, viewer, fixed = TRUE)) stop("Public viewer contains forbidden text: ", value, call. = FALSE)
 }
 viewer_required <- c(
-  "Interactive comparison of 17 one-at-a-time fits",
-  "Sensitivity axis",
-  "Diagnostic only",
-  "const payload=",
-  "τ = 2 (Diagnostic)",
-  "Reporting rates during tag-mixing periods"
+  "BET 2026 sensitivity model results",
+  "viewer-data",
+  "metricTabs",
+  "modelList",
+  "Key quantities",
+  "Fit diagnostics",
+  "Diagnostic",
+  "τ = 1",
+  "Reporting rates applied during mixing"
 )
 for (value in viewer_required) {
   if (!grepl(value, viewer, fixed = TRUE)) stop("Missing interactive-viewer element: ", value, call. = FALSE)
