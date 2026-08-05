@@ -12,7 +12,7 @@ the BET 2026 sensitivity figures and table without rerunning MFCL.
   against each completed model's final PAR and REP files.
 - `sensitivity-fit-diagnostics.csv` records final objective values and exact
   maximum gradient components from the completed fits, together with the
-  completed native-Hessian status used in the report diagnostics table.
+  completed Hessian status used in the report diagnostics table.
 
 The public payload contains derived quantities and audit metadata only. It does
 not contain credentials, internal host names or internal filesystem paths.

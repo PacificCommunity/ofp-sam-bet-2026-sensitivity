@@ -384,12 +384,12 @@ utils::write.csv(
 
 diagnostic_caption <- paste0(
   "Fit and Hessian diagnostics for the 17 one-at-a-time sensitivity fits. MGC is the maximum absolute gradient ",
-  "component at the final estimate; PDH indicates a positive-definite native Hessian. The τ = 1 label denotes the fitted finite lower-bound value ",
+  "component at the final estimate; PDH indicates a positive-definite Hessian. The τ = 1 label denotes the fitted finite lower-bound value ",
   "τ = 1 + exp(−5) ≈ 1.00674."
 )
 diagnostic_latex_caption <- paste0(
   "Fit and Hessian diagnostics for the 17 one-at-a-time sensitivity fits. MGC is the maximum absolute gradient ",
-  "component at the final estimate; PDH indicates a positive-definite native Hessian. The $\\tau=1$ label denotes the fitted finite lower-bound value ",
+  "component at the final estimate; PDH indicates a positive-definite Hessian. The $\\tau=1$ label denotes the fitted finite lower-bound value ",
   "$\\tau=1+\\exp(-5)\\approx1.00674$."
 )
 diagnostic_rows_html <- paste0(

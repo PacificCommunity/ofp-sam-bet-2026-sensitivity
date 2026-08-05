@@ -1,5 +1,5 @@
 name: BET-2026-sensitivity-report
-description: Render the public BET 2026 one-at-a-time sensitivity report with completed fit and native-Hessian diagnostics; no model or Hessian rerun.
+description: Render the public BET 2026 one-at-a-time sensitivity report with completed fit and Hessian diagnostics; no model or Hessian rerun.
 command: ./run-report
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 
