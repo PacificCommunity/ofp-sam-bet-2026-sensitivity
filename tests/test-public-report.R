@@ -61,7 +61,9 @@ viewer_required <- c(
   "modelList",
   "Key quantities",
   "Fit diagnostics",
-  "Diagnostic",
+  "Diagnostic (h = 0.90; τ = 2; K = 0.20",
+  "CAAL ESS = 0.75 sub-basin",
+  "reporting rates excluded during mixing",
   "τ = 1",
   "Reporting rates applied during mixing"
 )

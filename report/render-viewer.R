@@ -1,7 +1,12 @@
+viewer_diagnostic_label <- paste0(
+  "Diagnostic (h = 0.90; τ = 2; K = 0.20; CAAL ESS = 0.75 sub-basin; ",
+  "M scalar = 0.078; effort creep = 1% / 0.5%; five-year regional scaling; ",
+  "reporting rates excluded during mixing)"
+)
 viewer_model_keys <- c(design$key, "diagnostic")
 viewer_model_labels <- c(
   mapply(public_label, design$key, design$label, USE.NAMES = FALSE),
-  "Diagnostic"
+  viewer_diagnostic_label
 )
 viewer_model_colours <- c(
   grDevices::hcl.colors(nrow(design), palette = "Dynamic"),
