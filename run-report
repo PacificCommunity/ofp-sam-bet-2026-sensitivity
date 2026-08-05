@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$repo_dir"
+
+sha256sum -c data/SHA256SUMS
+Rscript report/validate.R
+Rscript report/render.R
+Rscript tests/test-public-report.R
+

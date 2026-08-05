@@ -1,5 +1,5 @@
 name: BET-2026-sensitivity-tau2
-description: Run 20 independent one-at-a-time BET 2026 sensitivities from the Diagnostic model (h=0.90, F10/F33 weak selectivity penalties, direct negative-binomial tau=2 fixed, ordinary makepar with no seed or checkpoint).
+description: Run 17 independent one-at-a-time BET 2026 sensitivities from the Diagnostic model (h=0.90, F10/F33 weak selectivity penalties, direct negative-binomial tau=2 fixed, ordinary makepar with no seed or checkpoint).
 command: bash run.sh
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 remote_host: suva

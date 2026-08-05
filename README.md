@@ -97,3 +97,26 @@ Notable input rules are:
 - Reporting inclusion changes only tag flag column 2.
 
 See `PROVENANCE.md` for source commits, formulas and file provenance.
+
+## Reproduce the sensitivity report
+
+The repository includes a compact public payload reconstructed from the final
+PAR and REP files of all 17 completed fits. It contains the annual derived
+quantities needed for the report and a checksum audit of each source output; it
+does not rerun MFCL.
+
+```sh
+./run-report
+```
+
+This validates the public payload and writes a self-contained HTML report,
+eight A4-landscape figure sets in PNG and vector PDF formats, and copy-ready
+Word/LaTeX table output under `results/`. Each sensitivity axis is presented on
+its own page with annual dynamic spawning depletion, recruitment, spawning
+potential and fishing mortality. The Diagnostic model is shown in red, and
+each alternative changes only the named axis.
+
+`kflow-report.yaml` is the lightweight report configuration for the Kflow
+**Local** submitter (2 CPUs, 8 GB RAM and 10 GB disk). The model-run campaign in
+`kflow.yaml` remains pinned to Suva and is unchanged apart from correcting its
+fit count to 17.

@@ -1,0 +1,35 @@
+name: BET-2026-sensitivity-tau2
+description: Render the public payload-based BET 2026 sensitivity report, grouped by the eight one-at-a-time changes from the Diagnostic model.
+command: ./run-report
+docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
+
+# This report is submitted through the Kflow Local submitter. No remote host or
+# pool requirement is specified here, so the scientific model fits are not rerun.
+resources:
+  cpus: 2
+  memory: 8GB
+  disk: 10GB
+
+env:
+  JOB_TITLE: BET 2026 sensitivity report | 17 completed fits | eight one-at-a-time axes
+  JOB_DESCRIPTION: Public report from the completed Diagnostic-model sensitivities; renders four annual derived quantities for each changed axis from checksum-locked payloads, with no MFCL refit.
+  JOB_KEY: sensitivity-axis-report
+  FLOW_GROUP: BET-2026-sensitivity-tau2
+  FLOW_SPECIES: BET
+  FLOW_SPECIES_LABEL: bigeye tuna
+  FLOW_ASSESSMENT_YEAR: "2026"
+  REPORT_OUTPUT_DIR: results
+  KFLOW_RUNTIME_UPDATE: never
+  TUNA_FLOW_RUNTIME_UPDATE: never
+  KFLOW_RUNTIME_PACKAGES: none
+
+tags:
+  stage: sensitivity-report
+  species: BET
+  assessment_year: "2026"
+  execution: local
+  model_refit: "false"
+
+output_patterns:
+  - results/**
+

@@ -1,5 +1,6 @@
 runs/
 outputs/
+results/
 *.log
 *.par
 !model/checkpoints/*.par
