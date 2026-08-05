@@ -118,11 +118,16 @@ does not rerun MFCL.
 ```
 
 This validates the public payload and writes a self-contained HTML report,
-eight A4-landscape figure sets in PNG and vector PDF formats, and copy-ready
+an interactive HTML viewer, eight A4-landscape figure sets in PNG and vector PDF formats, and copy-ready
 Word/LaTeX design and fit/Hessian tables under `results/`. Each sensitivity axis is presented on
 its own page with annual dynamic spawning depletion, recruitment, spawning
 potential and fishing mortality. The Diagnostic model is shown in red, and
 each alternative changes only the named axis.
+
+The report captions link to the latest release asset:
+[`bet-2026-sensitivity-interactive-viewer.html`](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/latest/download/bet-2026-sensitivity-interactive-viewer.html).
+The viewer is self-contained, uses only the checksum-locked public payload and
+allows individual configurations to be shown or hidden without rerunning MFCL.
 
 `kflow-report.yaml` registers the separate `BET-2026-sensitivity-report` task for the Kflow
 **Local** submitter (2 CPUs, 8 GB RAM and 10 GB disk). The model-run campaign in

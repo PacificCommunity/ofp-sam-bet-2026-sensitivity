@@ -45,6 +45,10 @@ metric_specs <- list(
 
 axis_palette <- c("#0072B2", "#009E73", "#E69F00", "#6F42C1", "#CC79A7")
 diagnostic_colour <- "#C62828"
+viewer_release_url <- paste0(
+  "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/",
+  "releases/latest/download/bet-2026-sensitivity-interactive-viewer.html"
+)
 
 slugify <- function(value) {
   value <- tolower(gsub("[^A-Za-z0-9]+", "-", value))
@@ -436,16 +440,20 @@ writeLines(
 
 figure_html <- paste(vapply(figure_specs, function(spec) {
   latex_figure <- paste0(
-    "% Requires \\usepackage{graphicx}\n",
+    "% Requires \\usepackage{graphicx,hyperref}\n",
     "\\begin{figure}[htbp]\n\\centering\n",
     "\\includegraphics[width=\\textwidth]{figures/", spec$stem, ".pdf}\n",
-    "\\caption{", spec$latex_caption, "}\n",
+    "\\caption{", spec$latex_caption,
+    " Individual fits can be explored in the \\href{", viewer_release_url,
+    "}{interactive viewer}.}\n",
     "\\label{fig:", spec$stem, "}\n\\end{figure}\n"
   )
   paste0(
     "<article class='paper-page'><h2>", html_escape(spec$axis), "</h2>",
     "<img id='fig-", spec$stem, "' src='", image_uri(spec$png), "' alt='", html_escape(spec$axis), " sensitivity figure'>",
-    "<figcaption id='cap-", spec$stem, "'><b>Figure <span contenteditable='true'>XX</span>.</b> ", spec$caption, "</figcaption>",
+    "<figcaption id='cap-", spec$stem, "'><b>Figure <span contenteditable='true'>XX</span>.</b> ",
+    spec$caption, " <a href='", viewer_release_url,
+    "' target='_blank' rel='noopener'>Open the interactive viewer</a>.</figcaption>",
     "<div class='buttons'>",
     "<button onclick=\"copyFigure('fig-", spec$stem, "','cap-", spec$stem, "')\">Copy figure + caption for Word</button>",
     "<button onclick=\"saveImage('fig-", spec$stem, "','", spec$stem, ".png')\">Save PNG</button>",
@@ -495,6 +503,7 @@ html <- paste0(
 
 html_file <- file.path(output_dir, "bet-2026-sensitivity-report.html")
 writeLines(html, html_file, useBytes = TRUE)
+source("report/render-viewer.R", local = TRUE)
 
 files <- list.files(output_dir, recursive = TRUE, full.names = TRUE)
 files <- files[file.info(files)$isdir %in% FALSE]
@@ -505,4 +514,4 @@ manifest <- data.frame(
 )
 utils::write.csv(manifest, file.path(output_dir, "report-manifest.csv"), row.names = FALSE)
 
-cat("Rendered eight A4 sensitivity figures and a self-contained public report with no MFCL rerun.\n")
+cat("Rendered eight A4 sensitivity figures, a self-contained report and an interactive viewer with no MFCL rerun.\n")

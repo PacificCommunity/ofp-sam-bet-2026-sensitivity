@@ -4,9 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   render:
@@ -31,3 +33,13 @@ jobs:
           name: bet-2026-sensitivity-report
           path: results/
           if-no-files-found: error
+
+      - name: Upload interactive viewer to the GitHub release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: >-
+          gh release upload "$RELEASE_TAG"
+          results/bet-2026-sensitivity-interactive-viewer.html
+          --clobber

@@ -7,6 +7,7 @@ table_dir <- file.path(output_dir, "tables")
 
 required <- c(
   html_file,
+  file.path(output_dir, "bet-2026-sensitivity-interactive-viewer.html"),
   file.path(table_dir, "sensitivity-design-summary.csv"),
   file.path(table_dir, "sensitivity-design-summary.tex"),
   file.path(table_dir, "sensitivity-fit-diagnostics.csv"),
@@ -22,6 +23,10 @@ if (length(pngs) != 8L || length(pdfs) != 8L) {
 if (any(file.info(c(pngs, pdfs))$size < 10000L)) stop("A report figure is unexpectedly small.", call. = FALSE)
 
 html <- paste(readLines(html_file, warn = FALSE), collapse = "\n")
+viewer <- paste(
+  readLines(file.path(output_dir, "bet-2026-sensitivity-interactive-viewer.html"), warn = FALSE),
+  collapse = "\n"
+)
 must_have <- c(
   "data:image/png;base64,",
   "Copy figure + caption for Word",
@@ -35,7 +40,8 @@ must_have <- c(
   "Fit and Hessian diagnostics",
   "PDH",
   "Reporting rates applied during mixing",
-  "τ = 2 (Diagnostic)"
+  "τ = 2 (Diagnostic)",
+  "Open the interactive viewer"
 )
 for (value in must_have) {
   if (!grepl(value, html, fixed = TRUE)) stop("Missing report element: ", value, call. = FALSE)
@@ -46,6 +52,21 @@ if (length(gregexpr("data:image/png;base64,", html, fixed = TRUE)[[1L]]) != 8L) 
 forbidden <- c("/home/", "corp.spc.int", "ghp_", "github_pat_", "Job 21641")
 for (value in forbidden) {
   if (grepl(value, html, fixed = TRUE)) stop("Public report contains forbidden text: ", value, call. = FALSE)
+  if (grepl(value, viewer, fixed = TRUE)) stop("Public viewer contains forbidden text: ", value, call. = FALSE)
+}
+viewer_required <- c(
+  "Interactive comparison of 17 one-at-a-time fits",
+  "Sensitivity axis",
+  "Diagnostic only",
+  "const payload=",
+  "τ = 2 (Diagnostic)",
+  "Reporting rates during tag-mixing periods"
+)
+for (value in viewer_required) {
+  if (!grepl(value, viewer, fixed = TRUE)) stop("Missing interactive-viewer element: ", value, call. = FALSE)
+}
+if (grepl("<script[^>]+src=|<link[^>]+href=", viewer, ignore.case = TRUE, perl = TRUE)) {
+  stop("The interactive viewer depends on an external script or stylesheet.", call. = FALSE)
 }
 
 latex <- paste(readLines(file.path(table_dir, "sensitivity-design-summary.tex"), warn = FALSE), collapse = "\n")
@@ -65,4 +86,4 @@ if (!identical(tau_rows, c("τ = 1", "τ = 1.2", "τ = 1.4", "τ = 1.6", "τ = 1
   stop("The τ sensitivity rows are not in ascending order.", call. = FALSE)
 }
 
-cat("Validated self-contained A4 sensitivity report, eight figure sets and two copy-ready table outputs.\n")
+cat("Validated self-contained A4 sensitivity report, interactive viewer, eight figure sets and two copy-ready table outputs.\n")
