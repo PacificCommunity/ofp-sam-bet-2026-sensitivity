@@ -15,4 +15,4 @@
 "lorenzen-m-scalar-0.1","Natural mortality","Lorenzen M scalar 0.1","0.078","0.1","Set the first Lorenzen M coefficient to log(0.1)"
 "effort-creep-high","Effort creep","Effort creep high (2.5% / 1.25%)","1% / 0.5%","2.5% / 1.25%","Replace only the effort field for F29-F33 from the authoritative high-creep FRQ"
 "regional-scaling-whole-period","Regional scaling","Regional scaling whole period","Current 5-year window","periods 3-292","Use all 290 mutually supported periods and parest flags 77-81 = 100 1 290 0 1"
-"pre-mixing-tag-reporting-inclusion","Pre-mixing tag reporting","Pre-mixing tag reporting inclusion","Pre-mixing exclusion","Pre-mixing inclusion","Set only tag_flags column 2 to zero"
+"pre-mixing-tag-reporting-inclusion","Pre-mixing tag reporting","Reporting rates applied during mixing","Reporting rates excluded during mixing","Reporting rates applied during mixing","Set tag_flags column 2 to zero so fitted reporting rates are applied within each release group's specified mixing period"

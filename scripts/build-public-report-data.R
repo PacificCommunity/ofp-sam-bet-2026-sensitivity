@@ -109,12 +109,12 @@ audit <- do.call(rbind, audit_rows)
 
 display_label <- function(key, label) {
   if (startsWith(key, "steepness-")) return(sub("Steepness ", "h = ", label, fixed = TRUE))
-  if (startsWith(key, "tau-")) return(sub("Tau ", "tau = ", label, fixed = TRUE))
+  if (startsWith(key, "tau-")) return(sub("Tau ", "τ = ", label, fixed = TRUE))
   if (startsWith(key, "tag-mixing-k-")) return(sub("Tag mixing periods - ", "", label, fixed = TRUE))
   if (startsWith(key, "lorenzen-m-scalar-")) return(sub("Lorenzen M scalar ", "M scalar = ", label, fixed = TRUE))
   if (identical(key, "effort-creep-high")) return("2.5% / 1.25%")
   if (identical(key, "regional-scaling-whole-period")) return("Whole-period scaling")
-  if (identical(key, "pre-mixing-tag-reporting-inclusion")) return("Pre-mixing reports included")
+  if (identical(key, "pre-mixing-tag-reporting-inclusion")) return("Reporting rates applied during mixing")
   sub("CAAL ", "", label, fixed = TRUE)
 }
 

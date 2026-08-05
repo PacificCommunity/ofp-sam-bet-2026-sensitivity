@@ -8,7 +8,9 @@ table_dir <- file.path(output_dir, "tables")
 required <- c(
   html_file,
   file.path(table_dir, "sensitivity-design-summary.csv"),
-  file.path(table_dir, "sensitivity-design-summary.tex")
+  file.path(table_dir, "sensitivity-design-summary.tex"),
+  file.path(table_dir, "sensitivity-fit-diagnostics.csv"),
+  file.path(table_dir, "sensitivity-fit-diagnostics.tex")
 )
 if (any(!file.exists(required))) stop("The rendered report is incomplete.", call. = FALSE)
 
@@ -29,7 +31,11 @@ must_have <- c(
   "Copy LaTeX",
   "@page{size:A4 landscape",
   "17 one-at-a-time fits",
-  "eight sensitivity axes"
+  "eight sensitivity axes",
+  "Fit and Hessian diagnostics",
+  "PDH",
+  "Reporting rates applied during mixing",
+  "τ = 2 (Diagnostic)"
 )
 for (value in must_have) {
   if (!grepl(value, html, fixed = TRUE)) stop("Missing report element: ", value, call. = FALSE)
@@ -43,9 +49,20 @@ for (value in forbidden) {
 }
 
 latex <- paste(readLines(file.path(table_dir, "sensitivity-design-summary.tex"), warn = FALSE), collapse = "\n")
+diagnostic_latex <- paste(readLines(file.path(table_dir, "sensitivity-fit-diagnostics.tex"), warn = FALSE), collapse = "\n")
 for (value in c("\\begin{table}", "\\begin{tabularx}", "\\toprule", "\\bottomrule")) {
-  if (!grepl(value, latex, fixed = TRUE)) stop("Malformed LaTeX table output.", call. = FALSE)
+  if (!grepl(value, latex, fixed = TRUE) || !grepl(value, diagnostic_latex, fixed = TRUE)) {
+    stop("Malformed LaTeX table output.", call. = FALSE)
+  }
 }
 
-cat("Validated self-contained A4 sensitivity report, eight figure sets and copy-ready table outputs.\n")
+diagnostics <- utils::read.csv(file.path(table_dir, "sensitivity-fit-diagnostics.csv"), check.names = FALSE)
+if (nrow(diagnostics) != 17L || any(diagnostics$PDH != "Yes")) {
+  stop("The rendered fit/Hessian diagnostics table is incomplete.", call. = FALSE)
+}
+tau_rows <- diagnostics[grepl("^τ = ", diagnostics$Fit), "Fit"]
+if (!identical(tau_rows, c("τ = 1", "τ = 1.2", "τ = 1.4", "τ = 1.6", "τ = 1.8"))) {
+  stop("The τ sensitivity rows are not in ascending order.", call. = FALSE)
+}
 
+cat("Validated self-contained A4 sensitivity report, eight figure sets and two copy-ready table outputs.\n")

@@ -1,5 +1,5 @@
-name: BET-2026-sensitivity-tau2
-description: Render the public payload-based BET 2026 sensitivity report, grouped by the eight one-at-a-time changes from the Diagnostic model.
+name: BET-2026-sensitivity-report
+description: Render the public BET 2026 one-at-a-time sensitivity report with completed fit and native-Hessian diagnostics; no model or Hessian rerun.
 command: ./run-report
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 
@@ -11,10 +11,10 @@ resources:
   disk: 10GB
 
 env:
-  JOB_TITLE: BET 2026 sensitivity report | 17 completed fits | eight one-at-a-time axes
-  JOB_DESCRIPTION: Public report from the completed Diagnostic-model sensitivities; renders four annual derived quantities for each changed axis from checksum-locked payloads, with no MFCL refit.
-  JOB_KEY: sensitivity-axis-report
-  FLOW_GROUP: BET-2026-sensitivity-tau2
+  JOB_TITLE: BET 2026 sensitivity report | 17 fits | eight axes | Hessian diagnostics
+  JOB_DESCRIPTION: Public report from 17 completed one-at-a-time sensitivities; renders four annual derived quantities and completed fit/Hessian diagnostics from checksum-locked payloads, with no MFCL or Hessian rerun.
+  JOB_KEY: sensitivity-report-17-fits-hessian
+  FLOW_GROUP: BET-2026-sensitivity-report
   FLOW_SPECIES: BET
   FLOW_SPECIES_LABEL: bigeye tuna
   FLOW_ASSESSMENT_YEAR: "2026"
@@ -32,4 +32,3 @@ tags:
 
 output_patterns:
   - results/**
-

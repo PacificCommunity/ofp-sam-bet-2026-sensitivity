@@ -10,7 +10,9 @@ the BET 2026 sensitivity figures and table without rerunning MFCL.
   Diagnostic-model settings and their alternatives.
 - `completed-output-audit.csv` records the controls and SHA-256 hashes verified
   against each completed model's final PAR and REP files.
+- `sensitivity-fit-diagnostics.csv` records final objective values and exact
+  maximum gradient components from the completed fits, together with the
+  completed native-Hessian status used in the report diagnostics table.
 
 The public payload contains derived quantities and audit metadata only. It does
 not contain credentials, internal host names or internal filesystem paths.
-

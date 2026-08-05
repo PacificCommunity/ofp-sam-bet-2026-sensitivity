@@ -4,7 +4,8 @@ payload_file <- "data/sensitivity/sensitivity-timeseries.rds"
 series_file <- "data/sensitivity/sensitivity-timeseries.csv"
 design_file <- "data/sensitivity/sensitivity-design.csv"
 audit_file <- "data/sensitivity/completed-output-audit.csv"
-required_files <- c(payload_file, series_file, design_file, audit_file)
+diagnostics_file <- "data/sensitivity/sensitivity-fit-diagnostics.csv"
+required_files <- c(payload_file, series_file, design_file, audit_file, diagnostics_file)
 if (any(!file.exists(required_files))) {
   stop("The public sensitivity report payload is incomplete.", call. = FALSE)
 }
@@ -13,6 +14,7 @@ payload <- readRDS(payload_file)
 csv_series <- utils::read.csv(series_file, check.names = FALSE)
 design <- utils::read.csv(design_file, check.names = FALSE)
 audit <- utils::read.csv(audit_file, check.names = FALSE)
+fit_diagnostics <- utils::read.csv(diagnostics_file, check.names = FALSE)
 
 required_columns <- c(
   "year", "depletion", "spawning_potential", "spawning_potential_nofish",
@@ -85,6 +87,33 @@ if (any(nchar(audit$final_par_sha256) != 64L) || any(nchar(audit$final_rep_sha25
   stop("The completed-output checksum audit is incomplete.", call. = FALSE)
 }
 
+required_diagnostic_columns <- c(
+  "key", "objective_function", "maximum_gradient_component", "active_parameters",
+  "hessian_evaluated", "positive_definite_hessian", "nonpositive_eigenvalues",
+  "smallest_eigenvalue"
+)
+if (!all(required_diagnostic_columns %in% names(fit_diagnostics))) {
+  stop("The fit-diagnostics payload schema is incomplete.", call. = FALSE)
+}
+if (nrow(fit_diagnostics) != 17L || !identical(sort(fit_diagnostics$key), sort(design$key))) {
+  stop("The fit-diagnostics payload does not cover all 17 sensitivities.", call. = FALSE)
+}
+diagnostic_numeric <- c(
+  "objective_function", "maximum_gradient_component", "active_parameters",
+  "nonpositive_eigenvalues", "smallest_eigenvalue"
+)
+if (any(!is.finite(as.matrix(fit_diagnostics[, diagnostic_numeric, drop = FALSE])))) {
+  stop("The fit-diagnostics payload contains a non-finite value.", call. = FALSE)
+}
+if (any(fit_diagnostics$maximum_gradient_component < 0) ||
+    any(fit_diagnostics$smallest_eigenvalue <= 0) ||
+    any(fit_diagnostics$nonpositive_eigenvalues != 0L)) {
+  stop("The completed Hessian diagnostics are internally inconsistent.", call. = FALSE)
+}
+if (!all(fit_diagnostics$hessian_evaluated) || !all(fit_diagnostics$positive_definite_hessian)) {
+  stop("A completed sensitivity fit is missing its positive-definite Hessian result.", call. = FALSE)
+}
+
 collect_text <- function(value) {
   output <- character()
   visit <- function(item) {
@@ -101,7 +130,8 @@ collect_text <- function(value) {
 public_text <- c(
   collect_text(payload),
   unlist(design, use.names = FALSE),
-  unlist(audit, use.names = FALSE)
+  unlist(audit, use.names = FALSE),
+  unlist(fit_diagnostics, use.names = FALSE)
 )
 forbidden <- c(
   "internal absolute path" = "/(home|var/lib/condor|kflow)/",
@@ -116,6 +146,6 @@ for (label in names(forbidden)) {
 
 cat(
   "Validated public sensitivity payload: 17 one-at-a-time fits, eight axes, ",
-  "73 annual values per configuration, and completed-output audits passed.\n",
+  "73 annual values per configuration, and fit/Hessian audits passed.\n",
   sep = ""
 )
