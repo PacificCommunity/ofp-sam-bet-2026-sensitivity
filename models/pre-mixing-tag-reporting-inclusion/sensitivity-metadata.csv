@@ -1,2 +1,2 @@
 "key","axis","label","reference","alternative","scientific_change","diagnostic_source_job","diagnostic_source_commit"
-"pre-mixing-tag-reporting-inclusion","Pre-mixing tag reporting","Pre-mixing tag reporting inclusion","Pre-mixing exclusion","Pre-mixing inclusion","Set only tag_flags column 2 to zero",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"
+"pre-mixing-tag-reporting-inclusion","Pre-mixing tag reporting","Reporting rates applied during mixing","Reporting rates excluded during mixing","Reporting rates applied during mixing","Set tag_flags column 2 to zero so fitted reporting rates are applied within each release group's specified mixing period",21641,"e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"

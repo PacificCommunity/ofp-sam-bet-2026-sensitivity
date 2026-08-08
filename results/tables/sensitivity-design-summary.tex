@@ -1,0 +1,23 @@
+% Requires \usepackage{booktabs,tabularx,array}
+\begin{table}[htbp]
+\centering
+\caption{One-at-a-time sensitivity design for the Diagnostic model. Each fit changes only the named component. The $\tau=1$ label denotes the finite lower-bound value $\tau=1+\exp(-5)\approx1.00674$.}
+\label{tab:bet-sensitivity-design}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}X@{}}
+\toprule
+Axis & Diagnostic setting & Alternatives & Changed component \\
+\midrule
+Steepness & h = 0.90 & h = 0.65; h = 0.80; h = 0.95 & Fixed Beverton--Holt steepness \\
+Tag overdispersion ($\tau$) & $\tau$ = 2 & $\tau$ = 1; $\tau$ = 1.2; $\tau$ = 1.4; $\tau$ = 1.6; $\tau$ = 1.8 & Fixed direct negative-binomial tag overdispersion \\
+Tag mixing periods (KS D-statistic cutoff) & K = 0.20 & K = 0.1; K = 0.3 & Release-group mixing periods derived from the KS D-statistic cutoff \\
+Conditional age-at-length & 0.75 sub-basin & 0.5 sub-basin; 1.0 sub-basin & Conditional age-at-length effective sample sizes \\
+Natural mortality & M scalar = 0.078 & M scalar = 0.062; M scalar = 0.1 & The first fixed Lorenzen natural-mortality coefficient \\
+Effort creep & 1\% / 0.5\% & 2.5\% / 1.25\% & Effort for fisheries F29--F33 \\
+Regional scaling & Current five-year window & Whole-period scaling & The regional-scaling time window \\
+Reporting rates during tag-mixing periods & Reporting rates excluded during mixing & Reporting rates applied during mixing & Application of the fitted reporting rates during each release group's specified mixing period \\
+\bottomrule
+\end{tabularx}
+\end{table}

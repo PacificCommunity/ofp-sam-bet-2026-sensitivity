@@ -46,8 +46,8 @@ metric_specs <- list(
 axis_palette <- c("#0072B2", "#009E73", "#E69F00", "#6F42C1", "#CC79A7")
 diagnostic_colour <- "#C62828"
 viewer_release_url <- paste0(
-  "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/",
-  "releases/latest/download/bet-2026-sensitivity-interactive-viewer.html"
+  "https://pacificcommunity.github.io/",
+  "ofp-sam-bet-2026-sensitivity/bet-2026-sensitivity-interactive-viewer.html"
 )
 
 slugify <- function(value) {

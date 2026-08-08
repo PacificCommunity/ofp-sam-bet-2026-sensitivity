@@ -1,0 +1,32 @@
+% Requires \usepackage{booktabs,tabularx,array}
+\begin{table}[htbp]
+\centering
+\caption{Fit and Hessian diagnostics for the 17 one-at-a-time sensitivity fits. MGC is the maximum absolute gradient component at the final estimate; PDH indicates a positive-definite Hessian. The $\tau=1$ label denotes the fitted finite lower-bound value $\tau=1+\exp(-5)\approx1.00674$.}
+\label{tab:bet-sensitivity-fit-diagnostics}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\renewcommand{\arraystretch}{1.04}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xrrc@{}}
+\toprule
+Fit & Axis & MGC & Objective function value & PDH \\
+\midrule
+h = 0.65 & Steepness & $2.42 \times 10^{-3}$ & 90,815.1 & Yes \\
+h = 0.80 & Steepness & $9.82 \times 10^{-5}$ & 90,814.9 & Yes \\
+h = 0.95 & Steepness & $8.20 \times 10^{-5}$ & 90,814.8 & Yes \\
+$\tau$ = 1 & Tag overdispersion ($\tau$) & $7.86 \times 10^{-5}$ & 89,811.1 & Yes \\
+$\tau$ = 1.2 & Tag overdispersion ($\tau$) & $9.93 \times 10^{-5}$ & 90,708.7 & Yes \\
+$\tau$ = 1.4 & Tag overdispersion ($\tau$) & $6.97 \times 10^{-5}$ & 94,950.7 & Yes \\
+$\tau$ = 1.6 & Tag overdispersion ($\tau$) & $9.28 \times 10^{-5}$ & 89,888.8 & Yes \\
+$\tau$ = 1.8 & Tag overdispersion ($\tau$) & $9.11 \times 10^{-5}$ & 95,044.2 & Yes \\
+K = 0.1 & Tag mixing periods (KS D-statistic cutoff) & $9.63 \times 10^{-5}$ & 94,713.6 & Yes \\
+K = 0.3 & Tag mixing periods (KS D-statistic cutoff) & $9.37 \times 10^{-4}$ & 100,605.3 & Yes \\
+0.5 sub-basin & Conditional age-at-length & $9.56 \times 10^{-5}$ & 88,772.9 & Yes \\
+1.0 sub-basin & Conditional age-at-length & $9.19 \times 10^{-5}$ & 101,291.6 & Yes \\
+M scalar = 0.062 & Natural mortality & $9.96 \times 10^{-5}$ & 91,019.8 & Yes \\
+M scalar = 0.1 & Natural mortality & $9.58 \times 10^{-5}$ & 91,685.5 & Yes \\
+2.5\% / 1.25\% & Effort creep & $8.38 \times 10^{-5}$ & 90,830.6 & Yes \\
+Whole-period scaling & Regional scaling & $9.12 \times 10^{-5}$ & 90,084.9 & Yes \\
+Reporting rates applied during mixing & Reporting rates during tag-mixing periods & $8.64 \times 10^{-5}$ & 94,961.0 & Yes \\
+\bottomrule
+\end{tabularx}
+\end{table}

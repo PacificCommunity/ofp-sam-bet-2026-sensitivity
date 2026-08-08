@@ -1,6 +1,16 @@
 runs/
 outputs/
-results/
+results/*
+!results/bet-2026-sensitivity-report.html
+!results/bet-2026-sensitivity-interactive-viewer.html
+!results/report-manifest.csv
+!results/figures/
+results/figures/*
+!results/figures/*.png
+!results/tables/
+results/tables/*
+!results/tables/*.csv
+!results/tables/*.tex
 *.log
 *.par
 !model/checkpoints/*.par

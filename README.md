@@ -124,12 +124,11 @@ its own page with annual dynamic spawning depletion, recruitment, spawning
 potential and fishing mortality. The Diagnostic model is shown in red, and
 each alternative changes only the named axis.
 
-The report captions link to the latest release asset:
-[`bet-2026-sensitivity-interactive-viewer.html`](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/latest/download/bet-2026-sensitivity-interactive-viewer.html).
+The report captions open the browser-hosted GitHub Pages viewer:
+[`bet-2026-sensitivity-interactive-viewer.html`](https://pacificcommunity.github.io/ofp-sam-bet-2026-sensitivity/bet-2026-sensitivity-interactive-viewer.html).
 The viewer is self-contained, uses only the checksum-locked public payload and
 allows individual configurations to be shown or hidden without rerunning MFCL.
 
-`kflow-report.yaml` registers the separate `BET-2026-sensitivity-report` task for the Kflow
-**Local** submitter (2 CPUs, 8 GB RAM and 10 GB disk). The model-run campaign in
-`kflow.yaml` remains pinned to Suva and is unchanged apart from correcting its
-fit count to 17.
+The `Render BET 2026 sensitivity report` GitHub Action uses the pinned public
+TunaFlow v2.7 image, checks the outputs and publishes the viewer through GitHub
+Pages.
