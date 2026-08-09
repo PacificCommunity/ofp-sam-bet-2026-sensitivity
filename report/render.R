@@ -341,7 +341,7 @@ table_rows_html <- paste0(
 )
 word_table <- paste(
   c(
-    paste0("Table XX. ", design_caption),
+    paste0("Table. ", design_caption),
     "",
     paste(names(axis_table), collapse = "\t"),
     apply(axis_table, 1L, function(row) paste(row, collapse = "\t"))
@@ -405,7 +405,7 @@ diagnostic_rows_html <- paste0(
 )
 diagnostic_word_table <- paste(
   c(
-    paste0("Table XX. ", diagnostic_caption),
+    paste0("Table. ", diagnostic_caption),
     "",
     paste(names(diagnostic_table), collapse = "\t"),
     apply(diagnostic_table, 1L, function(row) paste(row, collapse = "\t"))
