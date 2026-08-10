@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
 import hashlib
 import json
@@ -30,6 +31,7 @@ EXPECTED_REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
 EXPECTED_BRANCH = "more_tau_sens"
 EXPECTED_TAU = list(range(4, 33, 4))
 EXPECTED_KEYS = [f"tau-{tau}" for tau in EXPECTED_TAU]
+EXPECTED_JOB_KEYS = [f"more-tau-{key}" for key in EXPECTED_KEYS]
 EXPECTED_CONCURRENCY = 8
 EXPECTED_IMAGE = "ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360"
 EXPECTED_PROGRAM_PATH = "/home/mfcl/mfclo64"
@@ -77,6 +79,21 @@ def load_inputs() -> tuple[dict[str, Any], list[dict[str, str]]]:
         rows = [dict(row) for row in csv.DictReader(handle)]
     if not isinstance(config, dict) or not isinstance(reference, dict):
         raise ValueError("Both Kflow configuration files must contain mappings.")
+    if config.get("local_apps") is not None:
+        raise ValueError(
+            "Define the more-tau launcher through local_apps_from, not a duplicated block."
+        )
+    if config.get("local_apps_from") != REFERENCE_CONFIG_PATH.name:
+        raise ValueError("More-tau local_apps_from must be kflow.yaml.")
+    local_apps = reference.get("local_apps")
+    if not isinstance(local_apps, list) or len(local_apps) != 1:
+        raise ValueError("kflow.yaml must define exactly one local app.")
+    local_app = local_apps[0]
+    if not isinstance(local_app, dict) or local_app.get("key") != "mfclshiny":
+        raise ValueError("The inherited local app must be MFCL Shiny.")
+    if local_app.get("archive_sources") != ["outputs"]:
+        raise ValueError("MFCL Shiny must read only the current job output archive.")
+    config = {**config, "local_apps": copy.deepcopy(local_apps)}
     if config.get("name") != EXPECTED_TASK:
         raise ValueError(f"Kflow task must be {EXPECTED_TASK}.")
     keys = [row.get("key", "") for row in rows]
@@ -208,6 +225,7 @@ def report_payload(config: dict[str, Any], source_commit: str) -> dict[str, Any]
         "tags": config.get("tags") or {},
         "metadata": {
             **dict(config.get("metadata") or {}),
+            "local_apps": copy.deepcopy(config.get("local_apps") or []),
             "source_commit": source_commit,
             "campaign_size": EXPECTED_CONCURRENCY,
             "parallel_jobs": EXPECTED_CONCURRENCY,
@@ -266,6 +284,7 @@ def job_payload(
         },
         "metadata": {
             **dict(config.get("metadata") or {}),
+            "local_apps": copy.deepcopy(config.get("local_apps") or []),
             "source_commit": source_commit,
             "job_key": env["JOB_KEY"],
             "job_title": title,
@@ -300,6 +319,101 @@ def existing_jobs(base_url: str, token: str) -> dict[str, dict[str, Any]]:
             if key:
                 found[key] = job
     return found
+
+
+def verify_report(
+    base_url: str,
+    token: str,
+    expected: dict[str, Any],
+) -> None:
+    task_path = urllib.parse.quote(EXPECTED_TASK, safe="")
+    response = api_json("GET", f"{base_url}/api/report/{task_path}/", token)
+    report = response.get("report", response)
+    metadata = report.get("metadata") or {}
+    errors: list[str] = []
+    for key in (
+        "repo_full_name",
+        "branch",
+        "command",
+        "docker_image",
+        "remote_host",
+        "remote_user",
+        "remote_base_dir",
+        "cpus",
+        "memory",
+        "disk",
+        "slot_requirements",
+        "exclude_machines",
+        "exclude_slots",
+        "env",
+        "tags",
+        "output_patterns",
+        "input_jobs",
+        "triggers",
+    ):
+        if report.get(key) != expected.get(key):
+            errors.append(key)
+    for key in ("local_apps", "source_commit", "launcher_source_commit"):
+        if metadata.get(key) != expected["metadata"].get(key):
+            errors.append(f"metadata.{key}")
+    if errors:
+        raise ValueError(
+            "Registered more-tau task does not match the full launcher payload: "
+            + ", ".join(errors)
+        )
+
+
+def existing_model_source_commit(jobs: dict[str, dict[str, Any]]) -> str:
+    if sorted(jobs) != sorted(EXPECTED_JOB_KEYS):
+        raise ValueError("Local-app repair requires exactly the original eight jobs.")
+    commits = {
+        str((job.get("metadata") or {}).get("source_commit") or "").strip()
+        for job in jobs.values()
+    }
+    commits.discard("")
+    if len(commits) != 1:
+        raise ValueError("The original more-tau jobs do not share one source commit.")
+    return commits.pop()
+
+
+def verify_local_app(
+    base_url: str,
+    token: str,
+    job_number: int,
+) -> dict[str, Any]:
+    response = api_json("GET", f"{base_url}/api/job/{job_number}/", token)
+    job = response.get("job", response)
+    status = str(job.get("status") or "")
+    if status != "completed":
+        return {"job_number": job_number, "status": status, "launcher": "awaiting-archive"}
+    response = api_json(
+        "GET",
+        f"{base_url}/api/kflow/jobs/{job_number}/local-apps/mfclshiny/payload",
+        token,
+    )
+    payload = response.get("payload", response)
+    archives = payload.get("archives") or []
+    package_names = {
+        str(item.get("name") or "")
+        for item in payload.get("package_sources") or []
+        if isinstance(item, dict)
+    }
+    refs = [
+        str((payload.get("env") or {}).get(key) or "")
+        for key in ("MFCLKIT_GITHUB_REF", "MFCLSHINY_GITHUB_REF")
+    ]
+    valid = (
+        payload.get("key") == "mfclshiny"
+        and payload.get("runner") == "local-docker"
+        and len(archives) == 1
+        and archives[0].get("target") == "outputs"
+        and bool(str(archives[0].get("url") or "").strip())
+        and package_names == {"mfclkit", "mfclshiny"}
+        and all(len(ref) == 40 and all(char in "0123456789abcdef" for char in ref) for ref in refs)
+    )
+    if not valid:
+        raise ValueError(f"Job {job_number} returned an invalid MFCL Shiny payload.")
+    return {"job_number": job_number, "status": status, "launcher": "verified"}
 
 
 def verify_job(
@@ -384,12 +498,18 @@ def verify_job(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--submit", action="store_true", help="Create the task and jobs.")
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--submit", action="store_true", help="Create the task and jobs.")
+    action.add_argument(
+        "--repair-local-apps",
+        action="store_true",
+        help="Register the MFCL Shiny launcher without creating or changing jobs.",
+    )
     args = parser.parse_args()
 
     config, rows = load_inputs()
     preview = [job_payload(config, row, "<pushed-more_tau_sens>") for row in rows]
-    if not args.submit:
+    if not args.submit and not args.repair_local_apps:
         print(
             json.dumps(
                 {
@@ -406,7 +526,7 @@ def main() -> int:
         )
         return 0
 
-    source_commit = assert_pushed_branch()
+    launcher_source_commit = assert_pushed_branch()
     subprocess.run(
         ["Rscript", "scripts/validate-more-tau.R"], cwd=ROOT, check=True
     )
@@ -417,14 +537,58 @@ def main() -> int:
         raise SystemExit("Set KFLOW_API_TOKEN before submission.")
     base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
     task_path = urllib.parse.quote(EXPECTED_TASK, safe="")
+    already = existing_jobs(base_url, token)
+    if args.repair_local_apps:
+        source_commit = existing_model_source_commit(already)
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", source_commit, launcher_source_commit],
+            cwd=ROOT,
+            check=True,
+        )
+    else:
+        source_commit = launcher_source_commit
+        existing_commits = {
+            str((job.get("metadata") or {}).get("source_commit") or "").strip()
+            for job in already.values()
+        }
+        existing_commits.discard("")
+        if existing_commits and existing_commits != {source_commit}:
+            raise ValueError(
+                "Existing jobs use an earlier model source commit; use "
+                "--repair-local-apps instead of mixing model revisions."
+            )
+
+    expected_report = report_payload(config, source_commit)
+    if args.repair_local_apps:
+        expected_report["metadata"]["launcher_source_commit"] = launcher_source_commit
     api_json(
         "POST",
         f"{base_url}/api/report/{task_path}",
         token,
-        report_payload(config, source_commit),
+        expected_report,
     )
+    verify_report(base_url, token, expected_report)
 
-    already = existing_jobs(base_url, token)
+    if args.repair_local_apps:
+        verified_apps = [
+            verify_local_app(base_url, token, int(already[key]["job_number"]))
+            for key in EXPECTED_JOB_KEYS
+        ]
+        print(
+            json.dumps(
+                {
+                    "task": EXPECTED_TASK,
+                    "model_source_commit": source_commit,
+                    "launcher_source_commit": launcher_source_commit,
+                    "jobs_created": 0,
+                    "job_records_modified": 0,
+                    "local_apps": verified_apps,
+                },
+                indent=2,
+            )
+        )
+        return 0
+
     pending = [row for row in rows if f"more-tau-{row['key']}" not in already]
     submitted: list[tuple[dict[str, str], int, dict[str, Any]]] = []
     failures: list[str] = []

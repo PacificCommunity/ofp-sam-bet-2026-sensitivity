@@ -48,5 +48,5 @@ metadata:
   local_phase0_mfcl_sha256: 8995f72019869863c1d1c0b4f44fc6a6268d1f79031f5bc79dc354ee10f0a63e
 output_patterns:
   - outputs/**
-local_apps: []
+local_apps_from: kflow.yaml
 triggers: {}
