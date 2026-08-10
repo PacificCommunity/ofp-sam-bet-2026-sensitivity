@@ -64,6 +64,13 @@ Rscript scripts/validate-more-tau.R
 KFLOW_API_TOKEN=... ./scripts/submit-kflow-more-tau --submit
 ```
 
+The standalone viewer combines the five original fixed-tau sensitivities, the
+Diagnostic `tau=2` reference and these eight additional fits. Download
+[`bet-2026-more-tau-interactive-viewer.html`](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/more-tau-sens-v2026.08.11/bet-2026-more-tau-interactive-viewer.html)
+from the branch-specific prerelease and open it locally in a web browser. This
+exploratory viewer is separate from the published sensitivity report and does
+not replace the stock-assessment results.
+
 ## Inspect and run one model
 
 Every complete frozen input set is committed under `models/`, so the effective

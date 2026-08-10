@@ -1,0 +1,8 @@
+"role","file","sha256"
+"Original sensitivity design","sensitivities.csv","1db9c2b5e0977f941aeb02689d9ce76e50967a8a14a611240252760c8ea505b0"
+"Additional sensitivity design","more_tau_sens.csv","e85406cc163adc201190a0edad3dc0017b53031b40c65c15fff589677c8d5e45"
+"Original public time series","data/sensitivity/sensitivity-timeseries.csv","147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540"
+"Original public fit diagnostics","data/sensitivity/sensitivity-fit-diagnostics.csv","3a8bdb9269b5fd5d8f77cfa2e68250d0fafe57cb3d6960135488cca5239b5c68"
+"Original completed-output audit","data/sensitivity/completed-output-audit.csv","8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+"Viewer HTML template","report/interactive-viewer-template.html","503bae90a90439b3961ed0b72e4485468181a18ce83e3d7a8683c9cd2310a573"
+"Staged more-tau derived series","derived-timeseries-raw.csv","c903a10ebf69b2a194c1a94c1c760ec16ebe359d3ad710923d3ae75a7416f7c5"

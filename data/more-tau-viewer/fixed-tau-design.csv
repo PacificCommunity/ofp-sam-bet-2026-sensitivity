@@ -1,0 +1,15 @@
+"key","fixed_tau","label","campaign","kflow_job","source","model_order"
+"tau-1.006738",1.006737947,"tau = 1.006738","Original fixed-tau sensitivity",22181,"Original fixed-tau Kflow output and committed public payload",1
+"tau-1.2",1.2,"tau = 1.2","Original fixed-tau sensitivity",22184,"Original fixed-tau Kflow output and committed public payload",2
+"tau-1.4",1.4,"tau = 1.4","Original fixed-tau sensitivity",22186,"Original fixed-tau Kflow output and committed public payload",3
+"tau-1.6",1.6,"tau = 1.6","Original fixed-tau sensitivity",22188,"Original fixed-tau Kflow output and committed public payload",4
+"tau-1.8",1.8,"tau = 1.8","Original fixed-tau sensitivity",22179,"Original fixed-tau Kflow output and committed public payload",5
+"diagnostic",2,"tau = 2 (Diagnostic)","Diagnostic reference",21641,"Diagnostic public time series from Kflow Job 21641",6
+"tau-4",4,"tau = 4","Additional fixed-tau sensitivity",24040,"more_tau_sens Kflow output archive",7
+"tau-8",8,"tau = 8","Additional fixed-tau sensitivity",24041,"more_tau_sens Kflow output archive",8
+"tau-12",12,"tau = 12","Additional fixed-tau sensitivity",24042,"more_tau_sens Kflow output archive",9
+"tau-16",16,"tau = 16","Additional fixed-tau sensitivity",24044,"more_tau_sens Kflow output archive",10
+"tau-20",20,"tau = 20","Additional fixed-tau sensitivity",24047,"more_tau_sens Kflow output archive",11
+"tau-24",24,"tau = 24","Additional fixed-tau sensitivity",24045,"more_tau_sens Kflow output archive",12
+"tau-28",28,"tau = 28","Additional fixed-tau sensitivity",24043,"more_tau_sens Kflow output archive",13
+"tau-32",32,"tau = 32","Additional fixed-tau sensitivity",24046,"more_tau_sens Kflow output archive",14
