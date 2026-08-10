@@ -41,6 +41,29 @@ Each fit changes only its named axis. Data, selectivity, DM settings, mixing
 period, biology and all other Diagnostic controls remain unchanged unless they
 are the selected sensitivity axis.
 
+## Additional fixed-tau campaign (`more_tau_sens`)
+
+The `more_tau_sens` branch adds a separate, exploratory grid of eight fixed values,
+`tau=4,8,12,16,20,24,28,32`, defined in `more_tau_sens.csv`. It does not alter the original
+17-case registry or its published report data. Each model retains the direct
+parameterization `tau=1+exp(fish_pars(4))`, fixes all 33 copies of
+`fish_pars(4)` at `log(tau-1)`, and starts from ordinary makepar before running
+Diagnostic phases 1-11. The largest target, `tau=32`, maps to
+`fish_pars(4)=log(31)=3.43398720448515`, within the supported `[-5,5]` bound
+(`tau` upper bound `1+exp(5)=149.413159...`). Phase 10 and Phase 11 both use
+convergence `-4`; no fitted `final.par`, checkpoint, jitter, or seed is used.
+
+The campaign has its own frozen model folders, registry, validator, Phase-0
+smoke test, Kflow configuration and submitter. The submitter creates eight
+independent concurrent Suva jobs from branch `more_tau_sens`:
+
+```sh
+Rscript scripts/validate-more-tau.R
+./scripts/smoke-test-more-tau
+./scripts/submit-kflow-more-tau
+KFLOW_API_TOKEN=... ./scripts/submit-kflow-more-tau --submit
+```
+
 ## Inspect and run one model
 
 Every complete frozen input set is committed under `models/`, so the effective

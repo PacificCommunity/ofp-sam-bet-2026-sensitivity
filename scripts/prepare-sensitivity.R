@@ -13,7 +13,16 @@ repo <- normalizePath(file.path(dirname(sub("^--file=", "", script_arg)), ".."),
 case_key <- args[[1L]]
 output <- normalizePath(args[[2L]], mustWork = FALSE)
 
-registry <- read.csv(file.path(repo, "sensitivities.csv"), check.names = FALSE, stringsAsFactors = FALSE)
+registry_paths <- file.path(repo, c("sensitivities.csv", "more_tau_sens.csv"))
+registry_paths <- registry_paths[file.exists(registry_paths)]
+registry <- do.call(rbind, lapply(
+  registry_paths,
+  read.csv,
+  check.names = FALSE,
+  stringsAsFactors = FALSE,
+  colClasses = "character"
+))
+if (anyDuplicated(registry$key)) stop("Sensitivity keys must be unique across registries.", call. = FALSE)
 row <- registry[registry$key == case_key, , drop = FALSE]
 if (nrow(row) != 1L) {
   cat("Unknown sensitivity: ", case_key, "\nAvailable: ",
@@ -201,8 +210,22 @@ if (grepl("^steepness-", case_key)) {
     "tau-1.6" = "-0.510825623765991",
     "tau-1.8" = "-0.223143551314210"
   )
-  replace_shell_assignment(model_config, "TAU", unname(tau_values[[case_key]]))
-  replace_shell_assignment(model_config, "TAU_FISH_PARS4", unname(tau_pars[[case_key]]))
+  if (case_key %in% names(tau_values)) {
+    tau_value <- unname(tau_values[[case_key]])
+    tau_par <- unname(tau_pars[[case_key]])
+  } else {
+    numeric_tau <- suppressWarnings(as.numeric(row$alternative))
+    if (!is.finite(numeric_tau) || numeric_tau <= 1) {
+      stop("Direct fixed tau must be finite and greater than 1 for ", case_key, call. = FALSE)
+    }
+    tau_value <- sprintf("%.1f", numeric_tau)
+    tau_par <- format(log(numeric_tau - 1), scientific = FALSE, trim = TRUE, digits = 15L)
+    if (log(numeric_tau - 1) < -5 || log(numeric_tau - 1) > 5) {
+      stop("Direct fixed tau is outside fish_pars(4) bounds [-5,5] for ", case_key, call. = FALSE)
+    }
+  }
+  replace_shell_assignment(model_config, "TAU", tau_value)
+  replace_shell_assignment(model_config, "TAU_FISH_PARS4", tau_par)
 } else if (case_key %in% c("tag-mixing-k-0.1", "tag-mixing-k-0.3")) {
   value <- if (case_key == "tag-mixing-k-0.1") "0.1" else "0.3"
   source <- file.path(repo, "sources", "mixing", paste0("bet.2026.mix-", value, ".ini"))

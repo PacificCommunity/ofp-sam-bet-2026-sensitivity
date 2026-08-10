@@ -1,0 +1,494 @@
+#!/usr/bin/env python3
+"""Register and submit the 8 independent fixed-tau fits to Kflow on Suva."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+import os
+import subprocess
+import urllib.error
+import urllib.parse
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG_PATH = ROOT / "kflow-more-tau.yaml"
+REFERENCE_CONFIG_PATH = ROOT / "kflow.yaml"
+REGISTRY_PATH = ROOT / "more_tau_sens.csv"
+EXPECTED_TASK = "BET-2026-sensitivity-more-tau"
+EXPECTED_FLOW = "bet-2026-more-tau-sens-flow"
+EXPECTED_BATCH = "bet-2026-more-tau-sens-batch"
+EXPECTED_REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
+EXPECTED_BRANCH = "more_tau_sens"
+EXPECTED_TAU = list(range(4, 33, 4))
+EXPECTED_KEYS = [f"tau-{tau}" for tau in EXPECTED_TAU]
+EXPECTED_CONCURRENCY = 8
+EXPECTED_IMAGE = "ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360"
+EXPECTED_PROGRAM_PATH = "/home/mfcl/mfclo64"
+EXPECTED_PRODUCTION_MFCL_SHA256 = "f5bc1e232a86e51f920bce7271d8e0930d0b160e4d18dc46de44078f0fa24cd0"
+EXPECTED_LOCAL_MFCL_SHA256 = "8995f72019869863c1d1c0b4f44fc6a6268d1f79031f5bc79dc354ee10f0a63e"
+
+
+def api_json(
+    method: str,
+    url: str,
+    token: str,
+    payload: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    body = None if payload is None else json.dumps(payload).encode("utf-8")
+    headers = {"Authorization": f"Bearer {token}"}
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(url, data=body, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"{method} {url} failed: HTTP {exc.code}: {detail}"
+        ) from exc
+    return json.loads(raw.decode("utf-8")) if raw else {}
+
+
+def run(*args: str) -> str:
+    return subprocess.run(
+        args,
+        cwd=ROOT,
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout.strip()
+
+
+def load_inputs() -> tuple[dict[str, Any], list[dict[str, str]]]:
+    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    reference = yaml.safe_load(REFERENCE_CONFIG_PATH.read_text(encoding="utf-8"))
+    with REGISTRY_PATH.open(encoding="utf-8", newline="") as handle:
+        rows = [dict(row) for row in csv.DictReader(handle)]
+    if not isinstance(config, dict) or not isinstance(reference, dict):
+        raise ValueError("Both Kflow configuration files must contain mappings.")
+    if config.get("name") != EXPECTED_TASK:
+        raise ValueError(f"Kflow task must be {EXPECTED_TASK}.")
+    keys = [row.get("key", "") for row in rows]
+    if keys != EXPECTED_KEYS:
+        raise ValueError("Registry must contain exactly tau-4,8,...,32 in order.")
+    alternatives = [float(row["alternative"]) for row in rows]
+    if alternatives != [float(value) for value in EXPECTED_TAU]:
+        raise ValueError("Registry alternatives must be 4,8,...,32.")
+    missing = [key for key in keys if not (ROOT / "models" / key).is_dir()]
+    if missing:
+        raise ValueError(f"Missing frozen model folders: {', '.join(missing)}")
+    if str(config.get("remote_host", "")).lower() != "suva":
+        raise ValueError("All more-tau fits must be submitted through Suva.")
+    if "suvofp" not in str(config.get("slot_requirements", "")).lower():
+        raise ValueError("Kflow slot requirements do not restrict jobs to Suva workers.")
+    if config.get("triggers"):
+        raise ValueError("More-tau jobs must not define sequential triggers.")
+    if config.get("env", {}).get("FLOW_GROUP") != EXPECTED_FLOW:
+        raise ValueError(f"FLOW_GROUP must be {EXPECTED_FLOW}.")
+    if config.get("env", {}).get("BET_PHASE10_11_CONVERGENCE") != "-4":
+        raise ValueError("Phase 10 and Phase 11 convergence must both be -4.")
+    if config.get("docker_image") != EXPECTED_IMAGE:
+        raise ValueError("The pinned Tuna Flow image digest changed.")
+    if config.get("env", {}).get("PROGRAM_PATH") != EXPECTED_PROGRAM_PATH:
+        raise ValueError("The production MFCL path must remain /home/mfcl/mfclo64.")
+    provenance = config.get("metadata") or {}
+    if provenance.get("production_mfcl_sha256") != EXPECTED_PRODUCTION_MFCL_SHA256:
+        raise ValueError("The production MFCL SHA256 provenance is missing or changed.")
+    if provenance.get("local_phase0_mfcl_sha256") != EXPECTED_LOCAL_MFCL_SHA256:
+        raise ValueError("The local Phase-0 MFCL SHA256 provenance is missing or changed.")
+    observed_local_sha = hashlib.sha256((ROOT / "mfclo64").read_bytes()).hexdigest()
+    if observed_local_sha != EXPECTED_LOCAL_MFCL_SHA256:
+        raise ValueError("The repository Phase-0 MFCL executable hash changed.")
+
+    identical_fields = (
+        "command",
+        "docker_image",
+        "remote_host",
+        "remote_user",
+        "remote_base_dir",
+        "slot_requirements",
+        "resources",
+        "exclude_machines",
+        "exclude_slots",
+        "output_patterns",
+    )
+    changed = [field for field in identical_fields if config.get(field) != reference.get(field)]
+    if changed:
+        raise ValueError(
+            "More-tau Kflow execution semantics differ from the existing campaign: "
+            + ", ".join(changed)
+        )
+    reference_env = reference.get("env") or {}
+    config_env = config.get("env") or {}
+    runtime_keys = (
+        "PROGRAM_PATH",
+        "MODEL_ID",
+        "KFLOW_RUNTIME_REQUIRE_PRIVATE_PACKAGES",
+        "KFLOW_RUNTIME_UPDATE",
+        "TUNA_FLOW_RUNTIME_UPDATE",
+        "KFLOW_RUNTIME_FORCE_UPDATE",
+        "KFLOW_RUNTIME_PACKAGES",
+        "MFCLKIT_GITHUB_REF",
+        "MFCLSHINY_GITHUB_REF",
+        "KFLOW_RUNTIME_GITHUB_AUTH",
+        "KFLOW_FORWARD_GITHUB_TOKEN_TO_RUNTIME",
+    )
+    changed_env = [key for key in runtime_keys if config_env.get(key) != reference_env.get(key)]
+    if changed_env:
+        raise ValueError(
+            "More-tau runtime pins differ from the existing campaign: "
+            + ", ".join(changed_env)
+        )
+    return config, rows
+
+
+def assert_pushed_branch() -> str:
+    if run("git", "status", "--porcelain"):
+        raise ValueError("Repository has uncommitted changes; commit and push before submission.")
+    branch = run("git", "branch", "--show-current")
+    if branch != EXPECTED_BRANCH:
+        raise ValueError(
+            f"Submission must use {EXPECTED_BRANCH}; current branch is {branch}."
+        )
+    head = run("git", "rev-parse", "HEAD")
+    remote = run("git", "rev-parse", f"origin/{EXPECTED_BRANCH}")
+    if head != remote:
+        raise ValueError(
+            f"Local {EXPECTED_BRANCH} and origin/{EXPECTED_BRANCH} differ; "
+            "push the exact inputs first."
+        )
+    return head
+
+
+def job_title(row: dict[str, str]) -> str:
+    return f"BET 2026 more-tau sensitivity | tau={row['alternative']} fixed"
+
+
+def job_description(row: dict[str, str]) -> str:
+    tau = row["alternative"]
+    return (
+        "Independent BET 2026 tag-overdispersion sensitivity from the Diagnostic "
+        f"model: tau={tau} fixed with fish_pars(4)=log({tau}-1) for all 33 fisheries. "
+        "Direct parameterization tau=1+exp(fish_pars(4)); ordinary makepar followed "
+        "by phases 1-11 with Phase 10/11 convergence -4; no final.par, fitted "
+        "checkpoint, seed, jitter, input job, or sequential trigger."
+    )
+
+
+def report_payload(config: dict[str, Any], source_commit: str) -> dict[str, Any]:
+    resources = config["resources"]
+    return {
+        "name": EXPECTED_TASK,
+        "description": config["description"],
+        "repo_full_name": EXPECTED_REPO,
+        "branch": EXPECTED_BRANCH,
+        "command": config["command"],
+        "docker_image": config["docker_image"],
+        "remote_host": config["remote_host"],
+        "remote_user": config["remote_user"],
+        "remote_base_dir": config["remote_base_dir"],
+        "cpus": resources["cpus"],
+        "memory": resources["memory"],
+        "disk": resources["disk"],
+        "slot_requirements": config["slot_requirements"],
+        "exclude_machines": config.get("exclude_machines") or [],
+        "exclude_slots": config.get("exclude_slots") or [],
+        "env": config.get("env") or {},
+        "tags": config.get("tags") or {},
+        "metadata": {
+            **dict(config.get("metadata") or {}),
+            "source_commit": source_commit,
+            "campaign_size": EXPECTED_CONCURRENCY,
+            "parallel_jobs": EXPECTED_CONCURRENCY,
+            "execution": "independent-concurrent",
+            "initialization": "ordinary-makepar",
+            "task_id": EXPECTED_TASK,
+            "flow_id": EXPECTED_FLOW,
+            "batch_id": EXPECTED_BATCH,
+        },
+        "output_patterns": config.get("output_patterns") or [],
+        "input_jobs": [],
+        "triggers": {},
+    }
+
+
+def job_payload(
+    config: dict[str, Any], row: dict[str, str], source_commit: str
+) -> dict[str, Any]:
+    resources = config["resources"]
+    title = job_title(row)
+    description = job_description(row)
+    env = {
+        **dict(config.get("env") or {}),
+        "SENSITIVITY_SELECT": row["key"],
+        "JOB_KEY": f"more-tau-{row['key']}",
+        "JOB_TITLE": title,
+        "JOB_DESCRIPTION": description,
+        "MODEL_LABEL": row["label"],
+        "FLOW_GROUP": EXPECTED_FLOW,
+    }
+    return {
+        "repo": EXPECTED_REPO,
+        "branch": EXPECTED_BRANCH,
+        "command": config["command"],
+        "docker_image": config["docker_image"],
+        "remote_host": config["remote_host"],
+        "remote_user": config["remote_user"],
+        "remote_base_dir": config["remote_base_dir"],
+        "cpus": resources["cpus"],
+        "memory": resources["memory"],
+        "disk": resources["disk"],
+        "batch_name": EXPECTED_BATCH,
+        "slot_requirements": config["slot_requirements"],
+        "exclude_machines": config.get("exclude_machines") or [],
+        "exclude_slots": config.get("exclude_slots") or [],
+        "output_patterns": config.get("output_patterns") or [],
+        "input_jobs": [],
+        "env": env,
+        "tags": {
+            **dict(config.get("tags") or {}),
+            "sensitivity_key": row["key"],
+            "axis": row["axis"],
+            "reference": row["reference"],
+            "alternative": row["alternative"],
+            "execution": "independent-concurrent",
+        },
+        "metadata": {
+            **dict(config.get("metadata") or {}),
+            "source_commit": source_commit,
+            "job_key": env["JOB_KEY"],
+            "job_title": title,
+            "job_description": description,
+            "scientific_change": row["scientific_change"],
+            "campaign_size": EXPECTED_CONCURRENCY,
+            "parallel_jobs": EXPECTED_CONCURRENCY,
+            "independent_fit": True,
+            "inputs_frozen": True,
+            "initialization": "ordinary-makepar",
+            "task_id": EXPECTED_TASK,
+            "flow_id": EXPECTED_FLOW,
+            "batch_id": EXPECTED_BATCH,
+        },
+        "triggers": {},
+    }
+
+
+def existing_jobs(base_url: str, token: str) -> dict[str, dict[str, Any]]:
+    found: dict[str, dict[str, Any]] = {}
+    task_path = urllib.parse.quote(EXPECTED_TASK, safe="")
+    for page in range(1, 20):
+        response = api_json(
+            "GET", f"{base_url}/api/jobs/{task_path}/?page={page}", token
+        )
+        jobs = response.get("jobs") or []
+        if not jobs:
+            break
+        for job in jobs:
+            env = job.get("env") or job.get("env_json") or {}
+            key = str(env.get("JOB_KEY") or "")
+            if key:
+                found[key] = job
+    return found
+
+
+def verify_job(
+    base_url: str,
+    token: str,
+    row: dict[str, str],
+    job_number: int,
+    expected: dict[str, Any],
+) -> dict[str, Any]:
+    response = api_json("GET", f"{base_url}/api/job/{job_number}/", token)
+    job = response.get("job", response)
+    env = job.get("env") or job.get("env_json") or {}
+    tags = job.get("tags") or {}
+    metadata = job.get("metadata") or {}
+    errors: list[str] = []
+    if str(job.get("report_code", "")).lower() != EXPECTED_TASK.lower():
+        errors.append(f"task={job.get('report_code')}")
+    if str(job.get("repo_full_name", "")) != EXPECTED_REPO:
+        errors.append(f"repo={job.get('repo_full_name')}")
+    if str(job.get("branch", "")) != EXPECTED_BRANCH:
+        errors.append(f"branch={job.get('branch')}")
+    if str(job.get("command", "")) != str(expected["command"]):
+        errors.append(f"command={job.get('command')}")
+    if str(job.get("docker_image", "")) != EXPECTED_IMAGE:
+        errors.append("docker_image mismatch")
+    if int(job.get("cpus") or 0) != int(expected["cpus"]):
+        errors.append(f"cpus={job.get('cpus')}")
+    if str(job.get("memory", "")) != str(expected["memory"]):
+        errors.append(f"memory={job.get('memory')}")
+    if str(job.get("disk", "")) != str(expected["disk"]):
+        errors.append(f"disk={job.get('disk')}")
+    if str(job.get("batch_name", "")) != EXPECTED_BATCH:
+        errors.append(f"batch_name={job.get('batch_name')}")
+    if str(job.get("remote_host", "")).lower() not in {
+        "suva",
+        "suvofpsubmit.corp.spc.int",
+    }:
+        errors.append(f"remote_host={job.get('remote_host')}")
+    for key in (
+        "SENSITIVITY_SELECT",
+        "JOB_KEY",
+        "JOB_TITLE",
+        "JOB_DESCRIPTION",
+        "FLOW_GROUP",
+        "BET_PHASE10_11_CONVERGENCE",
+        "PROGRAM_PATH",
+        "MODEL_ID",
+    ):
+        if str(env.get(key)) != str(expected["env"][key]):
+            errors.append(f"{key} mismatch")
+    for key in ("sensitivity_key", "axis", "reference", "alternative", "execution"):
+        if str(tags.get(key)) != str(expected["tags"][key]):
+            errors.append(f"tag {key} mismatch")
+    for key in (
+        "source_commit",
+        "job_key",
+        "campaign_size",
+        "parallel_jobs",
+        "independent_fit",
+        "inputs_frozen",
+        "initialization",
+        "task_id",
+        "flow_id",
+        "batch_id",
+        "production_mfcl_sha256",
+    ):
+        if metadata.get(key) != expected["metadata"].get(key):
+            errors.append(f"metadata {key} mismatch")
+    if job.get("input_jobs") not in (None, []):
+        errors.append("input_jobs is not empty")
+    if job.get("triggers") not in (None, {}):
+        errors.append("triggers is not empty")
+    if errors:
+        raise ValueError(f"Job {job_number} ({row['key']}) failed verification: {errors}")
+    return {
+        "key": row["key"],
+        "job_number": job_number,
+        "status": job.get("status"),
+        "title": env.get("JOB_TITLE"),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--submit", action="store_true", help="Create the task and jobs.")
+    args = parser.parse_args()
+
+    config, rows = load_inputs()
+    preview = [job_payload(config, row, "<pushed-more_tau_sens>") for row in rows]
+    if not args.submit:
+        print(
+            json.dumps(
+                {
+                    "task": EXPECTED_TASK,
+                    "flow": EXPECTED_FLOW,
+                    "batch": EXPECTED_BATCH,
+                    "branch": EXPECTED_BRANCH,
+                    "concurrency": EXPECTED_CONCURRENCY,
+                    "count": len(rows),
+                    "jobs": preview,
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    source_commit = assert_pushed_branch()
+    subprocess.run(
+        ["Rscript", "scripts/validate-more-tau.R"], cwd=ROOT, check=True
+    )
+    subprocess.run(["./scripts/smoke-test-more-tau"], cwd=ROOT, check=True)
+
+    token = os.environ.get("KFLOW_API_TOKEN", "")
+    if not token:
+        raise SystemExit("Set KFLOW_API_TOKEN before submission.")
+    base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
+    task_path = urllib.parse.quote(EXPECTED_TASK, safe="")
+    api_json(
+        "POST",
+        f"{base_url}/api/report/{task_path}",
+        token,
+        report_payload(config, source_commit),
+    )
+
+    already = existing_jobs(base_url, token)
+    pending = [row for row in rows if f"more-tau-{row['key']}" not in already]
+    submitted: list[tuple[dict[str, str], int, dict[str, Any]]] = []
+    failures: list[str] = []
+    with ThreadPoolExecutor(max_workers=EXPECTED_CONCURRENCY) as executor:
+        futures = {}
+        for row in pending:
+            payload = job_payload(config, row, source_commit)
+            future = executor.submit(
+                api_json,
+                "POST",
+                f"{base_url}/api/job/{task_path}",
+                token,
+                payload,
+            )
+            futures[future] = (row, payload)
+        for future in as_completed(futures):
+            row, payload = futures[future]
+            try:
+                response = future.result()
+                job = response.get("job", response)
+                submitted.append((row, int(job["job_number"]), payload))
+            except Exception as exc:  # report all rows before failing
+                failures.append(f"{row['key']}: {exc}")
+
+    verified: list[dict[str, Any]] = []
+    for row, number, payload in submitted:
+        try:
+            verified.append(verify_job(base_url, token, row, number, payload))
+        except Exception as exc:
+            failures.append(str(exc))
+    for row in rows:
+        key = f"more-tau-{row['key']}"
+        if key in already:
+            job = already[key]
+            try:
+                verified.append(
+                    verify_job(
+                        base_url,
+                        token,
+                        row,
+                        int(job["job_number"]),
+                        job_payload(config, row, source_commit),
+                    )
+                )
+            except Exception as exc:
+                failures.append(str(exc))
+
+    key_order = {row["key"]: index for index, row in enumerate(rows)}
+    verified.sort(key=lambda item: key_order[item["key"]])
+    result = {
+        "task": EXPECTED_TASK,
+        "flow": EXPECTED_FLOW,
+        "batch": EXPECTED_BATCH,
+        "source_commit": source_commit,
+        "existing": len(already),
+        "submitted": len(submitted),
+        "verified": verified,
+        "failures": failures,
+    }
+    print(json.dumps(result, indent=2))
+    if failures or len(verified) != EXPECTED_CONCURRENCY:
+        raise SystemExit("Kflow submission or post-submission verification was incomplete.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

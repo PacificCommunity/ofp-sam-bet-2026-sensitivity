@@ -1,0 +1,52 @@
+name: BET-2026-sensitivity-more-tau
+description: Run 8 independent BET 2026 fixed-tau sensitivities (tau=4,8,...,32) from ordinary Diagnostic makepar initial values, with no fitted checkpoint, seed, or sequential dependency.
+command: bash run.sh
+docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
+remote_host: suva
+remote_user: kyuhank
+remote_base_dir: /home/kyuhank/KflowOutput
+slot_requirements: 'regexp("^suvofp", Machine)'
+resources:
+  cpus: 2
+  memory: 8GB
+  disk: 20GB
+exclude_machines: []
+exclude_slots: []
+env:
+  SENSITIVITY_SELECT: tau-4
+  JOB_TITLE: BET 2026 more-tau sensitivity | tau=4 fixed
+  JOB_DESCRIPTION: Direct negative-binomial tag-overdispersion sensitivity with tau=4 fixed for all 33 fisheries; ordinary makepar and Diagnostic phases 1-11; no fitted checkpoint or seed.
+  MODEL_LABEL: Tau 4
+  JOB_KEY: more-tau-tau-4
+  FLOW_GROUP: bet-2026-more-tau-sens-flow
+  FLOW_SPECIES: BET
+  FLOW_SPECIES_LABEL: bigeye tuna
+  FLOW_ASSESSMENT_YEAR: "2026"
+  PROGRAM_PATH: /home/mfcl/mfclo64
+  MODEL_ID: Diagnostic
+  BET_PHASE10_11_CONVERGENCE: "-4"
+  KFLOW_RUNTIME_REQUIRE_PRIVATE_PACKAGES: "true"
+  KFLOW_RUNTIME_UPDATE: auto
+  TUNA_FLOW_RUNTIME_UPDATE: auto
+  KFLOW_RUNTIME_FORCE_UPDATE: "1"
+  KFLOW_RUNTIME_PACKAGES: mfclkit=PacificCommunity/ofp-sam-mfclkit@cf786007b5261f84faac8f3d24f7084bd323119d,mfclshiny=PacificCommunity/mfclshiny@a8dffd78de61c99af8cf5b1f6995e861157dc96c
+  MFCLKIT_GITHUB_REF: cf786007b5261f84faac8f3d24f7084bd323119d
+  MFCLSHINY_GITHUB_REF: a8dffd78de61c99af8cf5b1f6995e861157dc96c
+  KFLOW_RUNTIME_GITHUB_AUTH: "true"
+  KFLOW_FORWARD_GITHUB_TOKEN_TO_RUNTIME: "true"
+tags:
+  stage: sensitivity
+  campaign: more-tau
+  species: BET
+  assessment_year: "2026"
+metadata:
+  production_program_path: /home/mfcl/mfclo64
+  production_mfcl_version: 2.2.7.9
+  production_mfcl_sha256: f5bc1e232a86e51f920bce7271d8e0930d0b160e4d18dc46de44078f0fa24cd0
+  container_manifest_sha256: c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
+  container_config_sha256: 898925450ab7ec3f99cb9d8427cc37d24097cc2fe9f0468d74f70aaf35daec3a
+  local_phase0_mfcl_sha256: 8995f72019869863c1d1c0b4f44fc6a6268d1f79031f5bc79dc354ee10f0a63e
+output_patterns:
+  - outputs/**
+local_apps: []
+triggers: {}

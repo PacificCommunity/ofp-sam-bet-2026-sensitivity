@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+test_root=$(mktemp -d /tmp/bet-more-tau-makepar.XXXXXX)
+trap 'rm -r "$test_root"' EXIT HUP INT TERM
+
+awk -F, 'NR > 1 {print $1 "," $5}' "$repo_dir/more_tau_sens.csv" |
+while IFS=, read -r case_key expected_tau; do
+  test -d "$repo_dir/models/$case_key"
+  mkdir -p "$test_root/$case_key"
+  cp -a "$repo_dir/models/$case_key/." "$test_root/$case_key/"
+  cp "$repo_dir/mfclo64" "$test_root/$case_key/mfclo64"
+  chmod +x "$test_root/$case_key/mfclo64" "$test_root/$case_key/doitall.sh"
+  (
+    cd "$test_root/$case_key"
+    MODEL_STOP_AFTER_PHASE0=1 \
+      BET_PHASE10_11_CONVERGENCE=-4 \
+      PROGRAM_PATH=./mfclo64 \
+      ./doitall.sh >phase0-validation.log 2>&1
+    test -s 00.par
+    test -s 00.fixed.par
+    test ! -e 01.par
+    grep -q "PHASE 10/11 convergence criterion: -4" phase0-validation.log
+    grep -q "fixed-tau value audit: tau=$expected_tau passed" phase0-validation.log
+    grep -q 'fixed-steepness audit: 0.90 passed' phase0-validation.log
+    grep -q 'fixed-DM concentration audit: 33 fish_pars(22)=7 passed' phase0-validation.log
+    grep -q 'Phase-0 validation requested; stopping after makepar' phase0-validation.log
+  )
+  echo "ordinary makepar and fixed-value audits passed: $case_key (tau=$expected_tau)"
+done
