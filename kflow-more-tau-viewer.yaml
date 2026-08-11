@@ -1,5 +1,5 @@
-name: BET-2026-sensitivity-more-tau-viewer
-description: Build the branch-only aggregate fixed-tau viewer after all 18 more_tau_sens fits complete; consume dependency archives and do not refit MFCL or publish Pages, releases, reports, or PDFs.
+name: BET-2026-sensitivity-more-tau-viewer-completed-only
+description: Build a branch-only completed-fit snapshot from the 16 successful more_tau_sens archives, while retaining all 18 requested fits in the Fit Summary; do not refit MFCL or publish Pages, releases, reports, or PDFs.
 command: Rscript scripts/run-more-tau-viewer.R
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 remote_host: suva
@@ -13,10 +13,10 @@ resources:
 exclude_machines: []
 exclude_slots: []
 env:
-  JOB_TITLE: BET 2026 fixed-tau aggregate viewer | 24 models | branch only
-  JOB_DESCRIPTION: Fan-in viewer build from 18 completed more_tau_sens dependency archives plus the committed five original fixed-tau and Diagnostic public series; no MFCL refit, report/PDF change, release, or Pages publication.
-  JOB_KEY: more-tau-aggregate-viewer-24-models
-  FLOW_GROUP: bet-2026-more-tau-viewer-flow
+  JOB_TITLE: BET 2026 completed-only fixed-tau viewer | 22 plotted | 24 fit rows
+  JOB_DESCRIPTION: Snapshot viewer from 16 completed more_tau_sens dependencies plus five original fixed-tau and Diagnostic series; Fit Summary retains the running tau=4.6 and failed tau=4.8 rows as excluded; no report/PDF/release/Pages mutation.
+  JOB_KEY: more-tau-completed-only-viewer-22-models
+  FLOW_GROUP: bet-2026-more-tau-viewer-completed-only-flow
   FLOW_SPECIES: BET
   FLOW_SPECIES_LABEL: bigeye tuna
   FLOW_ASSESSMENT_YEAR: "2026"
@@ -28,6 +28,7 @@ env:
   FLR4MFCL_GITHUB_REF: 3faaf84a4867175bfea50d89e4d518c085e84739
   MFCLKIT_GITHUB_REF: cf786007b5261f84faac8f3d24f7084bd323119d
   MFCLSHINY_GITHUB_REF: 2a49729ae1203b4182c7b6d51d4ee11c52497228
+  MORE_TAU_VIEWER_SOURCE_DATE: "2026-08-12"
   KFLOW_RUNTIME_GITHUB_AUTH: "true"
   KFLOW_FORWARD_GITHUB_TOKEN_TO_RUNTIME: "true"
 tags:
@@ -38,13 +39,17 @@ tags:
   branch_only: "true"
   model_refit: "false"
 metadata:
-  aggregate_models: 24
-  dependency_fits: 18
+  plotted_models: 22
+  fit_summary_rows: 24
+  dependency_fits: 16
+  excluded_fits: 2
   original_public_models: 6
-  output_scope: branch-only-outputs
+  output_scope: branch-only-completed-only-outputs
+  original_fit_source_commit: dcd289eef9f5a63f75e11aabfb4c47af406c8abb
+  fine_fit_source_commit: 0043eea6bf908608cd438c80b67858352abd6f89
   flr4mfcl_git_sha: 3faaf84a4867175bfea50d89e4d518c085e84739
   mfclkit_git_sha: cf786007b5261f84faac8f3d24f7084bd323119d
   mfclshiny_git_sha: 2a49729ae1203b4182c7b6d51d4ee11c52497228
 output_patterns:
-  - outputs/more-tau-viewer/**
+  - outputs/more-tau-viewer-completed-only/**
 triggers: {}

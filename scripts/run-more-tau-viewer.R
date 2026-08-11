@@ -28,13 +28,13 @@ input_root <- normalizePath(
 if (!nzchar(input_root) || !dir.exists(input_root)) {
   fail("KFLOW_INPUT_DIR must identify the extracted Kflow dependency archives.")
 }
-expected_output_dir <- file.path(root, "outputs", "more-tau-viewer")
+expected_output_dir <- file.path(root, "outputs", "more-tau-viewer-completed-only")
 output_dir <- Sys.getenv("MORE_TAU_VIEWER_OUTPUT_ROOT", unset = expected_output_dir)
 output_dir <- normalizePath(output_dir, winslash = "/", mustWork = FALSE)
 if (!identical(output_dir, normalizePath(
   expected_output_dir, winslash = "/", mustWork = FALSE
 ))) {
-  fail("The Kflow viewer output must be exactly outputs/more-tau-viewer.")
+  fail("The Kflow viewer output must be exactly outputs/more-tau-viewer-completed-only.")
 }
 if (dir.exists(output_dir) && length(list.files(output_dir, all.files = TRUE, no.. = TRUE))) {
   fail("Refusing to overwrite a non-empty aggregate viewer output directory.")
@@ -60,12 +60,38 @@ if (!all(required_registry %in% names(registry)) || nrow(registry) != 18L ||
     any(registry$axis != "Tag overdispersion") || anyDuplicated(registry$key)) {
   fail("more_tau_sens.csv must define exactly the 18 aggregate fixed-tau fits.")
 }
-expected_keys <- as.character(registry$key[order(as.numeric(registry$alternative))])
+cohort_json <- Sys.getenv("MORE_TAU_FIT_COHORT_JSON", unset = "")
+if (!nzchar(cohort_json)) fail("MORE_TAU_FIT_COHORT_JSON is required.")
+cohort <- jsonlite::fromJSON(cohort_json, simplifyDataFrame = TRUE)
+required_cohort <- c(
+  "key", "kflow_job", "execution_status", "included_in_plots", "source_commit"
+)
+if (!is.data.frame(cohort) || nrow(cohort) != 18L ||
+    !all(required_cohort %in% names(cohort)) ||
+    !identical(as.character(cohort$key), as.character(registry$key)) ||
+    anyDuplicated(cohort$kflow_job)) {
+  fail("Fit cohort must bind all 18 registry rows to unique Kflow jobs.")
+}
+expected_excluded <- c("tau-4.6" = "running", "tau-4.8" = "failed")
+observed_excluded <- cohort[!as.logical(cohort$included_in_plots), , drop = FALSE]
+if (!identical(as.character(observed_excluded$key), names(expected_excluded)) ||
+    !identical(as.character(observed_excluded$execution_status), unname(expected_excluded)) ||
+    any(as.character(cohort$execution_status[as.logical(cohort$included_in_plots)]) != "completed")) {
+  fail("Completed-only cohort must exclude exactly running tau-4.6 and failed tau-4.8.")
+}
+included_registry <- registry[registry$key %in% cohort$key[as.logical(cohort$included_in_plots)], , drop = FALSE]
+expected_keys <- as.character(
+  included_registry$key[order(as.numeric(included_registry$alternative))]
+)
+if (length(expected_keys) != 16L) fail("Completed-only snapshot requires 16 dependencies.")
 original_campaign_keys <- sprintf("tau-%d", seq(4L, 32L, by = 4L))
 original_source_commit <- "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
-checkout_head <- system2("git", c("rev-parse", "HEAD"), stdout = TRUE)
-if (length(checkout_head) != 1L || !grepl("^[0-9a-f]{40}$", checkout_head)) {
-  fail("Could not identify the immutable aggregate-viewer checkout commit.")
+fine_source_commit <- "0043eea6bf908608cd438c80b67858352abd6f89"
+expected_cohort_commits <- ifelse(
+  cohort$key %in% original_campaign_keys, original_source_commit, fine_source_commit
+)
+if (!identical(as.character(cohort$source_commit), expected_cohort_commits)) {
+  fail("Fit cohort source commits differ from the immutable original/fine fit commits.")
 }
 
 final_files <- list.files(
@@ -95,7 +121,7 @@ if (!file.exists(provenance_file)) fail("Missing Kflow dependency provenance: ",
 ledger <- jsonlite::fromJSON(provenance_file, simplifyDataFrame = TRUE)
 inputs <- ledger$inputs
 if (!is.data.frame(inputs) || nrow(inputs) != length(expected_keys)) {
-  fail("Kflow provenance must contain exactly 18 dependency input records.")
+  fail("Kflow provenance must contain exactly 16 completed dependency records.")
 }
 required_inputs <- c("job_id", "job_number", "job_key", "git_commit_sha")
 if (!all(required_inputs %in% names(inputs)) || anyDuplicated(inputs$job_id)) {
@@ -114,16 +140,24 @@ for (index in seq_along(expected_keys)) {
   relative_source <- substring(source_dir, nchar(input_root) + 2L)
   input_job_id <- strsplit(relative_source, "/", fixed = TRUE)[[1L]][[1L]]
   input_row <- inputs[as.character(inputs$job_id) == input_job_id, , drop = FALSE]
+  cohort_row <- cohort[cohort$key == key, , drop = FALSE]
   expected_source_commit <- if (key %in% original_campaign_keys) {
     original_source_commit
   } else {
-    checkout_head
+    fine_source_commit
   }
   if (nrow(input_row) != 1L ||
+      nrow(cohort_row) != 1L ||
+      as.integer(input_row$job_number) != as.integer(cohort_row$kflow_job) ||
       !identical(as.character(input_row$job_key), paste0("more-tau-", key)) ||
       !identical(as.character(input_row$git_commit_sha), expected_source_commit) ||
+      ("report_code" %in% names(input_row) &&
+        !identical(as.character(input_row$report_code), "BET-2026-sensitivity-more-tau")) ||
       ("task" %in% names(input_row) &&
         !identical(as.character(input_row$task), "BET-2026-sensitivity-more-tau")) ||
+      ("repo_full_name" %in% names(input_row) &&
+        !identical(as.character(input_row$repo_full_name),
+          "PacificCommunity/ofp-sam-bet-2026-sensitivity")) ||
       ("repo" %in% names(input_row) &&
         !identical(as.character(input_row$repo),
           "PacificCommunity/ofp-sam-bet-2026-sensitivity")) ||
@@ -197,15 +231,19 @@ dir.create(audit_root, recursive = TRUE, showWarnings = FALSE)
 on.exit(unlink(audit_root, recursive = TRUE, force = TRUE), add = TRUE)
 series_file <- file.path(audit_root, "derived-timeseries-raw.csv")
 lineage_file <- file.path(audit_root, "kflow-input-provenance.csv")
+cohort_file <- file.path(audit_root, "fit-cohort.csv")
 utils::write.csv(series, series_file, row.names = FALSE, na = "")
 utils::write.csv(lineage, lineage_file, row.names = FALSE, na = "")
+utils::write.csv(cohort, cohort_file, row.names = FALSE, na = "")
 
 Sys.setenv(
   MORE_TAU_DERIVED_SERIES = series_file,
   MORE_TAU_RAW_ROOT = staging_root,
   MORE_TAU_JOB_PROVENANCE = lineage_file,
+  MORE_TAU_FIT_COHORT = cohort_file,
+  MORE_TAU_INCLUDED_KEYS = paste(expected_keys, collapse = ","),
   MORE_TAU_VIEWER_OUTPUT_ROOT = output_dir,
-  MORE_TAU_VIEWER_REQUIRE_COMPLETE = "true"
+  MORE_TAU_VIEWER_REQUIRE_COMPLETED_ONLY = "true"
 )
 build_status <- system2(
   "Rscript", c(file.path(root, "scripts", "build-more-tau-viewer.R"), "--refresh-data")
@@ -224,7 +262,7 @@ expected_outputs <- sort(c(
   "bet-2026-more-tau-interactive-viewer.html",
   file.path("data", c(
     "SHA256SUMS", "fixed-tau-design.csv", "fixed-tau-fit-diagnostics.csv",
-    "fixed-tau-timeseries.csv", "kflow-input-provenance.csv",
+    "fixed-tau-timeseries.csv", "fit-cohort.csv", "kflow-input-provenance.csv",
     "more-tau-output-provenance.csv", "original-tau-output-provenance.csv",
     "source-inputs-sha256.csv"
   ))
@@ -239,4 +277,4 @@ tracked_after <- system2("git", c("diff", "--no-ext-diff", "--", "."), stdout = 
 if (!identical(tracked_after, tracked_before)) {
   fail("The aggregate viewer runner modified tracked repository content.")
 }
-message("Built audited 24-model fixed-tau viewer from 18 Kflow dependency archives.")
+message("Built audited completed-only viewer: 22 plotted models, 24 Fit Summary rows, 16 dependencies.")

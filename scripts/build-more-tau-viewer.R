@@ -15,7 +15,10 @@ if (nzchar(output_root)) {
   data_dir <- file.path("data", "more-tau-viewer")
   output_file <- file.path("results", "bet-2026-more-tau-interactive-viewer.html")
 }
-source_date <- "2026-08-11"
+source_date <- Sys.getenv("MORE_TAU_VIEWER_SOURCE_DATE", unset = "2026-08-11")
+if (!grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", source_date)) {
+  stop("MORE_TAU_VIEWER_SOURCE_DATE must be YYYY-MM-DD.", call. = FALSE)
+}
 
 old_design_file <- "sensitivities.csv"
 new_design_file <- "more_tau_sens.csv"
@@ -30,6 +33,7 @@ compact_fits_file <- file.path(data_dir, "fixed-tau-fit-diagnostics.csv")
 compact_original_provenance_file <- file.path(data_dir, "original-tau-output-provenance.csv")
 compact_provenance_file <- file.path(data_dir, "more-tau-output-provenance.csv")
 compact_input_jobs_file <- file.path(data_dir, "kflow-input-provenance.csv")
+compact_fit_cohort_file <- file.path(data_dir, "fit-cohort.csv")
 compact_sources_file <- file.path(data_dir, "source-inputs-sha256.csv")
 compact_checksums_file <- file.path(data_dir, "SHA256SUMS")
 committed_original_provenance_file <- file.path(
@@ -41,7 +45,13 @@ registry_preview <- utils::read.csv(new_design_file, check.names = FALSE, string
 registry_keys <- as.character(
   registry_preview$key[order(as.numeric(registry_preview$alternative))]
 )
-if (!refresh_requested && file.exists(compact_design_file)) {
+included_keys_env <- trimws(strsplit(
+  Sys.getenv("MORE_TAU_INCLUDED_KEYS", unset = ""), ",", fixed = TRUE
+)[[1L]])
+included_keys_env <- included_keys_env[nzchar(included_keys_env)]
+if (refresh_requested && length(included_keys_env)) {
+  new_keys <- included_keys_env
+} else if (!refresh_requested && file.exists(compact_design_file)) {
   compact_preview <- utils::read.csv(compact_design_file, check.names = FALSE, stringsAsFactors = FALSE)
   new_keys <- setdiff(as.character(compact_preview$key), c(old_keys, "diagnostic"))
 } else {
@@ -137,14 +147,16 @@ refresh_compact_data <- function() {
   raw_series_file <- Sys.getenv("MORE_TAU_DERIVED_SERIES", unset = "")
   raw_root <- Sys.getenv("MORE_TAU_RAW_ROOT", unset = "")
   job_provenance_file <- Sys.getenv("MORE_TAU_JOB_PROVENANCE", unset = "")
-  supplied <- nzchar(c(raw_series_file, raw_root, job_provenance_file))
+  fit_cohort_file <- Sys.getenv("MORE_TAU_FIT_COHORT", unset = "")
+  supplied <- nzchar(c(raw_series_file, raw_root, job_provenance_file, fit_cohort_file))
   if (!all(supplied)) {
     fail(
       "Refreshing requires MORE_TAU_DERIVED_SERIES, MORE_TAU_RAW_ROOT and ",
-      "MORE_TAU_JOB_PROVENANCE."
+      "MORE_TAU_JOB_PROVENANCE and MORE_TAU_FIT_COHORT."
     )
   }
-  if (!file.exists(raw_series_file) || !dir.exists(raw_root) || !file.exists(job_provenance_file)) {
+  if (!file.exists(raw_series_file) || !dir.exists(raw_root) ||
+      !file.exists(job_provenance_file) || !file.exists(fit_cohort_file)) {
     fail("One or more fixed-tau refresh inputs do not exist.")
   }
 
@@ -161,16 +173,26 @@ refresh_compact_data <- function() {
     fail("The Kflow input-job provenance is incomplete, unsafe or out of registry order.")
   }
   job_by_key <- stats::setNames(as.integer(job_provenance$kflow_job), job_provenance$key)
+  fit_cohort <- read_csv(fit_cohort_file)
+  required_cohort <- c(
+    "key", "kflow_job", "execution_status", "included_in_plots", "source_commit"
+  )
+  if (!all(required_cohort %in% names(fit_cohort)) || nrow(fit_cohort) != 18L ||
+      !identical(as.character(fit_cohort$key), as.character(registry_preview$key)) ||
+      !setequal(as.character(fit_cohort$key[as.logical(fit_cohort$included_in_plots)]), new_keys) ||
+      anyDuplicated(fit_cohort$kflow_job)) {
+    fail("The all-requested fit cohort is incomplete or inconsistent with plotted dependencies.")
+  }
 
   old_design_all <- read_csv(old_design_file)
-  new_design <- read_csv(new_design_file)
+  new_design_all <- read_csv(new_design_file)
   required_design <- c("key", "axis", "label", "reference", "alternative", "scientific_change")
-  if (!all(required_design %in% names(old_design_all)) || !all(required_design %in% names(new_design))) {
+  if (!all(required_design %in% names(old_design_all)) || !all(required_design %in% names(new_design_all))) {
     fail("A fixed-tau design file has an incomplete schema.")
   }
   old_design <- old_design_all[old_design_all$key %in% old_keys, required_design, drop = FALSE]
   old_design <- old_design[match(old_keys, old_design$key), , drop = FALSE]
-  new_design <- new_design[match(new_keys, new_design$key), required_design, drop = FALSE]
+  new_design <- new_design_all[match(new_keys, new_design_all$key), required_design, drop = FALSE]
   if (anyNA(old_design$key) || anyNA(new_design$key) ||
       !identical(old_design$key, old_keys) || !identical(new_design$key, new_keys)) {
     fail("Fixed-tau cases do not match the expected main and more_tau_sens designs.")
@@ -274,6 +296,8 @@ refresh_compact_data <- function() {
     source = "Original fixed-tau Kflow output and committed public payload",
     final_par_sha256 = as.character(main_audit$final_par_sha256),
     plot_11_rep_sha256 = as.character(main_audit$final_rep_sha256),
+    execution_status = "completed",
+    included_in_plots = TRUE,
     stringsAsFactors = FALSE
   )
 
@@ -360,6 +384,8 @@ refresh_compact_data <- function() {
       source = "more_tau_sens Kflow dependency archive",
       final_par_sha256 = sha256(final_file),
       plot_11_rep_sha256 = sha256(file.path(model_dir, "plot-11.par.rep")),
+      execution_status = "completed",
+      included_in_plots = TRUE,
       stringsAsFactors = FALSE
     )
 
@@ -390,22 +416,61 @@ refresh_compact_data <- function() {
   diagnostic_fit <- data.frame(
     key = "diagnostic",
     fixed_tau = 2,
-    objective_function = NA_real_,
-    maximum_gradient_component = NA_real_,
-    active_parameters = NA_integer_,
-    hessian_evaluated = NA,
+    objective_function = 90814.8573966593,
+    maximum_gradient_component = 9.67941148140092e-05,
+    active_parameters = 1997L,
+    hessian_evaluated = FALSE,
     positive_definite_hessian = NA,
-    hessian_status = "not included in the committed public diagnostic payload",
-    convergence_status = "not included in the committed public diagnostic payload",
+    hessian_status = "not evaluated",
+    convergence_status = "completed; MGC <= 1e-4",
     kflow_job = 21641L,
-    source = "Diagnostic public time series; fit diagnostics unavailable in this payload",
+    source = "Diagnostic Kflow Job 21641 and committed public time series",
     final_par_sha256 = NA_character_,
     plot_11_rep_sha256 = NA_character_,
+    execution_status = "completed",
+    included_in_plots = TRUE,
     stringsAsFactors = FALSE
   )
-  fits <- rbind(old_fits, diagnostic_fit, do.call(rbind, new_fit_rows))
+
+  excluded_keys <- as.character(fit_cohort$key[!as.logical(fit_cohort$included_in_plots)])
+  excluded_fit_rows <- lapply(excluded_keys, function(key) {
+    cohort_row <- fit_cohort[fit_cohort$key == key, , drop = FALSE]
+    tau <- as.numeric(new_design_all$alternative[new_design_all$key == key])
+    status <- as.character(cohort_row$execution_status)
+    detail <- if (identical(status, "failed")) {
+      "failed (native Choleski exception); excluded from plots"
+    } else {
+      paste0(status, "; excluded from plots")
+    }
+    data.frame(
+      key = key,
+      fixed_tau = tau,
+      objective_function = NA_real_,
+      maximum_gradient_component = NA_real_,
+      active_parameters = NA_integer_,
+      hessian_evaluated = NA,
+      positive_definite_hessian = NA,
+      hessian_status = paste0("not available; fit ", status),
+      convergence_status = detail,
+      kflow_job = as.integer(cohort_row$kflow_job),
+      source = "more_tau_sens Kflow execution status; output excluded",
+      final_par_sha256 = NA_character_,
+      plot_11_rep_sha256 = NA_character_,
+      execution_status = status,
+      included_in_plots = FALSE,
+      stringsAsFactors = FALSE
+    )
+  })
+  names(excluded_fit_rows) <- excluded_keys
+  all_new_fit_rows <- c(new_fit_rows, excluded_fit_rows)[registry_keys]
+  if (any(vapply(all_new_fit_rows, is.null, logical(1L)))) {
+    fail("The all-requested more-tau Fit Summary cohort is incomplete.")
+  }
+  fits <- rbind(old_fits, diagnostic_fit, do.call(rbind, all_new_fit_rows))
   row.names(fits) <- NULL
-  if (!identical(fits$key, all_keys)) fail("Combined fixed-tau diagnostics are out of order.")
+  if (!identical(fits$key, c(old_keys, "diagnostic", registry_keys))) {
+    fail("Combined fixed-tau Fit Summary is out of order.")
+  }
   provenance <- do.call(rbind, provenance_rows)
   row.names(provenance) <- NULL
 
@@ -414,17 +479,18 @@ refresh_compact_data <- function() {
       "Original sensitivity design", "Additional sensitivity design",
       "Original public time series", "Original public fit diagnostics",
       "Original completed-output audit", "Viewer HTML template",
-      "Staged more-tau derived series", "Staged Kflow input provenance"
+      "Staged more-tau derived series", "Staged all-requested fit cohort",
+      "Staged Kflow input provenance"
     ),
     file = c(
       old_design_file, new_design_file, main_series_file, main_fits_file,
-      main_audit_file, template_file, "derived-timeseries-raw.csv",
+      main_audit_file, template_file, "derived-timeseries-raw.csv", "fit-cohort.csv",
       "kflow-input-provenance.csv"
     ),
     sha256 = c(
       sha256(old_design_file), sha256(new_design_file), sha256(main_series_file),
       sha256(main_fits_file), sha256(main_audit_file), sha256(template_file),
-      sha256(raw_series_file), sha256(job_provenance_file)
+      sha256(raw_series_file), sha256(fit_cohort_file), sha256(job_provenance_file)
     ),
     stringsAsFactors = FALSE
   )
@@ -435,13 +501,14 @@ refresh_compact_data <- function() {
   utils::write.csv(fits, compact_fits_file, row.names = FALSE, na = "")
   utils::write.csv(original_provenance, compact_original_provenance_file, row.names = FALSE, na = "")
   utils::write.csv(provenance, compact_provenance_file, row.names = FALSE, na = "")
+  utils::write.csv(fit_cohort, compact_fit_cohort_file, row.names = FALSE, na = "")
   utils::write.csv(job_provenance, compact_input_jobs_file, row.names = FALSE, na = "")
   utils::write.csv(source_rows, compact_sources_file, row.names = FALSE, na = "")
 
   checksum_files <- c(
     compact_design_file, compact_series_file, compact_fits_file,
     compact_original_provenance_file, compact_provenance_file,
-    compact_input_jobs_file, compact_sources_file
+    compact_fit_cohort_file, compact_input_jobs_file, compact_sources_file
   )
   checksum_lines <- vapply(
     checksum_files,
@@ -469,6 +536,7 @@ checksum_parts <- strsplit(checksum_lines, "[[:space:]]+", perl = TRUE)
 expected_checksum_files <- basename(c(
   compact_design_file, compact_series_file, compact_fits_file,
   compact_original_provenance_file, compact_provenance_file,
+  if (file.exists(compact_fit_cohort_file)) compact_fit_cohort_file,
   if (file.exists(compact_input_jobs_file)) compact_input_jobs_file,
   compact_sources_file
 ))
@@ -491,7 +559,12 @@ provenance <- read_csv(compact_provenance_file)
 sources <- read_csv(compact_sources_file)
 if (!identical(as.character(design$key), all_keys)) fail("Committed viewer design is inconsistent.")
 check_series(series, all_keys)
-if (!identical(as.character(fits$key), all_keys)) fail("Committed viewer diagnostics are inconsistent.")
+fit_keys <- if (file.exists(compact_fit_cohort_file)) {
+  c(old_keys, "diagnostic", registry_keys)
+} else {
+  all_keys
+}
+if (!identical(as.character(fits$key), fit_keys)) fail("Committed viewer diagnostics are inconsistent.")
 if (!identical(as.character(original_provenance$key), old_keys)) {
   fail("Committed original-tau provenance is inconsistent.")
 }
@@ -512,6 +585,10 @@ if (any(!file.exists(repository_sources$file)) ||
 labels <- stats::setNames(as.character(design$label), design$key)
 series$model <- unname(labels[series$key])
 if (anyNA(series$model)) fail("A fixed-tau model label is missing.")
+fit_labels <- labels
+registry_labels <- paste0("tau = ", as.character(registry_preview$alternative))
+names(registry_labels) <- registry_preview$key
+fit_labels[names(registry_labels)] <- registry_labels
 
 metric_specs <- data.frame(
   column = c("depletion", "recruitment", "spawning_potential", "fishing_mortality"),
@@ -545,18 +622,32 @@ key_records <- do.call(
   })
 )
 
+fit_execution_status <- if ("execution_status" %in% names(fits)) {
+  as.character(fits$execution_status)
+} else {
+  ifelse(fits$key == "diagnostic", "not available", "completed")
+}
+fit_included <- if ("included_in_plots" %in% names(fits)) {
+  as.logical(fits$included_in_plots)
+} else {
+  fits$key %in% design$key
+}
 fit_table <- data.frame(
-  Model = unname(labels[fits$key]),
+  Model = unname(fit_labels[fits$key]),
   `Fixed tau` = fits$fixed_tau,
   `Objective value` = fits$objective_function,
   MGC = fits$maximum_gradient_component,
   `Active parameters` = fits$active_parameters,
-  Status = fits$convergence_status,
-  `Kflow job` = fits$kflow_job,
-  Source = fits$source,
   check.names = FALSE,
   stringsAsFactors = FALSE
 )
+if (file.exists(compact_fit_cohort_file)) {
+  fit_table[["Execution status"]] <- fit_execution_status
+  fit_table[["Included in plots"]] <- fit_included
+}
+fit_table[["Status"]] <- fits$convergence_status
+fit_table[["Kflow job"]] <- fits$kflow_job
+fit_table[["Source"]] <- fits$source
 
 all_provenance <- rbind(original_provenance, provenance)
 provenance_table <- data.frame(
@@ -584,10 +675,18 @@ colours[design$key == "diagnostic"] <- "#C62828"
 payload <- list(
   title = "BET 2026 exploratory fixed-tau sensitivity",
   generated_at = paste0(source_date, " (deterministic source date)"),
-  note = paste0(
-    "Exploratory fixed-tau sensitivity results only; this is not a stock-assessment update. ",
-    "The Diagnostic model fixes tau at 2."
-  ),
+  note = if (file.exists(compact_fit_cohort_file)) {
+    paste0(
+      "Exploratory fixed-tau sensitivity results only; this is not a stock-assessment update. ",
+      "The Diagnostic model fixes tau at 2. Plots include completed fits only; Fit Summary ",
+      "retains all requested fits and their execution status."
+    )
+  } else {
+    paste0(
+      "Exploratory fixed-tau sensitivity results only; this is not a stock-assessment update. ",
+      "The Diagnostic model fixes tau at 2."
+    )
+  },
   models = data.frame(
     key = design$key,
     label = design$label,
@@ -603,7 +702,7 @@ payload <- list(
     ),
     list(
       key = "model_summary",
-      label = "Fit diagnostics",
+      label = if (file.exists(compact_fit_cohort_file)) "Fit Summary" else "Fit diagnostics",
       kind = "table",
       records = fit_table,
       columns = names(fit_table)

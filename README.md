@@ -74,23 +74,29 @@ from the branch-specific prerelease and open it locally in a web browser. This
 exploratory viewer is separate from the published sensitivity report and does
 not replace the stock-assessment results.
 
-After all 18 campaign fits are available, a separate fan-in Kflow job rebuilds
-a 24-model viewer from their exact dependency archives and the committed main
-public series for the five original fixed-tau cases plus Diagnostic. Its only
-artefacts are the self-contained HTML and audited compact data below
-`outputs/more-tau-viewer/`; it does not change the report, PDFs, GitHub Pages,
-the release asset, or tracked repository data. Preview the exact 18-input
-payload, then submit it after the fit branch is committed and pushed:
+A separate completed-only fan-in Kflow job rebuilds a snapshot from the 16
+completed campaign fits and the committed main public series for the five
+original fixed-tau cases plus Diagnostic: 22 models are plotted. Its Fit
+Summary retains all 24 requested rows, explicitly marking running `tau=4.6`
+and failed `tau=4.8` (native Choleski exception) as excluded with unavailable
+fit quantities. Its only artefacts are the self-contained HTML and audited
+compact data below `outputs/more-tau-viewer-completed-only/`; it does not
+change the report, PDFs, GitHub Pages, the existing prerelease asset, or
+tracked repository data. Preview the exact completed cohort payload, then
+submit it only after the viewer branch is committed and pushed:
 
 ```sh
 ./scripts/submit-kflow-more-tau-viewer
 KFLOW_API_TOKEN=... ./scripts/submit-kflow-more-tau-viewer --submit
 ```
 
-The helper discovers job references by `more-tau-<key>` or accepts the exact
-comma-separated set through `MORE_TAU_FIT_JOB_REFS`. Both the registered task
-and its single job carry those 18 `input_jobs`, use `input_jobs_override`, and
-have empty triggers so Kflow supplies and waits for every dependency.
+The helper discovers and verifies all 18 job records by `more-tau-<key>`, but
+both its separate task and single job carry only the exact 16 completed jobs as
+`input_jobs`. Preview overrides use `MORE_TAU_FIT_JOB_REFS` for those 16 jobs
+and `MORE_TAU_EXCLUDED_JOB_REFS=tau-4.6=JOB,tau-4.8=JOB` for the two status-only
+rows. The original eight source fits are pinned to commit `dcd289e`; the fine
+grid fits are pinned to `0043eea`. The task uses `input_jobs_override`, refuses
+failed dependencies, and has empty triggers and no attachment metadata.
 
 ## Inspect and run one model
 

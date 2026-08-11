@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or submit the one 18-fit fan-in fixed-tau viewer job."""
+"""Preview or submit the completed-only 16-fit fixed-tau viewer fan-in."""
 
 from __future__ import annotations
 
@@ -16,16 +16,17 @@ from typing import Any
 
 import yaml
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "kflow-more-tau-viewer.yaml"
 REGISTRY_PATH = ROOT / "more_tau_sens.csv"
-TASK = "BET-2026-sensitivity-more-tau-viewer"
+TASK = "BET-2026-sensitivity-more-tau-viewer-completed-only"
 FIT_TASK = "BET-2026-sensitivity-more-tau"
 REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
 BRANCH = "more_tau_sens"
-JOB_KEY = "more-tau-aggregate-viewer-24-models"
+JOB_KEY = "more-tau-completed-only-viewer-22-models"
 ORIGINAL_SOURCE_COMMIT = "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
+FINE_SOURCE_COMMIT = "0043eea6bf908608cd438c80b67858352abd6f89"
+EXCLUDED_STATUS = {"tau-4.6": "running", "tau-4.8": "failed"}
 FORBIDDEN_METADATA = {
     "attachment", "attachments", "base_job", "check_input_jobs", "check_type",
     "diagnostic-support", "latest_attached_output", "source_base_job",
@@ -33,9 +34,7 @@ FORBIDDEN_METADATA = {
 FORBIDDEN_PREFIXES = ("attached_work", "attached_output")
 
 
-def api_json(
-    method: str, url: str, token: str, payload: dict[str, Any] | None = None
-) -> dict[str, Any]:
+def api_json(method: str, url: str, token: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
     body = None if payload is None else json.dumps(payload).encode("utf-8")
     headers = {"Authorization": f"Bearer {token}"}
     if body is not None:
@@ -52,33 +51,39 @@ def api_json(
 
 def run(*args: str) -> str:
     return subprocess.run(
-        args, cwd=ROOT, check=True, text=True, stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        args, cwd=ROOT, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     ).stdout.strip()
 
 
-def load() -> tuple[dict[str, Any], list[str]]:
+def forbidden_metadata(metadata: dict[str, Any]) -> set[str]:
+    names = {str(name).lower() for name in metadata}
+    return {name for name in names if name in FORBIDDEN_METADATA or name.startswith(FORBIDDEN_PREFIXES)}
+
+
+def load() -> tuple[dict[str, Any], list[str], list[str]]:
     config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
     with REGISTRY_PATH.open(encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
-    keys = [row["key"] for row in rows]
-    fine_tau = [round(4.2 + 0.2 * index, 1) for index in range(10)]
-    expected_fine = [f"tau-{value:g}" for value in fine_tau]
-    expected_original = [f"tau-{value}" for value in range(4, 33, 4)]
-    if keys != expected_original + expected_fine:
+    all_keys = [row["key"] for row in rows]
+    expected = [f"tau-{value}" for value in range(4, 33, 4)] + [
+        f"tau-{round(4.2 + 0.2 * index, 1):g}" for index in range(10)
+    ]
+    if all_keys != expected:
         raise ValueError("Registry must contain the original eight then tau=4.2,...,6.0.")
+    included = [key for key in all_keys if key not in EXCLUDED_STATUS]
+    if len(included) != 16:
+        raise ValueError("Completed-only snapshot must contain exactly 16 fit dependencies.")
     if config.get("name") != TASK or config.get("triggers") not in ({}, None):
-        raise ValueError("Viewer Kflow task name or empty trigger contract changed.")
+        raise ValueError("Completed-only viewer task name or empty-trigger contract changed.")
     if config.get("command") != "Rscript scripts/run-more-tau-viewer.R":
-        raise ValueError("Viewer task must use its aggregate runner.")
-    if config.get("output_patterns") != ["outputs/more-tau-viewer/**"]:
-        raise ValueError("Viewer task output scope must remain branch-only under outputs/.")
+        raise ValueError("Completed-only task must use its aggregate runner.")
+    if config.get("output_patterns") != ["outputs/more-tau-viewer-completed-only/**"]:
+        raise ValueError("Completed-only output scope changed.")
     if config.get("local_apps") is not None or config.get("local_apps_from") is not None:
-        raise ValueError("The aggregate viewer task must not attach a local application.")
-    metadata = config.get("metadata") or {}
-    if forbidden_metadata(metadata):
-        raise ValueError("Viewer metadata contains an attachment/base/check field.")
-    return config, keys
+        raise ValueError("Completed-only viewer must not attach a local application.")
+    if forbidden_metadata(config.get("metadata") or {}):
+        raise ValueError("Viewer config contains attachment/base/check metadata.")
+    return config, all_keys, included
 
 
 def parse_refs(value: str, expected: int) -> list[str]:
@@ -87,65 +92,95 @@ def parse_refs(value: str, expected: int) -> list[str]:
         len(refs) != expected or len(set(refs)) != expected
         or any(not ref.isdigit() or int(ref) <= 0 for ref in refs)
     ):
-        raise ValueError(f"Expected {expected} unique fit job references; received {len(refs)}.")
+        raise ValueError(f"Expected {expected} unique positive completed-fit references.")
     return refs
 
 
-def forbidden_metadata(metadata: dict[str, Any]) -> set[str]:
-    names = {str(name).lower() for name in metadata}
-    return {
-        name for name in names
-        if name in FORBIDDEN_METADATA or name.startswith(FORBIDDEN_PREFIXES)
-    }
+def parse_excluded(value: str) -> dict[str, str]:
+    found: dict[str, str] = {}
+    for part in (item.strip() for item in value.split(",") if item.strip()):
+        key, separator, number = part.partition("=")
+        number = number.strip().lstrip("#")
+        if not separator or key not in EXCLUDED_STATUS or not number.isdigit() or int(number) <= 0:
+            raise ValueError("Excluded refs must be tau-4.6=JOB,tau-4.8=JOB.")
+        found[key] = number
+    if found and set(found) != set(EXCLUDED_STATUS):
+        raise ValueError("Both excluded fit references are required.")
+    return found
 
 
-def discover_refs(
-    base_url: str, token: str, keys: list[str], fine_source_commit: str
-) -> list[str]:
-    wanted = {f"more-tau-{key}": key for key in keys}
+def source_commit_for(key: str) -> str:
+    return ORIGINAL_SOURCE_COMMIT if key in {f"tau-{value}" for value in range(4, 33, 4)} else FINE_SOURCE_COMMIT
+
+
+def make_cohort(all_keys: list[str], included: list[str], refs: list[str], excluded: dict[str, str]) -> list[dict[str, Any]]:
+    by_key = dict(zip(included, refs, strict=True))
+    by_key.update(excluded)
+    if set(by_key) != set(all_keys):
+        raise ValueError("The fit cohort is missing completed or excluded job references.")
+    return [
+        {
+            "key": key,
+            "kflow_job": int(by_key[key]),
+            "execution_status": EXCLUDED_STATUS.get(key, "completed"),
+            "included_in_plots": key in included,
+            "source_commit": source_commit_for(key),
+        }
+        for key in all_keys
+    ]
+
+
+def discover(base_url: str, token: str, all_keys: list[str], included: list[str]) -> tuple[list[str], list[dict[str, Any]]]:
+    wanted = {f"more-tau-{key}": key for key in all_keys}
     found: dict[str, dict[str, Any]] = {}
-    unexpected: list[str] = []
     task_path = urllib.parse.quote(FIT_TASK, safe="")
     for page in range(1, 30):
-        response = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page={page}", token)
-        jobs = response.get("jobs") or []
+        jobs = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page={page}", token).get("jobs") or []
         if not jobs:
             break
         for job in jobs:
             env = job.get("env") or job.get("env_json") or {}
-            key = str(env.get("JOB_KEY") or "")
-            if key in wanted:
-                if key in found:
-                    raise ValueError(f"More than one fit job exists for {key}.")
-                found[key] = job
-            elif key.startswith("more-tau-"):
-                unexpected.append(key)
-    if unexpected:
-        raise ValueError("Unexpected/replaced more-tau jobs exist: " + ", ".join(sorted(unexpected)))
-    missing = [key for key in wanted if key not in found]
+            job_key = str(env.get("JOB_KEY") or "")
+            if job_key in wanted:
+                if job_key in found:
+                    raise ValueError(f"Duplicate fit job exists for {job_key}.")
+                found[job_key] = job
+            elif job_key.startswith("more-tau-"):
+                raise ValueError(f"Unexpected/replaced more-tau job exists: {job_key}.")
+    missing = [job_key for job_key in wanted if job_key not in found]
     if missing:
-        raise ValueError("Could not resolve all fit dependencies: " + ", ".join(missing))
-    acceptable = {"queued", "waiting", "pending", "submitting", "submitted", "running", "completed"}
-    for index, key in enumerate(keys):
+        raise ValueError("Could not resolve the full 18-row fit cohort: " + ", ".join(missing))
+    rows: list[dict[str, Any]] = []
+    for key in all_keys:
         job = found[f"more-tau-{key}"]
+        env = job.get("env") or job.get("env_json") or {}
         metadata = job.get("metadata") or {}
-        source_commit = str(metadata.get("source_commit") or "")
-        expected_commit = ORIGINAL_SOURCE_COMMIT if index < 8 else fine_source_commit
-        if (
-            str(job.get("report_code") or job.get("task") or "").lower() != FIT_TASK.lower()
-            or str(job.get("repo_full_name") or job.get("repo") or "") != REPO
-            or str(job.get("branch") or "") != BRANCH
-            or str((job.get("env") or job.get("env_json") or {}).get("JOB_KEY") or "")
-            != f"more-tau-{key}"
-            or str(job.get("status") or "").lower() not in acceptable
-            or source_commit != expected_commit
-        ):
-            raise ValueError(f"Fit dependency {key} failed task/repo/branch/status/source verification.")
-    return [str(found[f"more-tau-{key}"]["job_number"]) for key in keys]
+        observed_status = str(job.get("status") or "").lower()
+        expected_status = EXCLUDED_STATUS.get(key, "completed")
+        checks = (
+            str(job.get("report_code") or job.get("task") or "").lower() == FIT_TASK.lower(),
+            str(job.get("repo_full_name") or job.get("repo") or "") == REPO,
+            str(job.get("branch") or "") == BRANCH,
+            env.get("JOB_KEY") == f"more-tau-{key}",
+            observed_status == expected_status,
+            str(metadata.get("source_commit") or "") == source_commit_for(key),
+        )
+        if not all(checks):
+            raise ValueError(f"Fit {key} failed exact task/branch/status/source verification.")
+        rows.append({
+            "key": key,
+            "kflow_job": int(job["job_number"]),
+            "execution_status": observed_status,
+            "included_in_plots": key in included,
+            "source_commit": source_commit_for(key),
+        })
+    refs = [str(next(row["kflow_job"] for row in rows if row["key"] == key)) for key in included]
+    return refs, rows
 
 
-def common_payload(config: dict[str, Any], refs: list[str], source_commit: str) -> dict[str, Any]:
+def common_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[str, Any]], viewer_commit: str) -> dict[str, Any]:
     resources = config["resources"]
+    env = {**dict(config.get("env") or {}), "MORE_TAU_FIT_COHORT_JSON": json.dumps(cohort, separators=(",", ":"))}
     payload = {
         "repo": REPO,
         "branch": BRANCH,
@@ -154,19 +189,18 @@ def common_payload(config: dict[str, Any], refs: list[str], source_commit: str) 
         "remote_host": config["remote_host"],
         "remote_user": config["remote_user"],
         "remote_base_dir": config["remote_base_dir"],
-        "cpus": resources["cpus"],
-        "memory": resources["memory"],
-        "disk": resources["disk"],
+        "cpus": resources["cpus"], "memory": resources["memory"], "disk": resources["disk"],
         "slot_requirements": config["slot_requirements"],
         "exclude_machines": config.get("exclude_machines") or [],
         "exclude_slots": config.get("exclude_slots") or [],
-        "env": config.get("env") or {},
-        "tags": config.get("tags") or {},
+        "env": env, "tags": config.get("tags") or {},
         "metadata": {
             **dict(config.get("metadata") or {}),
-            "source_commit": source_commit,
-            "fit_job_count": len(refs),
-            "dependency_mode": "fan-in",
+            "source_commit": viewer_commit,
+            "fit_job_count": 16,
+            "fit_summary_rows": 24,
+            "completed_fit_job_refs": refs,
+            "dependency_mode": "completed-only-fan-in",
             "input_jobs_override": True,
             "allow_failed_input_jobs": False,
         },
@@ -175,78 +209,75 @@ def common_payload(config: dict[str, Any], refs: list[str], source_commit: str) 
         "triggers": {},
     }
     if forbidden_metadata(payload["metadata"]):
-        raise ValueError("Generated payload contains forbidden metadata.")
+        raise ValueError("Generated completed-only payload contains forbidden metadata.")
     return payload
 
 
-def report_payload(config: dict[str, Any], refs: list[str], source_commit: str) -> dict[str, Any]:
-    common = common_payload(config, refs, source_commit)
-    return {
-        "name": TASK,
-        "description": config["description"],
-        "repo_full_name": common.pop("repo"),
-        **common,
-    }
+def report_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[str, Any]], commit: str) -> dict[str, Any]:
+    common = common_payload(config, refs, cohort, commit)
+    return {"name": TASK, "description": config["description"], "repo_full_name": common.pop("repo"), **common}
 
 
-def job_payload(config: dict[str, Any], refs: list[str], source_commit: str) -> dict[str, Any]:
-    payload = common_payload(config, refs, source_commit)
-    payload["batch_name"] = "bet-2026-more-tau-viewer-batch"
+def job_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[str, Any]], commit: str) -> dict[str, Any]:
+    payload = common_payload(config, refs, cohort, commit)
+    payload["batch_name"] = "bet-2026-more-tau-viewer-completed-only-batch"
     return payload
 
 
 def assert_pushed_branch() -> str:
     if run("git", "status", "--porcelain"):
-        raise ValueError("Commit and push the exact viewer inputs before submission.")
+        raise ValueError("Commit and push exact viewer inputs before submission.")
     if run("git", "branch", "--show-current") != BRANCH:
         raise ValueError(f"Submission must use branch {BRANCH}.")
     head = run("git", "rev-parse", "HEAD")
     if head != run("git", "rev-parse", f"origin/{BRANCH}"):
-        raise ValueError("Local and pushed branch heads differ.")
+        raise ValueError("Local and pushed viewer branch heads differ.")
     return head
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--submit", action="store_true", help="Register and create the fan-in job.")
-    parser.add_argument(
-        "--fit-jobs",
-        default=os.environ.get("MORE_TAU_FIT_JOB_REFS", ""),
-        help="Comma-separated 18 fit job references; otherwise discover through Kflow for --submit.",
-    )
+    parser.add_argument("--submit", action="store_true")
+    parser.add_argument("--fit-jobs", default=os.environ.get("MORE_TAU_FIT_JOB_REFS", ""))
+    parser.add_argument("--excluded-jobs", default=os.environ.get("MORE_TAU_EXCLUDED_JOB_REFS", ""))
     args = parser.parse_args()
-    config, keys = load()
-    refs = parse_refs(args.fit_jobs, len(keys))
+    config, all_keys, included = load()
+    refs = parse_refs(args.fit_jobs, 16)
+    excluded = parse_excluded(args.excluded_jobs)
     token = os.environ.get("KFLOW_API_TOKEN", "")
     base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
-    source_commit = assert_pushed_branch() if args.submit else "<pushed-more_tau_sens>"
+    viewer_commit = assert_pushed_branch() if args.submit else "<pushed-viewer-commit>"
     if args.submit:
         if not token:
-            raise SystemExit("Set KFLOW_API_TOKEN or provide MORE_TAU_FIT_JOB_REFS.")
-        discovered = discover_refs(base_url, token, keys, source_commit)
-        if refs and refs != discovered:
-            raise ValueError("Explicit fit references differ from the verified Kflow cohort.")
-        refs = discovered
-    if not refs:
+            raise SystemExit("Set KFLOW_API_TOKEN before submission.")
+        discovered_refs, cohort = discover(base_url, token, all_keys, included)
+        if refs and refs != discovered_refs:
+            raise ValueError("Explicit completed refs differ from verified Kflow state.")
+        if excluded:
+            discovered_excluded = {
+                row["key"]: str(row["kflow_job"])
+                for row in cohort if not row["included_in_plots"]
+            }
+            if excluded != discovered_excluded:
+                raise ValueError("Explicit excluded refs differ from verified Kflow state.")
+        refs = discovered_refs
+    elif refs or excluded:
+        if not refs or not excluded:
+            raise ValueError("Preview requires both 16 completed refs and two excluded refs.")
+        cohort = make_cohort(all_keys, included, refs, excluded)
+    else:
         print(json.dumps({
-            "task": TASK,
-            "branch": BRANCH,
-            "fit_task": FIT_TASK,
-            "input_job_keys": [f"more-tau-{key}" for key in keys],
-            "input_jobs": "resolve 18 refs with --fit-jobs or Kflow at submission",
-            "triggers": {},
-            "forbidden_metadata_absent": sorted(FORBIDDEN_METADATA),
+            "task": TASK, "branch": BRANCH, "fit_task": FIT_TASK,
+            "completed_input_job_keys": [f"more-tau-{key}" for key in included],
+            "excluded": EXCLUDED_STATUS, "input_jobs": "resolve exact 16 completed refs",
+            "plotted_models": 22, "fit_summary_rows": 24, "triggers": {},
         }, indent=2))
         return 0
-
-    report = report_payload(config, refs, source_commit)
-    job = job_payload(config, refs, source_commit)
+    report = report_payload(config, refs, cohort, viewer_commit)
+    job = job_payload(config, refs, cohort, viewer_commit)
     if not args.submit:
         print(json.dumps({"report": report, "job": job}, indent=2))
         return 0
-    if not token:
-        raise SystemExit("Set KFLOW_API_TOKEN before submission.")
-
     task_path = urllib.parse.quote(TASK, safe="")
     api_json("POST", f"{base_url}/api/report/{task_path}", token, report)
     report_response = api_json("GET", f"{base_url}/api/report/{task_path}/", token)
@@ -255,52 +286,54 @@ def main() -> int:
     report_checks = (
         [str(value) for value in observed_report.get("input_jobs", [])] == refs,
         observed_report.get("triggers") in ({}, None),
+        not forbidden_metadata(report_metadata),
         str(observed_report.get("branch") or "") == BRANCH,
         str(observed_report.get("command") or "") == report["command"],
         observed_report.get("output_patterns") == report["output_patterns"],
         int(observed_report.get("cpus") or 0) == int(report["cpus"]),
         str(observed_report.get("memory") or "") == str(report["memory"]),
         str(observed_report.get("disk") or "") == str(report["disk"]),
-        str(report_metadata.get("source_commit") or "") == source_commit,
-        not forbidden_metadata(report_metadata),
+        report_metadata.get("source_commit") == viewer_commit,
+        report_metadata.get("allow_failed_input_jobs") is False,
+        [str(value) for value in report_metadata.get("completed_fit_job_refs", [])] == refs,
     )
     if not all(report_checks):
-        raise ValueError("Registered viewer task failed its exact 18-input branch-only verification.")
+        raise ValueError("Registered completed-only viewer task failed verification.")
     existing = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page=1", token).get("jobs") or []
-    for value in existing:
-        env = value.get("env") or value.get("env_json") or {}
-        if env.get("JOB_KEY") == JOB_KEY:
-            raise ValueError("The aggregate viewer JOB_KEY already exists; no job was created.")
+    if any(((value.get("env") or value.get("env_json") or {}).get("JOB_KEY") == JOB_KEY) for value in existing):
+        raise ValueError("Completed-only viewer JOB_KEY already exists.")
     response = api_json("POST", f"{base_url}/api/job/{task_path}", token, job)
     created = response.get("job", response)
     number = int(created["job_number"])
     observed_response = api_json("GET", f"{base_url}/api/job/{number}/", token)
     observed = observed_response.get("job", observed_response)
-    observed_metadata = observed.get("metadata") or {}
-    observed_env = observed.get("env") or observed.get("env_json") or {}
-    if [str(value) for value in observed.get("input_jobs", [])] != refs:
-        raise ValueError("Accepted viewer job does not retain the exact 18 input references.")
-    if observed.get("triggers") not in ({}, None):
-        raise ValueError("Accepted viewer job unexpectedly contains triggers.")
-    if forbidden_metadata(observed_metadata):
-        raise ValueError("Accepted viewer job unexpectedly contains attachment/base/check metadata.")
-    expected = job
+    metadata = observed.get("metadata") or {}
+    env = observed.get("env") or observed.get("env_json") or {}
     checks = (
-        str(observed.get("status") or "").lower() in {
-            "waiting", "submitted", "running", "completed"
-        },
+        # The live job-detail endpoint omits input_jobs and triggers.  The full
+        # task registration above is the authoritative dependency contract;
+        # compare these fields here only if this API version exposes them.
+        "input_jobs" not in observed
+        or [str(value) for value in observed.get("input_jobs", [])] == refs,
+        "triggers" not in observed or observed.get("triggers") in ({}, None),
+        not forbidden_metadata(metadata),
         str(observed.get("branch") or "") == BRANCH,
-        str(observed.get("command") or "") == expected["command"],
+        str(observed.get("command") or "") == job["command"],
         str(observed.get("repo_full_name") or observed.get("repo") or "") == REPO,
-        observed.get("output_patterns") == expected["output_patterns"],
-        int(observed.get("cpus") or 0) == int(expected["cpus"]),
-        str(observed.get("memory") or "") == str(expected["memory"]),
-        str(observed.get("disk") or "") == str(expected["disk"]),
-        str(observed_metadata.get("source_commit") or "") == source_commit,
-        observed_env.get("JOB_KEY") == JOB_KEY,
+        "output_patterns" not in observed
+        or observed.get("output_patterns") == job["output_patterns"],
+        int(observed.get("cpus") or 0) == int(job["cpus"]),
+        str(observed.get("memory") or "") == str(job["memory"]),
+        str(observed.get("disk") or "") == str(job["disk"]),
+        metadata.get("source_commit") == viewer_commit,
+        metadata.get("allow_failed_input_jobs") is False,
+        metadata.get("input_jobs_override") is True,
+        [str(value) for value in metadata.get("completed_fit_job_refs", [])] == refs,
+        env.get("JOB_KEY") == JOB_KEY,
+        str(observed.get("status") or "").lower() in {"waiting", "submitted", "running", "completed"},
     )
     if not all(checks):
-        raise ValueError("Accepted viewer job failed status/branch/command/resource/output verification.")
+        raise ValueError("Accepted completed-only viewer job failed verification.")
     print(json.dumps({"task": TASK, "job_number": number, "input_jobs": refs}, indent=2))
     return 0
 

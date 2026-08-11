@@ -27,10 +27,13 @@ files <- list(
   fits = file.path(data_dir, "fixed-tau-fit-diagnostics.csv"),
   original = file.path(data_dir, "original-tau-output-provenance.csv"),
   provenance = file.path(data_dir, "more-tau-output-provenance.csv"),
+  cohort = file.path(data_dir, "fit-cohort.csv"),
+  input_jobs = file.path(data_dir, "kflow-input-provenance.csv"),
   sources = file.path(data_dir, "source-inputs-sha256.csv"),
   checksums = file.path(data_dir, "SHA256SUMS")
 )
-required <- c(unname(unlist(files)), html_file)
+required_file_keys <- c("design", "series", "fits", "original", "provenance", "sources", "checksums")
+required <- c(unname(unlist(files[required_file_keys])), html_file)
 missing <- required[!file.exists(required)]
 if (length(missing)) fail("Missing viewer artefact(s): ", paste(missing, collapse = ", "))
 
@@ -40,9 +43,8 @@ expected_names <- c(
   "fixed-tau-design.csv", "fixed-tau-timeseries.csv", "fixed-tau-fit-diagnostics.csv",
   "original-tau-output-provenance.csv", "more-tau-output-provenance.csv"
 )
-if (file.exists(file.path(data_dir, "kflow-input-provenance.csv"))) {
-  expected_names <- c(expected_names, "kflow-input-provenance.csv")
-}
+if (file.exists(files$cohort)) expected_names <- c(expected_names, "fit-cohort.csv")
+if (file.exists(files$input_jobs)) expected_names <- c(expected_names, "kflow-input-provenance.csv")
 expected_names <- c(expected_names, "source-inputs-sha256.csv")
 if (length(checksum_parts) != length(expected_names) ||
     !identical(vapply(checksum_parts, `[[`, character(1), 2L), expected_names)) {
@@ -62,6 +64,14 @@ fits <- read_csv(files$fits)
 original <- read_csv(files$original)
 provenance <- read_csv(files$provenance)
 sources <- read_csv(files$sources)
+completed_snapshot <- file.exists(files$cohort)
+if (completed_snapshot != file.exists(files$input_jobs)) {
+  fail("Completed-only cohort and Kflow input provenance must be present together.")
+}
+if (completed_snapshot) {
+  cohort <- read_csv(files$cohort)
+  input_jobs <- read_csv(files$input_jobs)
+}
 old_keys <- c("tau-1.006738", "tau-1.2", "tau-1.4", "tau-1.6", "tau-1.8")
 old_tau <- c(1.006737947, 1.2, 1.4, 1.6, 1.8)
 old_jobs <- c(22181L, 22184L, 22186L, 22188L, 22179L)
@@ -72,18 +82,21 @@ all_keys <- c(old_keys, "diagnostic", new_keys)
 legacy_new_keys <- c("tau-4", "tau-8", "tau-12", "tau-16", "tau-20", "tau-24", "tau-28", "tau-32")
 legacy_snapshot <- identical(new_keys, legacy_new_keys)
 registry_rows <- registry[match(new_keys, registry$key), , drop = FALSE]
-complete_required <- tolower(Sys.getenv("MORE_TAU_VIEWER_REQUIRE_COMPLETE", "")) %in%
-  c("1", "true", "yes", "on")
 if (!identical(as.character(design$key), all_keys) ||
     !identical(as.integer(design$model_order), seq_along(all_keys)) ||
     anyNA(registry_rows$key) || !identical(as.character(registry_rows$key), new_keys) ||
     !isTRUE(all.equal(as.numeric(design$fixed_tau),
-      c(old_tau, 2, as.numeric(registry_rows$alternative)), tolerance = 1e-12)) ||
-    (complete_required && !identical(new_keys, registry_keys))) {
+      c(old_tau, 2, as.numeric(registry_rows$alternative)), tolerance = 1e-12))) {
   fail("Fixed-tau design keys, values, registry binding or ordering are incorrect.")
 }
-if (complete_required && (nrow(design) != 24L || length(new_keys) != 18L)) {
-  fail("The Kflow aggregate must contain 24 models from exactly 18 fit dependencies.")
+completed_new_keys <- c(
+  "tau-4", "tau-4.2", "tau-4.4", "tau-5", "tau-5.2", "tau-5.4", "tau-5.6",
+  "tau-5.8", "tau-6", "tau-8", "tau-12", "tau-16", "tau-20", "tau-24",
+  "tau-28", "tau-32"
+)
+if (completed_snapshot &&
+    (!identical(new_keys, completed_new_keys) || nrow(design) != 22L)) {
+  fail("Completed-only viewer design must contain exactly 22 plotted models.")
 }
 
 numeric_series <- c(
@@ -114,21 +127,22 @@ for (key in c(old_keys, "diagnostic")) {
   }
 }
 
-if (!identical(as.character(fits$key), all_keys) ||
-    !identical(as.integer(fits$kflow_job), as.integer(design$kflow_job)) ||
+fit_keys <- if (completed_snapshot) c(old_keys, "diagnostic", registry_keys) else all_keys
+if (!identical(as.character(fits$key), fit_keys) ||
     !identical(as.character(provenance$key), new_keys) ||
     !identical(as.integer(provenance$kflow_job),
       as.integer(design$kflow_job[match(new_keys, design$key)]))) {
-  fail("Fit diagnostics, design and dependency provenance disagree.")
-}
-non_diagnostic <- fits$key != "diagnostic"
-if (any(!is.finite(fits$objective_function[non_diagnostic])) ||
-    any(!is.finite(fits$maximum_gradient_component[non_diagnostic])) ||
-    any(fits$maximum_gradient_component[non_diagnostic] < 0) ||
-    any(!is.finite(fits$active_parameters[non_diagnostic]))) {
-  fail("A non-Diagnostic fit has incomplete objective, MGC or parameter diagnostics.")
+  fail("Fit Summary, design and dependency provenance disagree.")
 }
 new_fits <- fits[match(new_keys, fits$key), , drop = FALSE]
+completed_fit_keys <- if (completed_snapshot) c(old_keys, "diagnostic", new_keys) else setdiff(all_keys, "diagnostic")
+completed_fits <- fits[match(completed_fit_keys, fits$key), , drop = FALSE]
+if (any(!is.finite(completed_fits$objective_function)) ||
+    any(!is.finite(completed_fits$maximum_gradient_component)) ||
+    any(completed_fits$maximum_gradient_component < 0) ||
+    any(!is.finite(completed_fits$active_parameters))) {
+  fail("A completed plotted fit has incomplete objective, MGC or parameter diagnostics.")
+}
 expected_status <- ifelse(
   new_fits$maximum_gradient_component <= 1e-4,
   "completed; MGC <= 1e-4", "completed; MGC above 1e-4"
@@ -138,10 +152,21 @@ if (any(new_fits$hessian_evaluated) || any(!is.na(new_fits$positive_definite_hes
     !identical(as.character(new_fits$convergence_status), expected_status)) {
   fail("Additional fits claim unavailable Hessians or inconsistent MGC status.")
 }
-if (!all(is.na(fits[fits$key == "diagnostic", c(
+diagnostic_fit <- fits[fits$key == "diagnostic", , drop = FALSE]
+if (completed_snapshot) {
+  if (!all(c("execution_status", "included_in_plots") %in% names(fits)) ||
+      !identical(as.character(diagnostic_fit$execution_status), "completed") ||
+      !isTRUE(as.logical(diagnostic_fit$included_in_plots)) ||
+      !isTRUE(all.equal(diagnostic_fit$objective_function, 90814.8573966593, tolerance = 1e-12)) ||
+      !isTRUE(all.equal(diagnostic_fit$maximum_gradient_component,
+        9.67941148140092e-05, tolerance = 1e-12)) ||
+      diagnostic_fit$active_parameters != 1997L || diagnostic_fit$kflow_job != 21641L) {
+    fail("Completed-only Diagnostic Fit Summary values are incorrect.")
+  }
+} else if (!all(is.na(diagnostic_fit[, c(
   "objective_function", "maximum_gradient_component", "active_parameters"
 )]))) {
-  fail("Unavailable Diagnostic fit quantities must remain explicitly missing.")
+  fail("Legacy unavailable Diagnostic fit quantities must remain explicitly missing.")
 }
 
 if (!identical(as.character(original$key), old_keys) ||
@@ -150,6 +175,68 @@ if (!identical(as.character(original$key), old_keys) ||
     any(!grepl("^[0-9a-f]{64}$", original$final_par_sha256)) ||
     any(!grepl("^[0-9a-f]{64}$", original$plot_11_rep_sha256))) {
   fail("Original fixed-tau public output provenance is incomplete.")
+}
+if (completed_snapshot) {
+  expected_registry_order <- as.character(registry$key)
+  included <- as.logical(cohort$included_in_plots)
+  expected_status_by_key <- stats::setNames(rep("completed", length(registry_keys)), registry_keys)
+  expected_status_by_key[c("tau-4.6", "tau-4.8")] <- c("running", "failed")
+  expected_commit_by_key <- stats::setNames(
+    ifelse(
+      registry_keys %in% legacy_new_keys,
+      "dcd289eef9f5a63f75e11aabfb4c47af406c8abb",
+      "0043eea6bf908608cd438c80b67858352abd6f89"
+    ),
+    registry_keys
+  )
+  required_cohort_columns <- c(
+    "key", "kflow_job", "execution_status", "included_in_plots", "source_commit"
+  )
+  if (!all(required_cohort_columns %in% names(cohort)) || nrow(cohort) != 18L ||
+      !identical(as.character(cohort$key), expected_registry_order) ||
+      anyDuplicated(as.integer(cohort$kflow_job)) || any(!is.finite(cohort$kflow_job)) ||
+      !identical(as.character(cohort$execution_status),
+        unname(expected_status_by_key[cohort$key])) ||
+      !identical(included, cohort$execution_status == "completed") ||
+      !identical(as.character(cohort$source_commit),
+        unname(expected_commit_by_key[cohort$key])) ||
+      !setequal(as.character(cohort$key[included]), new_keys)) {
+    fail("Completed-only all-requested fit cohort is incorrect.")
+  }
+  if (!identical(as.character(input_jobs$key), new_keys) || nrow(input_jobs) != 16L ||
+      !identical(as.integer(input_jobs$kflow_job),
+        as.integer(cohort$kflow_job[match(new_keys, cohort$key)])) ||
+      !identical(as.character(input_jobs$source_commit),
+        unname(expected_commit_by_key[new_keys]))) {
+    fail("Completed-only Kflow input lineage is not the exact 16-fit dependency set.")
+  }
+  if (!identical(as.integer(design$kflow_job[match(new_keys, design$key)]),
+        as.integer(cohort$kflow_job[match(new_keys, cohort$key)])) ||
+      !identical(as.integer(fits$kflow_job[match(registry_keys, fits$key)]),
+        as.integer(cohort$kflow_job[match(registry_keys, cohort$key)]))) {
+    fail("Completed-only design/Fit Summary jobs disagree with the cohort.")
+  }
+  if (!identical(as.character(provenance$source_commit),
+        unname(expected_commit_by_key[new_keys]))) {
+    fail("Completed-only plotted provenance has an unexpected fit source commit.")
+  }
+  excluded_keys <- c("tau-4.6", "tau-4.8")
+  excluded_fits <- fits[match(excluded_keys, fits$key), , drop = FALSE]
+  if (!identical(as.character(excluded_fits$execution_status), c("running", "failed")) ||
+      any(as.logical(excluded_fits$included_in_plots)) ||
+      !all(is.na(excluded_fits[, c(
+        "objective_function", "maximum_gradient_component", "active_parameters"
+      )])) ||
+      !grepl("native Choleski exception", excluded_fits$convergence_status[[2L]], fixed = TRUE) ||
+      any(excluded_keys %in% design$key) || any(excluded_keys %in% unique(series$key)) ||
+      any(excluded_keys %in% provenance$key)) {
+    fail("Running/failed fits must remain status-only Fit Summary rows excluded from plots.")
+  }
+  included_fits <- fits[match(c(old_keys, "diagnostic", new_keys), fits$key), , drop = FALSE]
+  if (any(included_fits$execution_status != "completed") ||
+      any(!as.logical(included_fits$included_in_plots))) {
+    fail("Every plotted model must be explicitly completed and included in plots.")
+  }
 }
 if (legacy_snapshot) {
   legacy_jobs <- c(24040L, 24041L, 24042L, 24044L, 24047L, 24045L, 24043L, 24046L)
@@ -203,8 +290,7 @@ if (nrow(sources) < 7L || any(!grepl("^[0-9a-f]{64}$", sources$sha256)) ||
   fail("Source-input provenance is incomplete or exposes a private path.")
 }
 repository_sources <- sources[!grepl("^Staged ", sources$role), , drop = FALSE]
-legacy_registry <- !identical(new_keys, registry_keys)
-if (legacy_registry) {
+if (!completed_snapshot && legacy_snapshot) {
   repository_sources <- repository_sources[
     repository_sources$role != "Additional sensitivity design", , drop = FALSE
   ]
@@ -222,6 +308,12 @@ required_text <- c(
   "Exploratory fixed-tau sensitivity results only; this is not a stock-assessment update.",
   "Fixed-tau output provenance"
 )
+if (completed_snapshot) {
+  required_text <- c(
+    required_text, "Fit Summary", "Plots include completed fits only",
+    "native Choleski exception"
+  )
+}
 if (any(!vapply(required_text, grepl, logical(1L), x = html, fixed = TRUE)) ||
     grepl("__VIEWER_DATA__", html, fixed = TRUE) ||
     grepl("<script[^>]+src[[:space:]]*=", html, ignore.case = TRUE, perl = TRUE) ||
@@ -246,12 +338,13 @@ payload <- jsonlite::fromJSON(capture[[2L]], simplifyVector = FALSE)
 if (!identical(as.character(unlist(payload$models$key)), all_keys) ||
     length(payload$metrics) != 3L ||
     length(payload$metrics[[1L]]$records$model) != length(all_keys) * 73L * 4L ||
-    length(payload$metrics[[2L]]$records$Model) != length(all_keys) ||
+    length(payload$metrics[[2L]]$records$Model) != length(fit_keys) ||
     length(payload$metrics[[3L]]$records$Model) != length(old_keys) + length(new_keys)) {
   fail("Embedded viewer payload has the wrong models, metrics or row counts.")
 }
 
 cat(
   "Validated standalone fixed-tau viewer: ", length(all_keys),
-  " models, 1952-2024, four key metrics and audited fit provenance.\n", sep = ""
+  " plotted models, ", length(fit_keys),
+  " Fit Summary rows, 1952-2024, four key metrics and audited fit provenance.\n", sep = ""
 )
