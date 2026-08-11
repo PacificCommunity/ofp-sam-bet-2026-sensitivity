@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Preview or submit the completed-only 16-fit fixed-tau viewer fan-in."""
+"""Preview, submit, or read-only recover the completed-only fixed-tau viewer."""
 
 from __future__ import annotations
 
 import argparse
 import csv
+import io
 import json
 import os
+import re
 import subprocess
 import urllib.error
 import urllib.parse
@@ -32,6 +34,14 @@ FORBIDDEN_METADATA = {
     "diagnostic-support", "latest_attached_output", "source_base_job",
 }
 FORBIDDEN_PREFIXES = ("attached_work", "attached_output")
+VIABLE_JOB_STATUSES = {
+    "waiting", "submitting", "submitted", "idle", "running",
+    "transferring-output", "finishing", "completed",
+}
+REPO_METADATA_KEYS = {
+    "repo_private", "repo_owner_login", "repo_owner_type", "repo_owner_avatar_url",
+}
+JOB_ENV_EXTRA_KEYS = {"KFLOW_CALLBACK_URL", "KFLOW_CALLBACK_TOKEN"}
 
 
 def api_json(method: str, url: str, token: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -60,10 +70,244 @@ def forbidden_metadata(metadata: dict[str, Any]) -> set[str]:
     return {name for name in names if name in FORBIDDEN_METADATA or name.startswith(FORBIDDEN_PREFIXES)}
 
 
-def load() -> tuple[dict[str, Any], list[str], list[str]]:
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
-    with REGISTRY_PATH.open(encoding="utf-8", newline="") as handle:
-        rows = list(csv.DictReader(handle))
+def mapping(value: Any, label: str) -> dict[str, Any]:
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"{label} is not valid JSON.") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} is missing or is not an object.")
+    return value
+
+
+def report_spec(record: dict[str, Any]) -> dict[str, Any]:
+    raw_details = record.get("details", record.get("details_json"))
+    details = mapping(raw_details, "Job details")
+    return mapping(details.get("report_spec"), "Job details.report_spec")
+
+
+def contract_value(
+    record: dict[str, Any],
+    field: str,
+    *,
+    aliases: tuple[str, ...] = (),
+    use_report_spec: bool = False,
+) -> Any:
+    names = (field, *aliases)
+    for name in names:
+        if name in record:
+            return record[name]
+    if use_report_spec:
+        spec = report_spec(record)
+        for name in names:
+            if name in spec:
+                return spec[name]
+    location = "top level or details.report_spec" if use_report_spec else "top level"
+    raise ValueError(f"Required contract field {field!r} is absent from the {location}.")
+
+
+def normalized_refs(value: Any, label: str) -> list[str]:
+    if not isinstance(value, list):
+        raise ValueError(f"{label} must be a list.")
+    return [str(item) for item in value]
+
+
+def remote_host_matches(observed: Any, requested: Any) -> bool:
+    actual = str(observed or "").strip().lower().split(".", 1)[0]
+    wanted = str(requested or "").strip().lower().split(".", 1)[0]
+    if actual == wanted:
+        return True
+    # Kflow stores the resolved submitter hostname on a job even when the
+    # task contract deliberately uses the stable profile name.
+    return wanted == "suva" and actual.startswith("suvofp")
+
+
+def exact_mapping(
+    observed: Any,
+    expected: dict[str, Any],
+    label: str,
+    *,
+    allowed_extra_keys: set[str] | None = None,
+) -> None:
+    actual = mapping(observed, label)
+    extras = set(actual) - set(expected) - (allowed_extra_keys or set())
+    missing = set(expected) - set(actual)
+    mismatched = sorted(key for key in expected if key in actual and actual[key] != expected[key])
+    if missing or extras or mismatched:
+        problems = []
+        if missing:
+            problems.append("missing=" + ",".join(sorted(missing)))
+        if extras:
+            problems.append("unexpected=" + ",".join(sorted(extras)))
+        if mismatched:
+            problems.append("mismatched=" + ",".join(mismatched))
+        raise ValueError(f"{label} differs from the submitted contract ({'; '.join(problems)}).")
+
+
+def verify_report_contract(observed: dict[str, Any], expected: dict[str, Any], refs: list[str]) -> None:
+    scalar_fields = (
+        ("code", TASK),
+        ("name", expected["name"]),
+        ("description", expected["description"]),
+        ("repo_full_name", expected["repo_full_name"]),
+        ("branch", expected["branch"]),
+        ("command", expected["command"]),
+        ("docker_image", expected["docker_image"]),
+        ("remote_user", expected["remote_user"]),
+        ("remote_host", expected["remote_host"]),
+        ("remote_base_dir", expected["remote_base_dir"]),
+        ("cpus", expected["cpus"]),
+        ("memory", expected["memory"]),
+        ("disk", expected["disk"]),
+        ("slot_requirements", expected["slot_requirements"]),
+    )
+    for field, wanted in scalar_fields:
+        actual = contract_value(observed, field)
+        if field == "code":
+            if str(actual).lower() != str(wanted).lower():
+                raise ValueError(f"Registered viewer task has the wrong {field}.")
+        elif str(actual) != str(wanted):
+            raise ValueError(f"Registered viewer task has the wrong {field}.")
+    for field in ("exclude_machines", "exclude_slots", "output_patterns", "triggers"):
+        if contract_value(observed, field) != expected[field]:
+            raise ValueError(f"Registered viewer task has the wrong {field}.")
+    if normalized_refs(contract_value(observed, "input_jobs"), "Task input_jobs") != refs:
+        raise ValueError("Registered viewer task has the wrong input_jobs.")
+    exact_mapping(contract_value(observed, "env", aliases=("env_json",)), expected["env"], "Task env")
+    exact_mapping(contract_value(observed, "tags", aliases=("tags_json",)), expected["tags"], "Task tags")
+    metadata = mapping(contract_value(observed, "metadata", aliases=("metadata_json",)), "Task metadata")
+    if forbidden_metadata(metadata):
+        raise ValueError("Registered viewer task contains forbidden metadata.")
+    exact_mapping(metadata, expected["metadata"], "Task metadata", allowed_extra_keys=REPO_METADATA_KEYS)
+
+
+def verify_job_contract(
+    observed: dict[str, Any], expected: dict[str, Any], refs: list[str], number: int
+) -> None:
+    scalar_fields = (
+        ("job_number", number, ()),
+        ("report_code", TASK, ("task",)),
+        ("batch_name", expected["batch_name"], ()),
+        ("repo_full_name", REPO, ("repo",)),
+        ("branch", expected["branch"], ()),
+        ("command", expected["command"], ()),
+        ("docker_image", expected["docker_image"], ()),
+        ("remote_user", expected["remote_user"], ()),
+        ("remote_host", expected["remote_host"], ()),
+        ("cpus", expected["cpus"], ()),
+        ("memory", expected["memory"], ()),
+        ("disk", expected["disk"], ()),
+    )
+    for field, wanted, aliases in scalar_fields:
+        actual = contract_value(observed, field, aliases=aliases)
+        if field == "report_code":
+            if str(actual).lower() != str(wanted).lower():
+                raise ValueError(f"Viewer job has the wrong {field}.")
+        elif field == "remote_host":
+            if not remote_host_matches(actual, wanted):
+                raise ValueError(f"Viewer job has the wrong {field}.")
+        elif str(actual) != str(wanted):
+            raise ValueError(f"Viewer job has the wrong {field}.")
+    remote_dir = str(contract_value(observed, "remote_dir") or "")
+    remote_base = str(expected["remote_base_dir"]).rstrip("/")
+    if not remote_dir.startswith(remote_base + "/"):
+        raise ValueError("Viewer job remote_dir is outside the configured remote_base_dir.")
+    fallback_fields = ("output_patterns", "triggers", "slot_requirements", "exclude_machines", "exclude_slots")
+    for field in fallback_fields:
+        if contract_value(observed, field, use_report_spec=True) != expected[field]:
+            raise ValueError(f"Viewer job has the wrong {field}.")
+    if normalized_refs(
+        contract_value(observed, "input_jobs", use_report_spec=True), "Job input_jobs"
+    ) != refs:
+        raise ValueError("Viewer job has the wrong input_jobs.")
+    exact_mapping(
+        contract_value(observed, "env", aliases=("env_json",)),
+        expected["env"],
+        "Job env",
+        allowed_extra_keys=JOB_ENV_EXTRA_KEYS,
+    )
+    exact_mapping(contract_value(observed, "tags", aliases=("tags_json",)), expected["tags"], "Job tags")
+    metadata = mapping(contract_value(observed, "metadata", aliases=("metadata_json",)), "Job metadata")
+    if forbidden_metadata(metadata):
+        raise ValueError("Viewer job contains forbidden metadata.")
+    expected_metadata = {**expected["metadata"], "job_key": JOB_KEY}
+    exact_mapping(metadata, expected_metadata, "Job metadata", allowed_extra_keys=REPO_METADATA_KEYS)
+    snapshot = report_spec(observed)
+    if "metadata" not in snapshot:
+        raise ValueError("Required contract field 'metadata' is absent from Job details.report_spec.")
+    snapshot_metadata = mapping(snapshot["metadata"], "Job details.report_spec metadata")
+    if forbidden_metadata(snapshot_metadata):
+        raise ValueError("Viewer job task snapshot contains forbidden metadata.")
+    exact_mapping(
+        snapshot_metadata,
+        expected["metadata"],
+        "Job details.report_spec metadata",
+        allowed_extra_keys=REPO_METADATA_KEYS,
+    )
+    status = str(contract_value(observed, "status") or "").lower()
+    if status not in VIABLE_JOB_STATUSES:
+        raise ValueError(f"Viewer job has non-viable status {status!r}.")
+
+
+def list_all_jobs(base_url: str, token: str, task: str) -> list[dict[str, Any]]:
+    task_path = urllib.parse.quote(task, safe="")
+    found: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    page = 1
+    while True:
+        response = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page={page}", token)
+        jobs = response.get("jobs")
+        if not isinstance(jobs, list):
+            raise ValueError(f"Kflow job listing for {task} page {page} is malformed.")
+        if not jobs:
+            break
+        page_ids = {
+            str(job.get("id") or job.get("job_number") or "")
+            for job in jobs if isinstance(job, dict)
+        }
+        if "" in page_ids or len(page_ids) != len(jobs):
+            raise ValueError(f"Kflow job listing for {task} page {page} has missing/duplicate IDs.")
+        if seen_ids.intersection(page_ids):
+            raise ValueError(f"Kflow pagination for {task} repeated jobs across pages.")
+        seen_ids.update(page_ids)
+        found.extend(jobs)
+        page += 1
+    return found
+
+
+def job_key_value(job: dict[str, Any]) -> str:
+    env = job.get("env") or job.get("env_json") or {}
+    metadata = job.get("metadata") or job.get("metadata_json") or {}
+    env = mapping(env, "Listed job env")
+    metadata = mapping(metadata, "Listed job metadata")
+    values = {
+        str(value).strip()
+        for value in (env.get("JOB_KEY"), metadata.get("job_key"))
+        if str(value or "").strip()
+    }
+    if len(values) > 1:
+        raise ValueError("A listed viewer job has conflicting env/metadata JOB_KEY values.")
+    return next(iter(values), "")
+
+
+def jobs_with_key(base_url: str, token: str) -> list[dict[str, Any]]:
+    matches = [job for job in list_all_jobs(base_url, token, TASK) if job_key_value(job) == JOB_KEY]
+    if len(matches) > 1:
+        numbers = sorted(str(job.get("job_number") or job.get("id") or "?") for job in matches)
+        raise ValueError("Duplicate completed-only viewer JOB_KEY exists: " + ", ".join(numbers))
+    return matches
+
+
+def load(commit: str = "") -> tuple[dict[str, Any], list[str], list[str]]:
+    if commit:
+        config_text = run("git", "show", f"{commit}:{CONFIG_PATH.relative_to(ROOT)}")
+        registry_text = run("git", "show", f"{commit}:{REGISTRY_PATH.relative_to(ROOT)}")
+    else:
+        config_text = CONFIG_PATH.read_text(encoding="utf-8")
+        registry_text = REGISTRY_PATH.read_text(encoding="utf-8")
+    config = yaml.safe_load(config_text)
+    rows = list(csv.DictReader(io.StringIO(registry_text)))
     all_keys = [row["key"] for row in rows]
     expected = [f"tau-{value}" for value in range(4, 33, 4)] + [
         f"tau-{round(4.2 + 0.2 * index, 1):g}" for index in range(10)
@@ -84,6 +328,79 @@ def load() -> tuple[dict[str, Any], list[str], list[str]]:
     if forbidden_metadata(config.get("metadata") or {}):
         raise ValueError("Viewer config contains attachment/base/check metadata.")
     return config, all_keys, included
+
+
+def validate_recovery_commit(value: Any) -> str:
+    commit = str(value or "").strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("Recovered job has no exact 40-character source_commit.")
+    try:
+        run("git", "cat-file", "-e", f"{commit}^{{commit}}")
+        run("git", "merge-base", "--is-ancestor", commit, f"origin/{BRANCH}")
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("Recovered source_commit is not a pushed ancestor of the viewer branch.") from exc
+    return commit
+
+
+def immutable_recovery_inputs(
+    observed: dict[str, Any], all_keys: list[str], included: list[str]
+) -> tuple[str, list[str], list[dict[str, Any]]]:
+    metadata = mapping(contract_value(observed, "metadata", aliases=("metadata_json",)), "Job metadata")
+    commit = validate_recovery_commit(metadata.get("source_commit"))
+    refs = normalized_refs(
+        contract_value(observed, "input_jobs", use_report_spec=True), "Recovered job input_jobs"
+    )
+    if parse_refs(",".join(refs), 16) != refs:
+        raise ValueError("Recovered job input_jobs are not the exact ordered 16-fit dependency set.")
+    env = mapping(contract_value(observed, "env", aliases=("env_json",)), "Recovered job env")
+    raw_cohort = env.get("MORE_TAU_FIT_COHORT_JSON")
+    try:
+        cohort = json.loads(str(raw_cohort))
+    except (TypeError, json.JSONDecodeError) as exc:
+        raise ValueError("Recovered job has no valid immutable fit-cohort snapshot.") from exc
+    if not isinstance(cohort, list) or len(cohort) != len(all_keys):
+        raise ValueError("Recovered fit-cohort snapshot must contain exactly 18 rows.")
+    required_fields = {
+        "key", "kflow_job", "execution_status", "included_in_plots", "source_commit",
+    }
+    normalized: list[dict[str, Any]] = []
+    seen_jobs: set[int] = set()
+    for index, (key, raw_row) in enumerate(zip(all_keys, cohort, strict=True)):
+        row = mapping(raw_row, f"Recovered fit-cohort row {index + 1}")
+        if set(row) != required_fields:
+            raise ValueError(f"Recovered fit-cohort row {key} has a non-exact schema.")
+        try:
+            fit_job = int(row["kflow_job"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Recovered fit-cohort row {key} has an invalid job number.") from exc
+        expected_status = EXCLUDED_STATUS.get(key, "completed")
+        expected_included = key in included
+        checks = (
+            row["key"] == key,
+            fit_job > 0,
+            fit_job not in seen_jobs,
+            row["execution_status"] == expected_status,
+            row["included_in_plots"] is expected_included,
+            row["source_commit"] == source_commit_for(key),
+        )
+        if not all(checks):
+            raise ValueError(f"Recovered fit-cohort row {key} differs from the immutable campaign contract.")
+        seen_jobs.add(fit_job)
+        normalized.append({**row, "kflow_job": fit_job})
+    cohort_refs = [str(row["kflow_job"]) for row in normalized if row["included_in_plots"]]
+    if cohort_refs != refs:
+        raise ValueError("Recovered fit-cohort snapshot and Job report_spec dependencies differ.")
+    metadata_refs = normalized_refs(metadata.get("completed_fit_job_refs"), "Job metadata completed refs")
+    if metadata_refs != refs:
+        raise ValueError("Recovered job metadata and immutable dependency snapshot differ.")
+    status = str(contract_value(observed, "status") or "").lower()
+    details = mapping(observed.get("details", observed.get("details_json")), "Job details")
+    checkout_commit = str(details.get("git_commit_sha") or "").strip()
+    if status not in {"waiting", "submitting"} and checkout_commit != commit:
+        raise ValueError("Recovered job checkout commit differs from its submitted source_commit.")
+    if checkout_commit and checkout_commit != commit:
+        raise ValueError("Recovered job checkout commit differs from its submitted source_commit.")
+    return commit, refs, normalized
 
 
 def parse_refs(value: str, expected: int) -> list[str]:
@@ -133,20 +450,15 @@ def make_cohort(all_keys: list[str], included: list[str], refs: list[str], exclu
 def discover(base_url: str, token: str, all_keys: list[str], included: list[str]) -> tuple[list[str], list[dict[str, Any]]]:
     wanted = {f"more-tau-{key}": key for key in all_keys}
     found: dict[str, dict[str, Any]] = {}
-    task_path = urllib.parse.quote(FIT_TASK, safe="")
-    for page in range(1, 30):
-        jobs = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page={page}", token).get("jobs") or []
-        if not jobs:
-            break
-        for job in jobs:
-            env = job.get("env") or job.get("env_json") or {}
-            job_key = str(env.get("JOB_KEY") or "")
-            if job_key in wanted:
-                if job_key in found:
-                    raise ValueError(f"Duplicate fit job exists for {job_key}.")
-                found[job_key] = job
-            elif job_key.startswith("more-tau-"):
-                raise ValueError(f"Unexpected/replaced more-tau job exists: {job_key}.")
+    for job in list_all_jobs(base_url, token, FIT_TASK):
+        env = job.get("env") or job.get("env_json") or {}
+        job_key = str(mapping(env, "Fit job env").get("JOB_KEY") or "")
+        if job_key in wanted:
+            if job_key in found:
+                raise ValueError(f"Duplicate fit job exists for {job_key}.")
+            found[job_key] = job
+        elif job_key.startswith("more-tau-"):
+            raise ValueError(f"Unexpected/replaced more-tau job exists: {job_key}.")
     missing = [job_key for job_key in wanted if job_key not in found]
     if missing:
         raise ValueError("Could not resolve the full 18-row fit cohort: " + ", ".join(missing))
@@ -237,15 +549,79 @@ def assert_pushed_branch() -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--submit", action="store_true")
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--submit", action="store_true")
+    action.add_argument(
+        "--recover-job",
+        type=int,
+        metavar="JOB_NUMBER",
+        help="verify a job after an uncertain POST without sending any POST request",
+    )
     parser.add_argument("--fit-jobs", default=os.environ.get("MORE_TAU_FIT_JOB_REFS", ""))
     parser.add_argument("--excluded-jobs", default=os.environ.get("MORE_TAU_EXCLUDED_JOB_REFS", ""))
     args = parser.parse_args()
-    config, all_keys, included = load()
-    refs = parse_refs(args.fit_jobs, 16)
-    excluded = parse_excluded(args.excluded_jobs)
+    if args.recover_job is not None and args.recover_job <= 0:
+        parser.error("--recover-job must be a positive Kflow job number")
+    explicit_refs = parse_refs(args.fit_jobs, 16)
+    explicit_excluded = parse_excluded(args.excluded_jobs)
     token = os.environ.get("KFLOW_API_TOKEN", "")
     base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
+    if args.recover_job is not None:
+        if not token:
+            raise SystemExit("Set KFLOW_API_TOKEN before recovery.")
+        # Recovery starts from the immutable Job snapshot.  It deliberately
+        # does not query mutable fit statuses or derive provenance from HEAD.
+        observed_response = api_json("GET", f"{base_url}/api/job/{args.recover_job}/", token)
+        observed = mapping(observed_response.get("job", observed_response), "Recovered job")
+        if str(contract_value(observed, "job_number")) != str(args.recover_job):
+            raise ValueError("Recovered endpoint returned a different job number.")
+        recovered_task = str(contract_value(observed, "report_code", aliases=("task",)) or "")
+        if recovered_task.lower() != TASK.lower() or job_key_value(observed) != JOB_KEY:
+            raise ValueError("Requested job is not the completed-only viewer JOB_KEY.")
+        preliminary_metadata = mapping(
+            contract_value(observed, "metadata", aliases=("metadata_json",)), "Recovered job metadata"
+        )
+        viewer_commit = validate_recovery_commit(preliminary_metadata.get("source_commit"))
+        config, all_keys, included = load(viewer_commit)
+        immutable_commit, refs, cohort = immutable_recovery_inputs(observed, all_keys, included)
+        if immutable_commit != viewer_commit:
+            raise ValueError("Recovered immutable source commit changed during verification.")
+        if explicit_refs and explicit_refs != refs:
+            raise ValueError("Explicit completed refs differ from the immutable Job snapshot.")
+        recovered_excluded = {
+            row["key"]: str(row["kflow_job"])
+            for row in cohort if not row["included_in_plots"]
+        }
+        if explicit_excluded and explicit_excluded != recovered_excluded:
+            raise ValueError("Explicit excluded refs differ from the immutable Job snapshot.")
+        report = report_payload(config, refs, cohort, viewer_commit)
+        job = job_payload(config, refs, cohort, viewer_commit)
+        existing = jobs_with_key(base_url, token)
+        if not existing:
+            raise ValueError("No completed-only viewer JOB_KEY exists to recover.")
+        listed_number = int(existing[0].get("job_number") or 0)
+        if listed_number != args.recover_job:
+            raise ValueError(
+                f"Recovered JOB_KEY belongs to job {listed_number}, not requested job {args.recover_job}."
+            )
+        task_path = urllib.parse.quote(TASK, safe="")
+        report_response = api_json("GET", f"{base_url}/api/report/{task_path}/", token)
+        observed_report = mapping(report_response.get("report", report_response), "Registered task")
+        verify_report_contract(observed_report, report, refs)
+        verify_job_contract(observed, job, refs, args.recover_job)
+        print(json.dumps({
+            "task": TASK,
+            "job_number": args.recover_job,
+            "input_jobs": refs,
+            "source_commit": viewer_commit,
+            "recovered_without_post": True,
+            "status": str(observed.get("status") or "").lower(),
+        }, indent=2))
+        return 0
+
+    config, all_keys, included = load()
+    refs = explicit_refs
+    excluded = explicit_excluded
     viewer_commit = assert_pushed_branch() if args.submit else "<pushed-viewer-commit>"
     if args.submit:
         if not token:
@@ -279,61 +655,26 @@ def main() -> int:
         print(json.dumps({"report": report, "job": job}, indent=2))
         return 0
     task_path = urllib.parse.quote(TASK, safe="")
+    existing = jobs_with_key(base_url, token)
+    if existing:
+        number = int(existing[0].get("job_number") or 0)
+        raise ValueError(
+            f"Completed-only viewer JOB_KEY already exists as job {number}; "
+            f"use --recover-job {number} for read-only verification."
+        )
     api_json("POST", f"{base_url}/api/report/{task_path}", token, report)
     report_response = api_json("GET", f"{base_url}/api/report/{task_path}/", token)
-    observed_report = report_response.get("report", report_response)
-    report_metadata = observed_report.get("metadata") or {}
-    report_checks = (
-        [str(value) for value in observed_report.get("input_jobs", [])] == refs,
-        observed_report.get("triggers") in ({}, None),
-        not forbidden_metadata(report_metadata),
-        str(observed_report.get("branch") or "") == BRANCH,
-        str(observed_report.get("command") or "") == report["command"],
-        observed_report.get("output_patterns") == report["output_patterns"],
-        int(observed_report.get("cpus") or 0) == int(report["cpus"]),
-        str(observed_report.get("memory") or "") == str(report["memory"]),
-        str(observed_report.get("disk") or "") == str(report["disk"]),
-        report_metadata.get("source_commit") == viewer_commit,
-        report_metadata.get("allow_failed_input_jobs") is False,
-        [str(value) for value in report_metadata.get("completed_fit_job_refs", [])] == refs,
-    )
-    if not all(report_checks):
-        raise ValueError("Registered completed-only viewer task failed verification.")
-    existing = api_json("GET", f"{base_url}/api/jobs/{task_path}/?page=1", token).get("jobs") or []
-    if any(((value.get("env") or value.get("env_json") or {}).get("JOB_KEY") == JOB_KEY) for value in existing):
-        raise ValueError("Completed-only viewer JOB_KEY already exists.")
+    observed_report = mapping(report_response.get("report", report_response), "Registered task")
+    verify_report_contract(observed_report, report, refs)
     response = api_json("POST", f"{base_url}/api/job/{task_path}", token, job)
-    created = response.get("job", response)
+    created = mapping(response.get("job", response), "Created job")
     number = int(created["job_number"])
+    matches = jobs_with_key(base_url, token)
+    if not matches or int(matches[0].get("job_number") or 0) != number:
+        raise ValueError("Accepted viewer job is missing from the all-page JOB_KEY listing.")
     observed_response = api_json("GET", f"{base_url}/api/job/{number}/", token)
-    observed = observed_response.get("job", observed_response)
-    metadata = observed.get("metadata") or {}
-    env = observed.get("env") or observed.get("env_json") or {}
-    checks = (
-        # The live job-detail endpoint omits input_jobs and triggers.  The full
-        # task registration above is the authoritative dependency contract;
-        # compare these fields here only if this API version exposes them.
-        "input_jobs" not in observed
-        or [str(value) for value in observed.get("input_jobs", [])] == refs,
-        "triggers" not in observed or observed.get("triggers") in ({}, None),
-        not forbidden_metadata(metadata),
-        str(observed.get("branch") or "") == BRANCH,
-        str(observed.get("command") or "") == job["command"],
-        str(observed.get("repo_full_name") or observed.get("repo") or "") == REPO,
-        "output_patterns" not in observed
-        or observed.get("output_patterns") == job["output_patterns"],
-        int(observed.get("cpus") or 0) == int(job["cpus"]),
-        str(observed.get("memory") or "") == str(job["memory"]),
-        str(observed.get("disk") or "") == str(job["disk"]),
-        metadata.get("source_commit") == viewer_commit,
-        metadata.get("allow_failed_input_jobs") is False,
-        metadata.get("input_jobs_override") is True,
-        [str(value) for value in metadata.get("completed_fit_job_refs", [])] == refs,
-        env.get("JOB_KEY") == JOB_KEY,
-        str(observed.get("status") or "").lower() in {"waiting", "submitted", "running", "completed"},
-    )
-    if not all(checks):
-        raise ValueError("Accepted completed-only viewer job failed verification.")
+    observed = mapping(observed_response.get("job", observed_response), "Accepted job")
+    verify_job_contract(observed, job, refs, number)
     print(json.dumps({"task": TASK, "job_number": number, "input_jobs": refs}, indent=2))
     return 0
 
