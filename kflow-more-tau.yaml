@@ -1,5 +1,5 @@
 name: BET-2026-sensitivity-more-tau
-description: Run 8 independent BET 2026 fixed-tau sensitivities (tau=4,8,...,32) from ordinary Diagnostic makepar initial values, with no fitted checkpoint, seed, or sequential dependency.
+description: "Run 18 independent BET 2026 fixed-tau sensitivities: the original tau=4,8,...,32 cohort plus the fine tau=4.2,4.4,...,6.0 cohort, from ordinary Diagnostic makepar initial values with no fitted checkpoint, seed, or sequential dependency."
 command: bash run.sh
 docker_image: ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360
 remote_host: suva
@@ -13,11 +13,11 @@ resources:
 exclude_machines: []
 exclude_slots: []
 env:
-  SENSITIVITY_SELECT: tau-4
-  JOB_TITLE: BET 2026 more-tau sensitivity | tau=4 fixed
-  JOB_DESCRIPTION: Direct negative-binomial tag-overdispersion sensitivity with tau=4 fixed for all 33 fisheries; ordinary makepar and Diagnostic phases 1-11; no fitted checkpoint or seed.
-  MODEL_LABEL: Tau 4
-  JOB_KEY: more-tau-tau-4
+  SENSITIVITY_SELECT: tau-4.2
+  JOB_TITLE: BET 2026 more-tau sensitivity | tau=4.2 fixed
+  JOB_DESCRIPTION: Direct negative-binomial tag-overdispersion sensitivity with tau=4.2 fixed for all 33 fisheries; ordinary makepar and Diagnostic phases 1-11; no fitted checkpoint or seed.
+  MODEL_LABEL: Tau 4.2
+  JOB_KEY: more-tau-tau-4.2
   FLOW_GROUP: bet-2026-more-tau-sens-flow
   FLOW_SPECIES: BET
   FLOW_SPECIES_LABEL: bigeye tuna

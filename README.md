@@ -43,9 +43,10 @@ are the selected sensitivity axis.
 
 ## Additional fixed-tau campaign (`more_tau_sens`)
 
-The `more_tau_sens` branch adds a separate, exploratory grid of eight fixed values,
-`tau=4,8,12,16,20,24,28,32`, defined in `more_tau_sens.csv`. It does not alter the original
-17-case registry or its published report data. Each model retains the direct
+The `more_tau_sens` branch adds a separate, exploratory grid of 18 fixed values:
+the original `tau=4,8,12,16,20,24,28,32` campaign and a finer
+`tau=4.2,4.4,...,6.0` grid, all defined in `more_tau_sens.csv`. It does not alter
+the original 17-case registry or its published report data. Each model retains the direct
 parameterization `tau=1+exp(fish_pars(4))`, fixes all 33 copies of
 `fish_pars(4)` at `log(tau-1)`, and starts from ordinary makepar before running
 Diagnostic phases 1-11. The largest target, `tau=32`, maps to
@@ -54,8 +55,9 @@ Diagnostic phases 1-11. The largest target, `tau=32`, maps to
 convergence `-4`; no fitted `final.par`, checkpoint, jitter, or seed is used.
 
 The campaign has its own frozen model folders, registry, validator, Phase-0
-smoke test, Kflow configuration and submitter. The submitter creates eight
-independent concurrent Suva jobs from branch `more_tau_sens`:
+smoke test, Kflow configuration and submitter. The submitter preserves and
+verifies the completed original eight jobs and creates the ten fine-grid jobs
+as independent concurrent Suva fits from branch `more_tau_sens`:
 
 ```sh
 Rscript scripts/validate-more-tau.R
@@ -64,12 +66,31 @@ Rscript scripts/validate-more-tau.R
 KFLOW_API_TOKEN=... ./scripts/submit-kflow-more-tau --submit
 ```
 
-The standalone viewer combines the five original fixed-tau sensitivities, the
-Diagnostic `tau=2` reference and these eight additional fits. Download
+The existing branch-specific prerelease viewer combines the five original
+fixed-tau sensitivities, the Diagnostic `tau=2` reference and the first eight
+additional fits. Download
 [`bet-2026-more-tau-interactive-viewer.html`](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/more-tau-sens-v2026.08.11/bet-2026-more-tau-interactive-viewer.html)
 from the branch-specific prerelease and open it locally in a web browser. This
 exploratory viewer is separate from the published sensitivity report and does
 not replace the stock-assessment results.
+
+After all 18 campaign fits are available, a separate fan-in Kflow job rebuilds
+a 24-model viewer from their exact dependency archives and the committed main
+public series for the five original fixed-tau cases plus Diagnostic. Its only
+artefacts are the self-contained HTML and audited compact data below
+`outputs/more-tau-viewer/`; it does not change the report, PDFs, GitHub Pages,
+the release asset, or tracked repository data. Preview the exact 18-input
+payload, then submit it after the fit branch is committed and pushed:
+
+```sh
+./scripts/submit-kflow-more-tau-viewer
+KFLOW_API_TOKEN=... ./scripts/submit-kflow-more-tau-viewer --submit
+```
+
+The helper discovers job references by `more-tau-<key>` or accepts the exact
+comma-separated set through `MORE_TAU_FIT_JOB_REFS`. Both the registered task
+and its single job carry those 18 `input_jobs`, use `input_jobs_override`, and
+have empty triggers so Kflow supplies and waits for every dependency.
 
 ## Inspect and run one model
 

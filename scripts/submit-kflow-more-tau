@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Register and submit the 8 independent fixed-tau fits to Kflow on Suva."""
+"""Register and submit only the 10 new fine fixed-tau fits to Kflow on Suva."""
 
 from __future__ import annotations
 
@@ -29,10 +29,30 @@ EXPECTED_FLOW = "bet-2026-more-tau-sens-flow"
 EXPECTED_BATCH = "bet-2026-more-tau-sens-batch"
 EXPECTED_REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
 EXPECTED_BRANCH = "more_tau_sens"
-EXPECTED_TAU = list(range(4, 33, 4))
-EXPECTED_KEYS = [f"tau-{tau}" for tau in EXPECTED_TAU]
-EXPECTED_JOB_KEYS = [f"more-tau-{key}" for key in EXPECTED_KEYS]
-EXPECTED_CONCURRENCY = 8
+ORIGINAL_SOURCE_COMMIT = "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
+ORIGINAL_TAU = list(range(4, 33, 4))
+ORIGINAL_KEYS = [f"tau-{tau}" for tau in ORIGINAL_TAU]
+ORIGINAL_JOB_KEYS = [f"more-tau-{key}" for key in ORIGINAL_KEYS]
+FINE_TAU = [4.2, 4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0]
+FINE_KEYS = [
+    "tau-4.2",
+    "tau-4.4",
+    "tau-4.6",
+    "tau-4.8",
+    "tau-5",
+    "tau-5.2",
+    "tau-5.4",
+    "tau-5.6",
+    "tau-5.8",
+    "tau-6",
+]
+FINE_JOB_KEYS = [f"more-tau-{key}" for key in FINE_KEYS]
+EXPECTED_TAU = ORIGINAL_TAU + FINE_TAU
+EXPECTED_KEYS = ORIGINAL_KEYS + FINE_KEYS
+EXPECTED_JOB_KEYS = ORIGINAL_JOB_KEYS + FINE_JOB_KEYS
+ORIGINAL_CONCURRENCY = 8
+FINE_CONCURRENCY = 10
+EXPECTED_TOTAL = 18
 EXPECTED_IMAGE = "ghcr.io/pacificcommunity/tuna-flow:v2.5@sha256:c87f1f6d9d4f62dc447844b58afe35f96af175bf933cb6cffbbbe39a59172360"
 EXPECTED_PROGRAM_PATH = "/home/mfcl/mfclo64"
 EXPECTED_PRODUCTION_MFCL_SHA256 = "f5bc1e232a86e51f920bce7271d8e0930d0b160e4d18dc46de44078f0fa24cd0"
@@ -98,10 +118,15 @@ def load_inputs() -> tuple[dict[str, Any], list[dict[str, str]]]:
         raise ValueError(f"Kflow task must be {EXPECTED_TASK}.")
     keys = [row.get("key", "") for row in rows]
     if keys != EXPECTED_KEYS:
-        raise ValueError("Registry must contain exactly tau-4,8,...,32 in order.")
+        raise ValueError(
+            "Registry must contain the original 8 cases followed by the 10 fine cases."
+        )
     alternatives = [float(row["alternative"]) for row in rows]
     if alternatives != [float(value) for value in EXPECTED_TAU]:
-        raise ValueError("Registry alternatives must be 4,8,...,32.")
+        raise ValueError(
+            "Registry alternatives must contain the original 8 values followed by "
+            "4.2,4.4,...,6.0."
+        )
     missing = [key for key in keys if not (ROOT / "models" / key).is_dir()]
     if missing:
         raise ValueError(f"Missing frozen model folders: {', '.join(missing)}")
@@ -203,7 +228,7 @@ def job_description(row: dict[str, str]) -> str:
     )
 
 
-def report_payload(config: dict[str, Any], source_commit: str) -> dict[str, Any]:
+def report_payload(config: dict[str, Any], fine_source_commit: str) -> dict[str, Any]:
     resources = config["resources"]
     return {
         "name": EXPECTED_TASK,
@@ -226,9 +251,13 @@ def report_payload(config: dict[str, Any], source_commit: str) -> dict[str, Any]
         "metadata": {
             **dict(config.get("metadata") or {}),
             "local_apps": copy.deepcopy(config.get("local_apps") or []),
-            "source_commit": source_commit,
-            "campaign_size": EXPECTED_CONCURRENCY,
-            "parallel_jobs": EXPECTED_CONCURRENCY,
+            "source_commit": fine_source_commit,
+            "original_source_commit": ORIGINAL_SOURCE_COMMIT,
+            "fine_source_commit": fine_source_commit,
+            "campaign_size": EXPECTED_TOTAL,
+            "original_campaign_size": ORIGINAL_CONCURRENCY,
+            "fine_campaign_size": FINE_CONCURRENCY,
+            "parallel_jobs": FINE_CONCURRENCY,
             "execution": "independent-concurrent",
             "initialization": "ordinary-makepar",
             "task_id": EXPECTED_TASK,
@@ -242,7 +271,10 @@ def report_payload(config: dict[str, Any], source_commit: str) -> dict[str, Any]
 
 
 def job_payload(
-    config: dict[str, Any], row: dict[str, str], source_commit: str
+    config: dict[str, Any],
+    row: dict[str, str],
+    source_commit: str,
+    cohort_size: int,
 ) -> dict[str, Any]:
     resources = config["resources"]
     title = job_title(row)
@@ -290,8 +322,8 @@ def job_payload(
             "job_title": title,
             "job_description": description,
             "scientific_change": row["scientific_change"],
-            "campaign_size": EXPECTED_CONCURRENCY,
-            "parallel_jobs": EXPECTED_CONCURRENCY,
+            "campaign_size": cohort_size,
+            "parallel_jobs": cohort_size,
             "independent_fit": True,
             "inputs_frozen": True,
             "initialization": "ordinary-makepar",
@@ -317,6 +349,8 @@ def existing_jobs(base_url: str, token: str) -> dict[str, dict[str, Any]]:
             env = job.get("env") or job.get("env_json") or {}
             key = str(env.get("JOB_KEY") or "")
             if key:
+                if key in found:
+                    raise ValueError(f"Duplicate existing JOB_KEY returned by Kflow: {key}")
                 found[key] = job
     return found
 
@@ -353,7 +387,17 @@ def verify_report(
     ):
         if report.get(key) != expected.get(key):
             errors.append(key)
-    for key in ("local_apps", "source_commit", "launcher_source_commit"):
+    for key in (
+        "local_apps",
+        "source_commit",
+        "launcher_source_commit",
+        "original_source_commit",
+        "fine_source_commit",
+        "campaign_size",
+        "original_campaign_size",
+        "fine_campaign_size",
+        "parallel_jobs",
+    ):
         if metadata.get(key) != expected["metadata"].get(key):
             errors.append(f"metadata.{key}")
     if errors:
@@ -363,16 +407,40 @@ def verify_report(
         )
 
 
-def existing_model_source_commit(jobs: dict[str, dict[str, Any]]) -> str:
-    if sorted(jobs) != sorted(EXPECTED_JOB_KEYS):
-        raise ValueError("Local-app repair requires exactly the original eight jobs.")
-    commits = {
-        str((job.get("metadata") or {}).get("source_commit") or "").strip()
-        for job in jobs.values()
-    }
+def job_source_commit(job: dict[str, Any]) -> str:
+    return str((job.get("metadata") or {}).get("source_commit") or "").strip()
+
+
+def require_original_jobs(jobs: dict[str, dict[str, Any]]) -> None:
+    missing = [key for key in ORIGINAL_JOB_KEYS if key not in jobs]
+    if missing:
+        raise ValueError(
+            "The original eight jobs must already exist and will not be resubmitted; "
+            f"missing: {', '.join(missing)}"
+        )
+    wrong = [
+        key
+        for key in ORIGINAL_JOB_KEYS
+        if job_source_commit(jobs[key]) != ORIGINAL_SOURCE_COMMIT
+    ]
+    if wrong:
+        raise ValueError(
+            "Original jobs must remain pinned to source commit "
+            f"{ORIGINAL_SOURCE_COMMIT}; mismatches: {', '.join(wrong)}"
+        )
+
+
+def repair_model_source_commit(jobs: dict[str, dict[str, Any]]) -> str:
+    require_original_jobs(jobs)
+    present_fine = [key for key in FINE_JOB_KEYS if key in jobs]
+    if present_fine and len(present_fine) != len(FINE_JOB_KEYS):
+        raise ValueError("Local-app repair requires either zero or all ten fine jobs.")
+    if not present_fine:
+        return ORIGINAL_SOURCE_COMMIT
+    commits = {job_source_commit(jobs[key]) for key in FINE_JOB_KEYS}
     commits.discard("")
     if len(commits) != 1:
-        raise ValueError("The original more-tau jobs do not share one source commit.")
+        raise ValueError("The ten fine jobs do not share one immutable source commit.")
     return commits.pop()
 
 
@@ -508,7 +576,12 @@ def main() -> int:
     args = parser.parse_args()
 
     config, rows = load_inputs()
-    preview = [job_payload(config, row, "<pushed-more_tau_sens>") for row in rows]
+    original_rows = rows[:ORIGINAL_CONCURRENCY]
+    fine_rows = rows[ORIGINAL_CONCURRENCY:]
+    preview = [
+        job_payload(config, row, "<new-pushed-more_tau_sens>", FINE_CONCURRENCY)
+        for row in fine_rows
+    ]
     if not args.submit and not args.repair_local_apps:
         print(
             json.dumps(
@@ -517,8 +590,10 @@ def main() -> int:
                     "flow": EXPECTED_FLOW,
                     "batch": EXPECTED_BATCH,
                     "branch": EXPECTED_BRANCH,
-                    "concurrency": EXPECTED_CONCURRENCY,
-                    "count": len(rows),
+                    "original_source_commit": ORIGINAL_SOURCE_COMMIT,
+                    "original_jobs_to_resubmit": 0,
+                    "concurrency": FINE_CONCURRENCY,
+                    "count": len(fine_rows),
                     "jobs": preview,
                 },
                 indent=2,
@@ -538,29 +613,55 @@ def main() -> int:
     base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
     task_path = urllib.parse.quote(EXPECTED_TASK, safe="")
     already = existing_jobs(base_url, token)
+    unexpected = sorted(
+        key
+        for key in already
+        if key.startswith("more-tau-") and key not in EXPECTED_JOB_KEYS
+    )
+    if unexpected:
+        raise ValueError(
+            "Unexpected more-tau JOB_KEY values already exist: "
+            + ", ".join(unexpected)
+        )
     if args.repair_local_apps:
-        source_commit = existing_model_source_commit(already)
+        source_commit = repair_model_source_commit(already)
         subprocess.run(
             ["git", "merge-base", "--is-ancestor", source_commit, launcher_source_commit],
             cwd=ROOT,
             check=True,
         )
     else:
+        require_original_jobs(already)
         source_commit = launcher_source_commit
-        existing_commits = {
-            str((job.get("metadata") or {}).get("source_commit") or "").strip()
-            for job in already.values()
-        }
-        existing_commits.discard("")
-        if existing_commits and existing_commits != {source_commit}:
+        wrong_fine_commits = [
+            key
+            for key in FINE_JOB_KEYS
+            if key in already and job_source_commit(already[key]) != source_commit
+        ]
+        if wrong_fine_commits:
             raise ValueError(
-                "Existing jobs use an earlier model source commit; use "
-                "--repair-local-apps instead of mixing model revisions."
+                "Existing fine jobs use a different immutable source commit: "
+                + ", ".join(wrong_fine_commits)
+            )
+
+        # Verify the immutable original cohort before registering or creating anything.
+        for row in original_rows:
+            key = f"more-tau-{row['key']}"
+            verify_job(
+                base_url,
+                token,
+                row,
+                int(already[key]["job_number"]),
+                job_payload(
+                    config,
+                    row,
+                    ORIGINAL_SOURCE_COMMIT,
+                    ORIGINAL_CONCURRENCY,
+                ),
             )
 
     expected_report = report_payload(config, source_commit)
-    if args.repair_local_apps:
-        expected_report["metadata"]["launcher_source_commit"] = launcher_source_commit
+    expected_report["metadata"]["launcher_source_commit"] = launcher_source_commit
     api_json(
         "POST",
         f"{base_url}/api/report/{task_path}",
@@ -570,9 +671,10 @@ def main() -> int:
     verify_report(base_url, token, expected_report)
 
     if args.repair_local_apps:
+        app_keys = [key for key in EXPECTED_JOB_KEYS if key in already]
         verified_apps = [
             verify_local_app(base_url, token, int(already[key]["job_number"]))
-            for key in EXPECTED_JOB_KEYS
+            for key in app_keys
         ]
         print(
             json.dumps(
@@ -589,13 +691,15 @@ def main() -> int:
         )
         return 0
 
-    pending = [row for row in rows if f"more-tau-{row['key']}" not in already]
+    pending = [
+        row for row in fine_rows if f"more-tau-{row['key']}" not in already
+    ]
     submitted: list[tuple[dict[str, str], int, dict[str, Any]]] = []
     failures: list[str] = []
-    with ThreadPoolExecutor(max_workers=EXPECTED_CONCURRENCY) as executor:
+    with ThreadPoolExecutor(max_workers=FINE_CONCURRENCY) as executor:
         futures = {}
         for row in pending:
-            payload = job_payload(config, row, source_commit)
+            payload = job_payload(config, row, source_commit, FINE_CONCURRENCY)
             future = executor.submit(
                 api_json,
                 "POST",
@@ -619,7 +723,27 @@ def main() -> int:
             verified.append(verify_job(base_url, token, row, number, payload))
         except Exception as exc:
             failures.append(str(exc))
-    for row in rows:
+    for row in original_rows:
+        key = f"more-tau-{row['key']}"
+        job = already[key]
+        try:
+            verified.append(
+                verify_job(
+                    base_url,
+                    token,
+                    row,
+                    int(job["job_number"]),
+                    job_payload(
+                        config,
+                        row,
+                        ORIGINAL_SOURCE_COMMIT,
+                        ORIGINAL_CONCURRENCY,
+                    ),
+                )
+            )
+        except Exception as exc:
+            failures.append(str(exc))
+    for row in fine_rows:
         key = f"more-tau-{row['key']}"
         if key in already:
             job = already[key]
@@ -630,7 +754,7 @@ def main() -> int:
                         token,
                         row,
                         int(job["job_number"]),
-                        job_payload(config, row, source_commit),
+                        job_payload(config, row, source_commit, FINE_CONCURRENCY),
                     )
                 )
             except Exception as exc:
@@ -642,14 +766,16 @@ def main() -> int:
         "task": EXPECTED_TASK,
         "flow": EXPECTED_FLOW,
         "batch": EXPECTED_BATCH,
-        "source_commit": source_commit,
-        "existing": len(already),
+        "original_source_commit": ORIGINAL_SOURCE_COMMIT,
+        "fine_source_commit": source_commit,
+        "existing_original": ORIGINAL_CONCURRENCY,
+        "existing_fine": len(fine_rows) - len(pending),
         "submitted": len(submitted),
         "verified": verified,
         "failures": failures,
     }
     print(json.dumps(result, indent=2))
-    if failures or len(verified) != EXPECTED_CONCURRENCY:
+    if failures or len(verified) != EXPECTED_TOTAL:
         raise SystemExit("Kflow submission or post-submission verification was incomplete.")
     return 0
 

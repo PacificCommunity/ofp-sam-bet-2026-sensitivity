@@ -67,12 +67,19 @@ if (yaml_value("^docker_image:") != expected_image ||
   fail("Pinned image, PROGRAM_PATH, or MFCL SHA256 provenance changed.")
 }
 
-expected_tau <- seq(4L, 32L, by = 4L)
-expected_keys <- paste0("tau-", expected_tau)
+expected_tau <- c(
+  seq(4, 32, by = 4),
+  4.2, 4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0
+)
+expected_keys <- c(
+  paste0("tau-", seq(4L, 32L, by = 4L)),
+  "tau-4.2", "tau-4.4", "tau-4.6", "tau-4.8", "tau-5",
+  "tau-5.2", "tau-5.4", "tau-5.6", "tau-5.8", "tau-6"
+)
 if (!identical(registry$key, expected_keys) ||
-    !identical(as.integer(registry$alternative), expected_tau) ||
-    nrow(registry) != 8L || anyDuplicated(registry$key)) {
-  fail("more_tau_sens.csv must define exactly the 8 ordered values tau=4,8,...,32.")
+    !isTRUE(all.equal(as.numeric(registry$alternative), expected_tau, tolerance = 1e-12)) ||
+    nrow(registry) != 18L || anyDuplicated(registry$key)) {
+  fail("more_tau_sens.csv must define the original 8 cases followed by the 10 fine values tau=4.2,...,6.0.")
 }
 if (nrow(original_registry) != 17L || length(intersect(original_registry$key, registry$key))) {
   fail("The original 17-case registry must remain separate from the more-tau campaign.")
@@ -184,7 +191,7 @@ for (i in seq_len(nrow(registry))) {
 
   metadata <- read.csv(file.path(staged, "sensitivity-metadata.csv"), stringsAsFactors = FALSE)
   if (nrow(metadata) != 1L || metadata$key != case_key ||
-      as.numeric(metadata$alternative) != target_tau ||
+      abs(as.numeric(metadata$alternative) - target_tau) > 1e-12 ||
       metadata$diagnostic_source_job != 21641L) {
     fail("Sensitivity metadata is wrong for ", case_key)
   }
@@ -226,7 +233,7 @@ for (i in seq_len(nrow(registry))) {
 audit <- do.call(rbind, audit)
 print(audit, row.names = FALSE, digits = 15)
 cat(
-  "Validated 8 frozen more-tau models: only Diagnostic.conf changes scientific content; ",
+  "Validated 18 frozen more-tau models: only Diagnostic.conf changes scientific content; ",
   "MANIFEST/metadata/README/INPUTS bookkeeping is isolated; direct tau reconstruction, ",
   "bounds, fixed switches, ordinary makepar, and Phase 10/11 -4 controls passed.\n",
   sep = ""

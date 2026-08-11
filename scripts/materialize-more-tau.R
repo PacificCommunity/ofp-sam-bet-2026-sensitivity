@@ -1,45 +1,44 @@
 #!/usr/bin/env Rscript
 
 args <- commandArgs(trailingOnly = TRUE)
-replace_existing <- identical(args, "--replace")
-if (length(args) > 1L || (length(args) == 1L && !replace_existing)) {
-  stop("Usage: Rscript scripts/materialize-more-tau.R [--replace]", call. = FALSE)
+if (length(args)) {
+  stop("Usage: Rscript scripts/materialize-more-tau.R", call. = FALSE)
 }
 
 script_arg <- grep("^--file=", commandArgs(), value = TRUE)
 repo <- normalizePath(file.path(dirname(sub("^--file=", "", script_arg)), ".."), mustWork = TRUE)
 registry <- read.csv(file.path(repo, "more_tau_sens.csv"), stringsAsFactors = FALSE)
-expected_keys <- paste0("tau-", seq(4L, 32L, by = 4L))
+original_keys <- paste0("tau-", seq(4L, 32L, by = 4L))
+fine_keys <- c(
+  "tau-4.2", "tau-4.4", "tau-4.6", "tau-4.8", "tau-5",
+  "tau-5.2", "tau-5.4", "tau-5.6", "tau-5.8", "tau-6"
+)
+expected_keys <- c(original_keys, fine_keys)
 if (!identical(registry$key, expected_keys)) {
-  stop("more_tau_sens.csv must contain exactly tau-4,8,...,32 in order.", call. = FALSE)
+  stop(
+    "more_tau_sens.csv must contain the original 8 cases followed by the 10 fine cases.",
+    call. = FALSE
+  )
 }
 
 models <- file.path(repo, "models")
 staging <- file.path(repo, paste0(".more-tau-models-staging-", Sys.getpid()))
-backup <- file.path(repo, paste0(".more-tau-models-backup-", Sys.getpid()))
-targets <- file.path(models, registry$key)
-existing <- targets[dir.exists(targets)]
-if (length(existing) && !replace_existing) {
-  stop(
-    "More-tau model folders already exist; use --replace to regenerate: ",
-    paste(basename(existing), collapse = ", "),
-    call. = FALSE
-  )
+missing_original <- original_keys[!dir.exists(file.path(models, original_keys))]
+if (length(missing_original)) {
+  stop("Original frozen model folders are missing: ", paste(missing_original, collapse = ", "), call. = FALSE)
+}
+missing <- fine_keys[!dir.exists(file.path(models, fine_keys))]
+if (!length(missing)) {
+  cat("All 10 fine fixed-tau input folders already exist; nothing to materialize.\n")
+  quit(status = 0L)
 }
 
 dir.create(staging)
 on.exit({
   if (dir.exists(staging)) unlink(staging, recursive = TRUE)
-  if (dir.exists(backup)) {
-    for (path in list.files(backup, full.names = TRUE)) {
-      target <- file.path(models, basename(path))
-      if (!dir.exists(target)) file.rename(path, target)
-    }
-    unlink(backup, recursive = TRUE)
-  }
 }, add = TRUE)
 
-for (case_key in registry$key) {
+for (case_key in missing) {
   destination <- file.path(staging, case_key)
   status <- system2(
     "Rscript",
@@ -57,19 +56,14 @@ for (case_key in registry$key) {
   write.table(manifest, input_manifest, row.names = FALSE, col.names = FALSE, quote = FALSE)
 }
 
-if (length(existing)) {
-  dir.create(backup)
-  for (target in existing) {
-    if (!file.rename(target, file.path(backup, basename(target)))) {
-      stop("Could not stage existing model folder: ", target, call. = FALSE)
-    }
-  }
-}
-for (case_key in registry$key) {
+for (case_key in missing) {
   source <- file.path(staging, case_key)
   target <- file.path(models, case_key)
   if (!file.rename(source, target)) stop("Could not install model folder: ", target, call. = FALSE)
 }
-if (dir.exists(backup)) unlink(backup, recursive = TRUE)
 unlink(staging, recursive = TRUE)
-cat("Materialized 8 fixed-tau input folders (tau=4,8,...,32) in models/.\n")
+cat(
+  "Materialized ", length(missing), " missing fine fixed-tau input folder(s): ",
+  paste(missing, collapse = ", "), ".\n",
+  sep = ""
+)

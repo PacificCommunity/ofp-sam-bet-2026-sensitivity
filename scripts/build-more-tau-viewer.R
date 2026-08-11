@@ -2,8 +2,19 @@
 
 options(stringsAsFactors = FALSE, warn = 1)
 
-data_dir <- file.path("data", "more-tau-viewer")
-output_file <- file.path("results", "bet-2026-more-tau-interactive-viewer.html")
+args <- commandArgs(trailingOnly = TRUE)
+unknown <- setdiff(args, "--refresh-data")
+if (length(unknown)) stop("Unknown argument(s): ", paste(unknown, collapse = ", "), call. = FALSE)
+refresh_requested <- "--refresh-data" %in% args
+
+output_root <- Sys.getenv("MORE_TAU_VIEWER_OUTPUT_ROOT", unset = "")
+if (nzchar(output_root)) {
+  data_dir <- file.path(output_root, "data")
+  output_file <- file.path(output_root, "bet-2026-more-tau-interactive-viewer.html")
+} else {
+  data_dir <- file.path("data", "more-tau-viewer")
+  output_file <- file.path("results", "bet-2026-more-tau-interactive-viewer.html")
+}
 source_date <- "2026-08-11"
 
 old_design_file <- "sensitivities.csv"
@@ -18,11 +29,24 @@ compact_series_file <- file.path(data_dir, "fixed-tau-timeseries.csv")
 compact_fits_file <- file.path(data_dir, "fixed-tau-fit-diagnostics.csv")
 compact_original_provenance_file <- file.path(data_dir, "original-tau-output-provenance.csv")
 compact_provenance_file <- file.path(data_dir, "more-tau-output-provenance.csv")
+compact_input_jobs_file <- file.path(data_dir, "kflow-input-provenance.csv")
 compact_sources_file <- file.path(data_dir, "source-inputs-sha256.csv")
 compact_checksums_file <- file.path(data_dir, "SHA256SUMS")
+committed_original_provenance_file <- file.path(
+  "data", "more-tau-viewer", "original-tau-output-provenance.csv"
+)
 
 old_keys <- c("tau-1.006738", "tau-1.2", "tau-1.4", "tau-1.6", "tau-1.8")
-new_keys <- c("tau-4", "tau-8", "tau-12", "tau-16", "tau-20", "tau-24", "tau-28", "tau-32")
+registry_preview <- utils::read.csv(new_design_file, check.names = FALSE, stringsAsFactors = FALSE)
+registry_keys <- as.character(
+  registry_preview$key[order(as.numeric(registry_preview$alternative))]
+)
+if (!refresh_requested && file.exists(compact_design_file)) {
+  compact_preview <- utils::read.csv(compact_design_file, check.names = FALSE, stringsAsFactors = FALSE)
+  new_keys <- setdiff(as.character(compact_preview$key), c(old_keys, "diagnostic"))
+} else {
+  new_keys <- registry_keys
+}
 all_keys <- c(old_keys, "diagnostic", new_keys)
 old_job_by_key <- c(
   "tau-1.006738" = 22181L,
@@ -31,22 +55,11 @@ old_job_by_key <- c(
   "tau-1.6" = 22188L,
   "tau-1.8" = 22179L
 )
-job_by_key <- c(
-  "tau-4" = 24040L,
-  "tau-8" = 24041L,
-  "tau-12" = 24042L,
-  "tau-16" = 24044L,
-  "tau-20" = 24047L,
-  "tau-24" = 24045L,
-  "tau-28" = 24043L,
-  "tau-32" = 24046L
-)
-
 original_tau_source_commit <- "63267b676538c601a19f60a38cf2a179a30e4f20"
-more_tau_source_commit <- "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
 diagnostic_source_commit <- "e93b9bc6284b17cc5ab2af4ccabb1cfe776e76a5"
 mfclkit_git_sha <- "cf786007b5261f84faac8f3d24f7084bd323119d"
 mfclshiny_git_sha <- "2a49729ae1203b4182c7b6d51d4ee11c52497228"
+flr4mfcl_git_sha <- "3faaf84a4867175bfea50d89e4d518c085e84739"
 
 fail <- function(...) stop(..., call. = FALSE)
 
@@ -123,19 +136,31 @@ check_series <- function(series, keys) {
 refresh_compact_data <- function() {
   raw_series_file <- Sys.getenv("MORE_TAU_DERIVED_SERIES", unset = "")
   raw_root <- Sys.getenv("MORE_TAU_RAW_ROOT", unset = "")
-  archive_root <- Sys.getenv("MORE_TAU_ARCHIVE_ROOT", unset = "")
-  original_output_root <- Sys.getenv("ORIGINAL_TAU_OUTPUT_ROOT", unset = "")
-  supplied <- nzchar(c(raw_series_file, raw_root, archive_root, original_output_root))
+  job_provenance_file <- Sys.getenv("MORE_TAU_JOB_PROVENANCE", unset = "")
+  supplied <- nzchar(c(raw_series_file, raw_root, job_provenance_file))
   if (!all(supplied)) {
     fail(
       "Refreshing requires MORE_TAU_DERIVED_SERIES, MORE_TAU_RAW_ROOT and ",
-      "MORE_TAU_ARCHIVE_ROOT, plus ORIGINAL_TAU_OUTPUT_ROOT."
+      "MORE_TAU_JOB_PROVENANCE."
     )
   }
-  if (!file.exists(raw_series_file) || !dir.exists(raw_root) || !dir.exists(archive_root) ||
-      !dir.exists(original_output_root)) {
+  if (!file.exists(raw_series_file) || !dir.exists(raw_root) || !file.exists(job_provenance_file)) {
     fail("One or more fixed-tau refresh inputs do not exist.")
   }
+
+  job_provenance <- read_csv(job_provenance_file)
+  required_job_provenance <- c(
+    "key", "kflow_job", "source_commit", "input_job_id", "model_relative_dir"
+  )
+  if (!all(required_job_provenance %in% names(job_provenance)) ||
+      !identical(as.character(job_provenance$key), new_keys) ||
+      any(!is.finite(job_provenance$kflow_job)) ||
+      any(!grepl("^[0-9a-f]{40}$", job_provenance$source_commit)) ||
+      any(!grepl("^[[:alnum:]_.-]+$", job_provenance$input_job_id)) ||
+      any(grepl("^/|(^|/)\\.\\.(/|$)", job_provenance$model_relative_dir))) {
+    fail("The Kflow input-job provenance is incomplete, unsafe or out of registry order.")
+  }
+  job_by_key <- stats::setNames(as.integer(job_provenance$kflow_job), job_provenance$key)
 
   old_design_all <- read_csv(old_design_file)
   new_design <- read_csv(new_design_file)
@@ -181,7 +206,7 @@ refresh_compact_data <- function() {
       label = paste0("tau = ", sub("^Tau ", "", new_design$label)),
       campaign = "Additional fixed-tau sensitivity",
       kflow_job = unname(as.integer(job_by_key[new_design$key])),
-      source = "more_tau_sens Kflow output archive",
+      source = "more_tau_sens Kflow dependency archive",
       stringsAsFactors = FALSE
     )
   )
@@ -252,88 +277,26 @@ refresh_compact_data <- function() {
     stringsAsFactors = FALSE
   )
 
-  original_provenance_rows <- list()
-  for (key in old_keys) {
-    job <- unname(as.integer(old_job_by_key[[key]]))
-    raw_dir <- file.path(original_output_root, "raw-minimal", key)
-    final_file <- file.path(raw_dir, "final.par")
-    rep_file <- file.path(raw_dir, "plot-11.par.rep")
-    payload_file <- file.path(raw_dir, "model_payload.rds")
-    metadata_file <- file.path(raw_dir, "sensitivity-metadata.csv")
-    manifest_file <- file.path(raw_dir, "model_payload_manifest.csv")
-    required <- c(final_file, rep_file, payload_file, metadata_file, manifest_file)
-    if (any(!file.exists(required))) fail("Original raw-minimal evidence is incomplete for ", key, ".")
-
-    metadata <- read_one_row(metadata_file)
-    manifest <- read_one_row(manifest_file)
-    audit_row <- main_audit[main_audit$key == key, , drop = FALSE]
-    checks <- c(
-      identical(as.character(metadata$key), key),
-      identical(as.character(metadata$axis), "Tag overdispersion"),
-      as.integer(metadata$diagnostic_source_job) == 21641L,
-      identical(as.character(metadata$diagnostic_source_commit), diagnostic_source_commit),
-      identical(as.character(manifest$schema), "mfclshiny.model_payload_manifest.v1"),
-      identical(as.character(manifest$model_label), key),
-      identical(sha256(final_file), as.character(audit_row$final_par_sha256)),
-      identical(sha256(rep_file), as.character(audit_row$final_rep_sha256)),
-      isTRUE(all.equal(as.numeric(manifest$obj_fun),
-        main_fits$objective_function[main_fits$key == key], tolerance = 1e-12)),
-      isTRUE(all.equal(as.numeric(manifest$max_grad),
-        main_fits$maximum_gradient_component[main_fits$key == key], tolerance = 1e-12))
-    )
-    if (!all(checks)) fail("Original output provenance audit failed for ", key, ".")
-
-    relative_archive <- file.path(sprintf("job-%06d", job), "output_archive.tar.gz")
-    archive_file <- file.path(original_output_root, relative_archive)
-    archive_available <- file.exists(archive_file)
-    if (archive_available) {
-      members <- system2("tar", c("-tzf", archive_file), stdout = TRUE, stderr = TRUE)
-      tar_status <- attr(members, "status")
-      expected_members <- paste0(
-        "./outputs/models/", key, "/",
-        c("final.par", "plot-11.par.rep", "sensitivity-metadata.csv")
-      )
-      if ((!is.null(tar_status) && tar_status != 0L) || !all(expected_members %in% members)) {
-        fail("Original Kflow archive membership failed for ", key, ".")
-      }
-    }
-
-    original_provenance_rows[[key]] <- data.frame(
-      key = key,
-      fixed_tau = as.numeric(old_design$alternative[old_design$key == key]),
-      campaign = "Original fixed-tau sensitivity",
-      kflow_job = job,
-      source_commit = original_tau_source_commit,
-      archive_file = relative_archive,
-      archive_status = if (archive_available) {
-        "verified local archive; required model members present"
-      } else {
-        "archive not retained in local cache; raw-minimal output hashes verified"
-      },
-      archive_sha256 = if (archive_available) sha256(archive_file) else NA_character_,
-      final_par_sha256 = sha256(final_file),
-      plot_11_rep_sha256 = sha256(rep_file),
-      gradient_rpt_sha256 = NA_character_,
-      model_payload_sha256 = sha256(payload_file),
-      mfcl_executable_sha256 = NA_character_,
-      mfclkit_git_sha = NA_character_,
-      mfclshiny_git_sha = NA_character_,
-      diagnostic_source_job = 21641L,
-      diagnostic_source_commit = diagnostic_source_commit,
-      payload_created_at = as.character(manifest$created_at),
-      stringsAsFactors = FALSE
-    )
+  original_provenance <- read_csv(committed_original_provenance_file)
+  if (!identical(as.character(original_provenance$key), old_keys) ||
+      any(original_provenance$source_commit != original_tau_source_commit) ||
+      !identical(as.character(original_provenance$final_par_sha256),
+        as.character(main_audit$final_par_sha256)) ||
+      !identical(as.character(original_provenance$plot_11_rep_sha256),
+        as.character(main_audit$final_rep_sha256))) {
+    fail("Committed original fixed-tau provenance disagrees with the main public audit.")
   }
-  original_provenance <- do.call(rbind, original_provenance_rows)
-  row.names(original_provenance) <- NULL
+  if (!"flr4mfcl_git_sha" %in% names(original_provenance)) {
+    original_provenance$flr4mfcl_git_sha <- NA_character_
+  }
 
   new_fit_rows <- list()
   provenance_rows <- list()
   for (key in new_keys) {
     job <- unname(as.integer(job_by_key[[key]]))
     tau <- as.numeric(new_design$alternative[new_design$key == key])
-    model_dir <- file.path(raw_root, paste0("job-", job), "outputs", "models", key)
-    archive_file <- file.path(archive_root, paste0("job-", job, ".tar.gz"))
+    provenance_row <- job_provenance[job_provenance$key == key, , drop = FALSE]
+    model_dir <- file.path(raw_root, provenance_row$model_relative_dir)
     required <- file.path(
       model_dir,
       c(
@@ -342,8 +305,8 @@ refresh_compact_data <- function() {
         "sensitivity-metadata.csv", "mfclo64"
       )
     )
-    if (any(!file.exists(required)) || !file.exists(archive_file)) {
-      fail("Raw output or archive is incomplete for ", key, ".")
+    if (any(!file.exists(required))) {
+      fail("Extracted Kflow dependency output is incomplete for ", key, ".")
     }
 
     model_audit <- read_one_row(file.path(model_dir, "model-input-audit.csv"))
@@ -394,7 +357,7 @@ refresh_compact_data <- function() {
         "completed; MGC above 1e-4"
       ),
       kflow_job = job,
-      source = "more_tau_sens Kflow output archive",
+      source = "more_tau_sens Kflow dependency archive",
       final_par_sha256 = sha256(final_file),
       plot_11_rep_sha256 = sha256(file.path(model_dir, "plot-11.par.rep")),
       stringsAsFactors = FALSE
@@ -405,10 +368,10 @@ refresh_compact_data <- function() {
       fixed_tau = tau,
       campaign = "Additional fixed-tau sensitivity",
       kflow_job = job,
-      source_commit = more_tau_source_commit,
-      archive_file = basename(archive_file),
-      archive_status = "verified staged archive",
-      archive_sha256 = sha256(archive_file),
+      source_commit = as.character(provenance_row$source_commit),
+      archive_file = paste0("Kflow input job ", provenance_row$input_job_id),
+      archive_status = "Kflow dependency extracted; required model members verified",
+      archive_sha256 = NA_character_,
       final_par_sha256 = sha256(final_file),
       plot_11_rep_sha256 = sha256(file.path(model_dir, "plot-11.par.rep")),
       gradient_rpt_sha256 = sha256(file.path(model_dir, "gradient.rpt")),
@@ -416,6 +379,7 @@ refresh_compact_data <- function() {
       mfcl_executable_sha256 = sha256(file.path(model_dir, "mfclo64")),
       mfclkit_git_sha = mfclkit_git_sha,
       mfclshiny_git_sha = mfclshiny_git_sha,
+      flr4mfcl_git_sha = flr4mfcl_git_sha,
       diagnostic_source_job = 21641L,
       diagnostic_source_commit = diagnostic_source_commit,
       payload_created_at = as.character(manifest$created_at),
@@ -450,16 +414,17 @@ refresh_compact_data <- function() {
       "Original sensitivity design", "Additional sensitivity design",
       "Original public time series", "Original public fit diagnostics",
       "Original completed-output audit", "Viewer HTML template",
-      "Staged more-tau derived series"
+      "Staged more-tau derived series", "Staged Kflow input provenance"
     ),
     file = c(
       old_design_file, new_design_file, main_series_file, main_fits_file,
-      main_audit_file, template_file, "derived-timeseries-raw.csv"
+      main_audit_file, template_file, "derived-timeseries-raw.csv",
+      "kflow-input-provenance.csv"
     ),
     sha256 = c(
       sha256(old_design_file), sha256(new_design_file), sha256(main_series_file),
       sha256(main_fits_file), sha256(main_audit_file), sha256(template_file),
-      sha256(raw_series_file)
+      sha256(raw_series_file), sha256(job_provenance_file)
     ),
     stringsAsFactors = FALSE
   )
@@ -470,11 +435,13 @@ refresh_compact_data <- function() {
   utils::write.csv(fits, compact_fits_file, row.names = FALSE, na = "")
   utils::write.csv(original_provenance, compact_original_provenance_file, row.names = FALSE, na = "")
   utils::write.csv(provenance, compact_provenance_file, row.names = FALSE, na = "")
+  utils::write.csv(job_provenance, compact_input_jobs_file, row.names = FALSE, na = "")
   utils::write.csv(source_rows, compact_sources_file, row.names = FALSE, na = "")
 
   checksum_files <- c(
     compact_design_file, compact_series_file, compact_fits_file,
-    compact_original_provenance_file, compact_provenance_file, compact_sources_file
+    compact_original_provenance_file, compact_provenance_file,
+    compact_input_jobs_file, compact_sources_file
   )
   checksum_lines <- vapply(
     checksum_files,
@@ -482,13 +449,10 @@ refresh_compact_data <- function() {
     character(1)
   )
   writeLines(checksum_lines, compact_checksums_file, useBytes = TRUE)
-  message("Refreshed committed fixed-tau viewer data from audited raw outputs.")
+  message("Refreshed fixed-tau viewer data from audited Kflow dependency outputs.")
 }
 
-args <- commandArgs(trailingOnly = TRUE)
-unknown <- setdiff(args, "--refresh-data")
-if (length(unknown)) fail("Unknown argument(s): ", paste(unknown, collapse = ", "))
-if ("--refresh-data" %in% args) refresh_compact_data()
+if (refresh_requested) refresh_compact_data()
 
 required_compact <- c(
   compact_design_file, compact_series_file, compact_fits_file,
@@ -504,7 +468,9 @@ checksum_lines <- readLines(compact_checksums_file, warn = FALSE)
 checksum_parts <- strsplit(checksum_lines, "[[:space:]]+", perl = TRUE)
 expected_checksum_files <- basename(c(
   compact_design_file, compact_series_file, compact_fits_file,
-  compact_original_provenance_file, compact_provenance_file, compact_sources_file
+  compact_original_provenance_file, compact_provenance_file,
+  if (file.exists(compact_input_jobs_file)) compact_input_jobs_file,
+  compact_sources_file
 ))
 if (length(checksum_parts) != length(expected_checksum_files) ||
     !identical(vapply(checksum_parts, `[[`, character(1), 2L), expected_checksum_files)) {
@@ -530,7 +496,12 @@ if (!identical(as.character(original_provenance$key), old_keys)) {
   fail("Committed original-tau provenance is inconsistent.")
 }
 if (!identical(as.character(provenance$key), new_keys)) fail("Committed more-tau provenance is inconsistent.")
-repository_sources <- sources[sources$file != "derived-timeseries-raw.csv", , drop = FALSE]
+repository_sources <- sources[!grepl("^Staged ", sources$role), , drop = FALSE]
+if (!refresh_requested) {
+  repository_sources <- repository_sources[
+    repository_sources$role != "Additional sensitivity design", , drop = FALSE
+  ]
+}
 if (any(!file.exists(repository_sources$file)) ||
     any(vapply(seq_len(nrow(repository_sources)), function(index) {
       !identical(sha256(repository_sources$file[[index]]), repository_sources$sha256[[index]])
@@ -604,6 +575,9 @@ provenance_table <- data.frame(
   check.names = FALSE,
   stringsAsFactors = FALSE
 )
+if ("flr4mfcl_git_sha" %in% names(all_provenance)) {
+  provenance_table[["FLR4MFCL commit"]] <- all_provenance$flr4mfcl_git_sha
+}
 
 colours <- grDevices::hcl.colors(nrow(design), palette = "Dynamic")
 colours[design$key == "diagnostic"] <- "#C62828"

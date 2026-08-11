@@ -29,3 +29,5 @@ while IFS=, read -r case_key expected_tau; do
   )
   echo "ordinary makepar and fixed-value audits passed: $case_key (tau=$expected_tau)"
 done
+
+test "$(awk -F, 'NR > 1 && $1 == "tau-4" {count++} END {print count + 0}' "$repo_dir/more_tau_sens.csv")" -eq 1
