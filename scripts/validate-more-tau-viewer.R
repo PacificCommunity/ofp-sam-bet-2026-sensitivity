@@ -90,13 +90,13 @@ if (!identical(as.character(design$key), all_keys) ||
   fail("Fixed-tau design keys, values, registry binding or ordering are incorrect.")
 }
 completed_new_keys <- c(
-  "tau-4", "tau-4.2", "tau-4.4", "tau-5", "tau-5.2", "tau-5.4", "tau-5.6",
+  "tau-4", "tau-4.2", "tau-4.4", "tau-4.6", "tau-5", "tau-5.2", "tau-5.4", "tau-5.6",
   "tau-5.8", "tau-6", "tau-8", "tau-12", "tau-16", "tau-20", "tau-24",
   "tau-28", "tau-32"
 )
 if (completed_snapshot &&
-    (!identical(new_keys, completed_new_keys) || nrow(design) != 22L)) {
-  fail("Completed-only viewer design must contain exactly 22 plotted models.")
+    (!identical(new_keys, completed_new_keys) || nrow(design) != 23L)) {
+  fail("Completed-only viewer design must contain exactly 23 plotted models.")
 }
 
 numeric_series <- c(
@@ -180,7 +180,7 @@ if (completed_snapshot) {
   expected_registry_order <- as.character(registry$key)
   included <- as.logical(cohort$included_in_plots)
   expected_status_by_key <- stats::setNames(rep("completed", length(registry_keys)), registry_keys)
-  expected_status_by_key[c("tau-4.6", "tau-4.8")] <- c("running", "failed")
+  expected_status_by_key["tau-4.8"] <- "failed"
   expected_commit_by_key <- stats::setNames(
     ifelse(
       registry_keys %in% legacy_new_keys,
@@ -203,12 +203,12 @@ if (completed_snapshot) {
       !setequal(as.character(cohort$key[included]), new_keys)) {
     fail("Completed-only all-requested fit cohort is incorrect.")
   }
-  if (!identical(as.character(input_jobs$key), new_keys) || nrow(input_jobs) != 16L ||
+  if (!identical(as.character(input_jobs$key), new_keys) || nrow(input_jobs) != 17L ||
       !identical(as.integer(input_jobs$kflow_job),
         as.integer(cohort$kflow_job[match(new_keys, cohort$key)])) ||
       !identical(as.character(input_jobs$source_commit),
         unname(expected_commit_by_key[new_keys]))) {
-    fail("Completed-only Kflow input lineage is not the exact 16-fit dependency set.")
+    fail("Completed-only Kflow input lineage is not the exact 17-fit dependency set.")
   }
   if (!identical(as.integer(design$kflow_job[match(new_keys, design$key)]),
         as.integer(cohort$kflow_job[match(new_keys, cohort$key)])) ||
@@ -220,22 +220,38 @@ if (completed_snapshot) {
         unname(expected_commit_by_key[new_keys]))) {
     fail("Completed-only plotted provenance has an unexpected fit source commit.")
   }
-  excluded_keys <- c("tau-4.6", "tau-4.8")
+  excluded_keys <- "tau-4.8"
   excluded_fits <- fits[match(excluded_keys, fits$key), , drop = FALSE]
-  if (!identical(as.character(excluded_fits$execution_status), c("running", "failed")) ||
+  if (!identical(as.character(excluded_fits$execution_status), "failed") ||
       any(as.logical(excluded_fits$included_in_plots)) ||
       !all(is.na(excluded_fits[, c(
         "objective_function", "maximum_gradient_component", "active_parameters"
       )])) ||
-      !grepl("native Choleski exception", excluded_fits$convergence_status[[2L]], fixed = TRUE) ||
+      !grepl("native Choleski exception", excluded_fits$convergence_status[[1L]], fixed = TRUE) ||
       any(excluded_keys %in% design$key) || any(excluded_keys %in% unique(series$key)) ||
       any(excluded_keys %in% provenance$key)) {
-    fail("Running/failed fits must remain status-only Fit Summary rows excluded from plots.")
+    fail("Failed tau-4.8 must remain a status-only Fit Summary row excluded from plots.")
   }
   included_fits <- fits[match(c(old_keys, "diagnostic", new_keys), fits$key), , drop = FALSE]
   if (any(included_fits$execution_status != "completed") ||
       any(!as.logical(included_fits$included_in_plots))) {
     fail("Every plotted model must be explicitly completed and included in plots.")
+  }
+  tau46 <- new_fits[new_fits$key == "tau-4.6", , drop = FALSE]
+  tau28 <- new_fits[new_fits$key == "tau-28", , drop = FALSE]
+  high_mgc_keys <- as.character(new_fits$key[new_fits$maximum_gradient_component > 1e-4])
+  if (nrow(tau46) != 1L || nrow(tau28) != 1L ||
+      !isTRUE(all.equal(tau46$objective_function, 95678.7103061567, tolerance = 1e-12)) ||
+      !isTRUE(all.equal(tau46$maximum_gradient_component,
+        0.00628079055077213, tolerance = 1e-12)) ||
+      tau46$active_parameters != 1997L || tau46$kflow_job != 24050L ||
+      !identical(as.character(tau46$convergence_status), "completed; MGC above 1e-4") ||
+      !isTRUE(as.logical(tau46$included_in_plots)) ||
+      !isTRUE(all.equal(tau28$maximum_gradient_component,
+        0.00580837932133212, tolerance = 1e-12)) ||
+      !identical(as.character(tau28$convergence_status), "completed; MGC above 1e-4") ||
+      !identical(high_mgc_keys, c("tau-4.6", "tau-28"))) {
+    fail("Completed tau-4.6 and tau-28 must retain their explicit above-threshold MGC warnings.")
   }
 }
 if (legacy_snapshot) {
@@ -311,7 +327,7 @@ required_text <- c(
 if (completed_snapshot) {
   required_text <- c(
     required_text, "Fit Summary", "Plots include completed fits only",
-    "native Choleski exception"
+    "native Choleski exception", "completed; MGC above 1e-4"
   )
 }
 if (any(!vapply(required_text, grepl, logical(1L), x = html, fixed = TRUE)) ||

@@ -28,13 +28,13 @@ input_root <- normalizePath(
 if (!nzchar(input_root) || !dir.exists(input_root)) {
   fail("KFLOW_INPUT_DIR must identify the extracted Kflow dependency archives.")
 }
-expected_output_dir <- file.path(root, "outputs", "more-tau-viewer-completed-only")
+expected_output_dir <- file.path(root, "outputs", "more-tau-viewer-completed-only-v2")
 output_dir <- Sys.getenv("MORE_TAU_VIEWER_OUTPUT_ROOT", unset = expected_output_dir)
 output_dir <- normalizePath(output_dir, winslash = "/", mustWork = FALSE)
 if (!identical(output_dir, normalizePath(
   expected_output_dir, winslash = "/", mustWork = FALSE
 ))) {
-  fail("The Kflow viewer output must be exactly outputs/more-tau-viewer-completed-only.")
+  fail("The Kflow viewer output must be exactly outputs/more-tau-viewer-completed-only-v2.")
 }
 if (dir.exists(output_dir) && length(list.files(output_dir, all.files = TRUE, no.. = TRUE))) {
   fail("Refusing to overwrite a non-empty aggregate viewer output directory.")
@@ -72,18 +72,18 @@ if (!is.data.frame(cohort) || nrow(cohort) != 18L ||
     anyDuplicated(cohort$kflow_job)) {
   fail("Fit cohort must bind all 18 registry rows to unique Kflow jobs.")
 }
-expected_excluded <- c("tau-4.6" = "running", "tau-4.8" = "failed")
+expected_excluded <- c("tau-4.8" = "failed")
 observed_excluded <- cohort[!as.logical(cohort$included_in_plots), , drop = FALSE]
 if (!identical(as.character(observed_excluded$key), names(expected_excluded)) ||
     !identical(as.character(observed_excluded$execution_status), unname(expected_excluded)) ||
     any(as.character(cohort$execution_status[as.logical(cohort$included_in_plots)]) != "completed")) {
-  fail("Completed-only cohort must exclude exactly running tau-4.6 and failed tau-4.8.")
+  fail("Completed-only cohort must exclude exactly failed tau-4.8.")
 }
 included_registry <- registry[registry$key %in% cohort$key[as.logical(cohort$included_in_plots)], , drop = FALSE]
 expected_keys <- as.character(
   included_registry$key[order(as.numeric(included_registry$alternative))]
 )
-if (length(expected_keys) != 16L) fail("Completed-only snapshot requires 16 dependencies.")
+if (length(expected_keys) != 17L) fail("Completed-only snapshot requires 17 dependencies.")
 original_campaign_keys <- sprintf("tau-%d", seq(4L, 32L, by = 4L))
 original_source_commit <- "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
 fine_source_commit <- "0043eea6bf908608cd438c80b67858352abd6f89"
@@ -121,7 +121,7 @@ if (!file.exists(provenance_file)) fail("Missing Kflow dependency provenance: ",
 ledger <- jsonlite::fromJSON(provenance_file, simplifyDataFrame = TRUE)
 inputs <- ledger$inputs
 if (!is.data.frame(inputs) || nrow(inputs) != length(expected_keys)) {
-  fail("Kflow provenance must contain exactly 16 completed dependency records.")
+  fail("Kflow provenance must contain exactly 17 completed dependency records.")
 }
 required_inputs <- c("job_id", "job_number", "job_key", "git_commit_sha")
 if (!all(required_inputs %in% names(inputs)) || anyDuplicated(inputs$job_id)) {
@@ -277,4 +277,4 @@ tracked_after <- system2("git", c("diff", "--no-ext-diff", "--", "."), stdout = 
 if (!identical(tracked_after, tracked_before)) {
   fail("The aggregate viewer runner modified tracked repository content.")
 }
-message("Built audited completed-only viewer: 22 plotted models, 24 Fit Summary rows, 16 dependencies.")
+message("Built audited completed-only viewer: 23 plotted models, 24 Fit Summary rows, 17 dependencies.")

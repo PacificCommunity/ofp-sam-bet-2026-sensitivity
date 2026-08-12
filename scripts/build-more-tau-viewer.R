@@ -6,6 +6,9 @@ args <- commandArgs(trailingOnly = TRUE)
 unknown <- setdiff(args, "--refresh-data")
 if (length(unknown)) stop("Unknown argument(s): ", paste(unknown, collapse = ", "), call. = FALSE)
 refresh_requested <- "--refresh-data" %in% args
+completed_only_required <- tolower(trimws(Sys.getenv(
+  "MORE_TAU_VIEWER_REQUIRE_COMPLETED_ONLY", unset = ""
+))) %in% c("1", "true", "yes", "on")
 
 output_root <- Sys.getenv("MORE_TAU_VIEWER_OUTPUT_ROOT", unset = "")
 if (nzchar(output_root)) {
@@ -182,6 +185,16 @@ refresh_compact_data <- function() {
       !setequal(as.character(fit_cohort$key[as.logical(fit_cohort$included_in_plots)]), new_keys) ||
       anyDuplicated(fit_cohort$kflow_job)) {
     fail("The all-requested fit cohort is incomplete or inconsistent with plotted dependencies.")
+  }
+  if (completed_only_required) {
+    expected_included <- fit_cohort$key != "tau-4.8"
+    expected_execution <- ifelse(expected_included, "completed", "failed")
+    if (length(new_keys) != 17L ||
+        anyNA(as.logical(fit_cohort$included_in_plots)) ||
+        !identical(as.logical(fit_cohort$included_in_plots), expected_included) ||
+        !identical(as.character(fit_cohort$execution_status), expected_execution)) {
+      fail("The refreshed completed-only cohort must include 17 completed fits and exclude only failed tau-4.8.")
+    }
   }
 
   old_design_all <- read_csv(old_design_file)

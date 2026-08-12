@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview, submit, or read-only recover the completed-only fixed-tau viewer."""
+"""Preview, submit, or read-only recover the isolated completed-only v2 fixed-tau viewer."""
 
 from __future__ import annotations
 
@@ -21,14 +21,17 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "kflow-more-tau-viewer.yaml"
 REGISTRY_PATH = ROOT / "more_tau_sens.csv"
-TASK = "BET-2026-sensitivity-more-tau-viewer-completed-only"
+TASK = "BET-2026-sensitivity-more-tau-viewer-completed-only-v2"
 FIT_TASK = "BET-2026-sensitivity-more-tau"
 REPO = "PacificCommunity/ofp-sam-bet-2026-sensitivity"
 BRANCH = "more_tau_sens"
-JOB_KEY = "more-tau-completed-only-viewer-22-models"
+JOB_KEY = "more-tau-completed-only-v2-viewer-23-models"
 ORIGINAL_SOURCE_COMMIT = "dcd289eef9f5a63f75e11aabfb4c47af406c8abb"
 FINE_SOURCE_COMMIT = "0043eea6bf908608cd438c80b67858352abd6f89"
-EXCLUDED_STATUS = {"tau-4.6": "running", "tau-4.8": "failed"}
+EXCLUDED_STATUS = {"tau-4.8": "failed"}
+DEPENDENCY_COUNT = 17
+PLOTTED_MODELS = 23
+FIT_SUMMARY_ROWS = 24
 FORBIDDEN_METADATA = {
     "attachment", "attachments", "base_job", "check_input_jobs", "check_type",
     "diagnostic-support", "latest_attached_output", "source_base_job",
@@ -315,13 +318,13 @@ def load(commit: str = "") -> tuple[dict[str, Any], list[str], list[str]]:
     if all_keys != expected:
         raise ValueError("Registry must contain the original eight then tau=4.2,...,6.0.")
     included = [key for key in all_keys if key not in EXCLUDED_STATUS]
-    if len(included) != 16:
-        raise ValueError("Completed-only snapshot must contain exactly 16 fit dependencies.")
+    if len(included) != DEPENDENCY_COUNT:
+        raise ValueError("Completed-only snapshot must contain exactly 17 fit dependencies.")
     if config.get("name") != TASK or config.get("triggers") not in ({}, None):
         raise ValueError("Completed-only viewer task name or empty-trigger contract changed.")
     if config.get("command") != "Rscript scripts/run-more-tau-viewer.R":
         raise ValueError("Completed-only task must use its aggregate runner.")
-    if config.get("output_patterns") != ["outputs/more-tau-viewer-completed-only/**"]:
+    if config.get("output_patterns") != ["outputs/more-tau-viewer-completed-only-v2/**"]:
         raise ValueError("Completed-only output scope changed.")
     if config.get("local_apps") is not None or config.get("local_apps_from") is not None:
         raise ValueError("Completed-only viewer must not attach a local application.")
@@ -350,8 +353,8 @@ def immutable_recovery_inputs(
     refs = normalized_refs(
         contract_value(observed, "input_jobs", use_report_spec=True), "Recovered job input_jobs"
     )
-    if parse_refs(",".join(refs), 16) != refs:
-        raise ValueError("Recovered job input_jobs are not the exact ordered 16-fit dependency set.")
+    if parse_refs(",".join(refs), DEPENDENCY_COUNT) != refs:
+        raise ValueError("Recovered job input_jobs are not the exact ordered 17-fit dependency set.")
     env = mapping(contract_value(observed, "env", aliases=("env_json",)), "Recovered job env")
     raw_cohort = env.get("MORE_TAU_FIT_COHORT_JSON")
     try:
@@ -419,10 +422,10 @@ def parse_excluded(value: str) -> dict[str, str]:
         key, separator, number = part.partition("=")
         number = number.strip().lstrip("#")
         if not separator or key not in EXCLUDED_STATUS or not number.isdigit() or int(number) <= 0:
-            raise ValueError("Excluded refs must be tau-4.6=JOB,tau-4.8=JOB.")
+            raise ValueError("Excluded refs must be tau-4.8=JOB.")
         found[key] = number
     if found and set(found) != set(EXCLUDED_STATUS):
-        raise ValueError("Both excluded fit references are required.")
+        raise ValueError("The tau-4.8 excluded fit reference is required.")
     return found
 
 
@@ -509,8 +512,8 @@ def common_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[st
         "metadata": {
             **dict(config.get("metadata") or {}),
             "source_commit": viewer_commit,
-            "fit_job_count": 16,
-            "fit_summary_rows": 24,
+            "fit_job_count": DEPENDENCY_COUNT,
+            "fit_summary_rows": FIT_SUMMARY_ROWS,
             "completed_fit_job_refs": refs,
             "dependency_mode": "completed-only-fan-in",
             "input_jobs_override": True,
@@ -532,7 +535,7 @@ def report_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[st
 
 def job_payload(config: dict[str, Any], refs: list[str], cohort: list[dict[str, Any]], commit: str) -> dict[str, Any]:
     payload = common_payload(config, refs, cohort, commit)
-    payload["batch_name"] = "bet-2026-more-tau-viewer-completed-only-batch"
+    payload["batch_name"] = "bet-2026-more-tau-viewer-completed-only-v2-batch"
     return payload
 
 
@@ -562,7 +565,7 @@ def main() -> int:
     args = parser.parse_args()
     if args.recover_job is not None and args.recover_job <= 0:
         parser.error("--recover-job must be a positive Kflow job number")
-    explicit_refs = parse_refs(args.fit_jobs, 16)
+    explicit_refs = parse_refs(args.fit_jobs, DEPENDENCY_COUNT)
     explicit_excluded = parse_excluded(args.excluded_jobs)
     token = os.environ.get("KFLOW_API_TOKEN", "")
     base_url = os.environ.get("KFLOW_URL", "http://127.0.0.1:8089").rstrip("/")
@@ -639,14 +642,17 @@ def main() -> int:
         refs = discovered_refs
     elif refs or excluded:
         if not refs or not excluded:
-            raise ValueError("Preview requires both 16 completed refs and two excluded refs.")
+            raise ValueError("Preview requires 17 completed refs and the failed tau-4.8 ref.")
         cohort = make_cohort(all_keys, included, refs, excluded)
     else:
         print(json.dumps({
             "task": TASK, "branch": BRANCH, "fit_task": FIT_TASK,
             "completed_input_job_keys": [f"more-tau-{key}" for key in included],
-            "excluded": EXCLUDED_STATUS, "input_jobs": "resolve exact 16 completed refs",
-            "plotted_models": 22, "fit_summary_rows": 24, "triggers": {},
+            "excluded": EXCLUDED_STATUS,
+            "input_jobs": "resolve exact 17 completed refs",
+            "plotted_models": PLOTTED_MODELS,
+            "fit_summary_rows": FIT_SUMMARY_ROWS,
+            "triggers": {},
         }, indent=2))
         return 0
     report = report_payload(config, refs, cohort, viewer_commit)

@@ -10,12 +10,13 @@ reference (`tau = 2`), and the eight additional Kflow fits (`tau = 4, 8, 12,
 16, 20, 24, 28, 32`). Every model has annual values for 1952--2024 for dynamic
 depletion, recruitment, spawning potential and fishing mortality.
 
-The completed-only Kflow fan-in rebuild is intentionally not committed here.
-It plots the 16 completed more-tau fits (22 models including the main five and
-Diagnostic), while its Fit Summary retains all 18 requested more-tau rows (24
-rows total). Running `tau=4.6` and failed `tau=4.8` are explicit status-only
-rows with missing fit quantities and are excluded from plots. Output is written
-only to `outputs/more-tau-viewer-completed-only/`. The runner rebuilds
+The refreshed completed-only Kflow fan-in rebuild is intentionally not committed
+here. It plots the 17 completed more-tau fits (23 models including the main five
+and Diagnostic), while its Fit Summary retains all 18 requested more-tau rows
+(24 rows total). Completed `tau=4.6` is plotted and explicitly flagged above the
+`1e-4` MGC threshold. Failed `tau=4.8` is the only status-only row with missing
+fit quantities and is excluded from plots. Output is written only to
+`outputs/more-tau-viewer-completed-only-v2/`. The runner rebuilds
 `model_payload.rds` from each completed dependency archive's raw `final.par`
 and `plot-11.par.rep` with pinned FLR4MFCL, mfclkit and mfclshiny packages; it
 does not assume payloads were stored in the fit archives.
@@ -40,7 +41,7 @@ does not assume payloads were stored in the fit archives.
 - `SHA256SUMS` protects the five committed CSV payloads.
 
 The fan-in output additionally includes `fit-cohort.csv` for all 18 requested
-fits and `kflow-input-provenance.csv` for the exact 16 completed dependencies,
+fits and `kflow-input-provenance.csv` for the exact 17 completed dependencies,
 binding keys to dynamically resolved Kflow jobs and immutable fit commits. Job
 numbers are never hard-coded in the viewer builder.
 
