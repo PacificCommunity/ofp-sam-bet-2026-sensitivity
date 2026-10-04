@@ -14,7 +14,7 @@ python3 reproduce/run-native.py all /tmp/bet-sensitivity
 ```
 
 Choose a case such as `steepness-0.80` instead of `all` for one fit. Each run
-uses one function evaluation, preserves every input, checks the saved objective
+uses a function-evaluation ceiling of 1, preserves every input, checks the saved objective
 and compares native biomass and MSY quantities with the original REP sections,
 plus annual biomass and depletion with the original public CSV. Detailed native outputs stay in the new folder.
 
