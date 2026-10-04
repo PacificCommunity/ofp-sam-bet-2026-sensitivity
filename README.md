@@ -17,17 +17,19 @@ complete frozen inputs. Each fit begins with ordinary `bet.ini -makepar`.
 From the repository root:
 
 ```sh
-./run-report
-python3 reproduce/run-native.py steepness-0.80 /tmp/bet-steepness
+make verify
+make results
+make rerun CASE=steepness-0.80 OUT=/tmp/bet-steepness
 ```
 
-The first command rebuilds the report from saved results. On 64-bit x86 Linux,
-the second regenerates detailed native outputs using the original fitted PAR
-and one function evaluation. Use `all` instead of the case key for all 17 fits.
+The checks verify the saved files; `results` rebuilds the cached report.
+On 64-bit x86 Linux, `rerun` regenerates detailed native outputs using the
+original fitted PAR and a function-evaluation ceiling of 1. Use `CASE=all`
+for all 17 fits. Choose a new output directory each time.
 The saved PARs, original central REP sections and input checksums are retained
 in `reproduce/`.
 
-For a full fit, use `./run.sh steepness-0.65` in a fresh clone or scratch folder.
+For a full fit, use `make refit CASE=steepness-0.65 OUT=/tmp/bet-refit`.
 See [native reruns](reproduce/README.md) for model keys and verification.
 
 See [design, validation and reproduction details](docs/reproduction.md) and
