@@ -1,5 +1,8 @@
 # Saved sensitivity fits
 
+[Download native.tar.gz](https://raw.githubusercontent.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/main/reproduce/native.tar.gz). It is included in a normal clone;
+[files.json](files.json) lists the archived files and checksums.
+
 The small archive retains all 17 original final PARs. Their six native inputs
 and `doitall.sh` reuse the frozen case files in this repository; the MFCL
 executable comes from a checksum-verified public Git file.
