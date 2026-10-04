@@ -1,0 +1,29 @@
+name: Verify preserved BET results
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+      - name: Verify preserved assessment files
+        run: python3 ci/verify-preserved-files.py
+      - name: Check preserved inputs and results
+        shell: bash
+        run: |
+          sha256sum -c data/SHA256SUMS
+          Rscript report/validate.R
+          python3 ci/run-in-scratch.py Rscript scripts/validate-sensitivities.R
+          python3 ci/verify-preserved-files.py
+          git diff --exit-code
