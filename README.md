@@ -1,3 +1,5 @@
+[![Preservation checks](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/verify-preserved-results.yml/badge.svg?branch=main)](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/verify-preserved-results.yml?query=branch%3Amain) [![Model checks](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/validate.yml?query=branch%3Amain)
+
 # BET 2026 sensitivity models
 
 <a id="sensitivities"></a>

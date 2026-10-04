@@ -43,8 +43,8 @@
     {
       "path": "README.md",
       "mode": "100644",
-      "git_blob": "df04cb9bb8ff6b428249fe5aef29445970c48ff2",
-      "sha256": "1970afe497996a62310dab074021724ff2f3f8a63e115a61447adfc116da19a3"
+      "git_blob": "5d7fd58f1a337e491e480d9fb395f5d98a4001f5",
+      "sha256": "24fb63d43278ccd6d8f429758a725cd44c6b11a298286b6348e237e5296d1a98"
     },
     {
       "path": "data/SHA256SUMS",
@@ -2055,6 +2055,18 @@
       "mode": "100644",
       "git_blob": "99e881ff0e0ca584082cd2e29244a380edb710dc",
       "sha256": "3078b7a89eb6470daabc4952f2d2e25a86102548fa8a582cbb1d72b7d07fa018"
+    }
+  ],
+  "approved_updates": [
+    {
+      "path": "README.md",
+      "reason": "Add current CI status badges requested by Kyuhan. The complete previous README body is byte-identical after removing the exact badge prefix. Scientific files, reports, links and anchors are unchanged.",
+      "previous_sha256": "1970afe497996a62310dab074021724ff2f3f8a63e115a61447adfc116da19a3",
+      "previous_git_blob": "df04cb9bb8ff6b428249fe5aef29445970c48ff2",
+      "expected_sha256": "24fb63d43278ccd6d8f429758a725cd44c6b11a298286b6348e237e5296d1a98",
+      "expected_git_blob": "5d7fd58f1a337e491e480d9fb395f5d98a4001f5",
+      "exact_added_prefix": "[![Preservation checks](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/verify-preserved-results.yml/badge.svg?branch=main)](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/verify-preserved-results.yml?query=branch%3Amain) [![Model checks](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/actions/workflows/validate.yml?query=branch%3Amain)\n\n",
+      "authorization": "Task-scoped human instruction: CI\ub41c\uac83\ub4e4\uc740 \ub9ac\ub4dc\ubbf8\uc5d0 \uadf8 \uccb4\ud06c\ubc43\uc9c0\ub098 \uc774\ub7f0\uac70\ub3c4 \uc880 \ub123\uc5b4\uc8fc\uba74 \uc88b\uaca0\ub2e4"
     }
   ]
 }
