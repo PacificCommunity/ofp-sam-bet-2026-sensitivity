@@ -1,0 +1,1306 @@
+{
+  "schema_version": 1,
+  "family": "sensitivity",
+  "models": [
+    {
+      "model": "caal-0.5-sub-basin",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/bet.age_length",
+          "sha256": "ba49ccfc78ce700cc5e02f28a862e8d31ed6fc4f1bd2fafa5b148cd53de5752a",
+          "bytes": 1386461,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-0.5-sub-basin/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "caal-1.0-sub-basin",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/bet.age_length",
+          "sha256": "7e6c0513e2f36ca2044c1d5a2de37c589c75fafabc3fd96b45683cbb1236b083",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/caal-1.0-sub-basin/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "effort-creep-high",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/bet.frq",
+          "sha256": "d115c60a2489362df570507e1a6c3283db7a1d080be365ec8e7ba738c2ac7aea",
+          "bytes": 2931921,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/effort-creep-high/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "lorenzen-m-scalar-0.062",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/bet.ini",
+          "sha256": "1da89f037ce47a701127f957879a82164671d0f65ffef376bde3ce78029ecd2f",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.062/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "lorenzen-m-scalar-0.1",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/bet.ini",
+          "sha256": "4c162ac868be64980812243696bf9d4fa4af2c21cd902bb69015333f396f028f",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/lorenzen-m-scalar-0.1/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "pre-mixing-tag-reporting-inclusion",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/bet.ini",
+          "sha256": "8b2fc2ad80185cf7e0acc8bed6d5470f42f04063b62007ab79aa086fb18b4b3d",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/pre-mixing-tag-reporting-inclusion/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "regional-scaling-whole-period",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/bet.reg_scaling",
+          "sha256": "a20dfa309aea448b9118407701a3456b28fed85be0a95b2d330149b6fb0446f1",
+          "bytes": 17235,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/doitall.sh",
+          "sha256": "607fd6c7b474eadd2aa4b902b6baa351cb43ca5d5b0fcf38ccc059317e87e63b",
+          "bytes": 43366,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/regional-scaling-whole-period/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "steepness-0.65",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/bet.ini",
+          "sha256": "546bfb1d2134e7db2d9186b141eada9be43a5b0e673d562dab0fbefbf5935f2f",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.65/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "steepness-0.80",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/bet.ini",
+          "sha256": "6700a85c8f476eebdcec92f079f793578e9c66d9b2d68aa0f01d28a893214ed6",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.80/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "steepness-0.95",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/bet.ini",
+          "sha256": "63a17235b51d3224172da78c244532c2863d422cfb1fd944774502ec745f2326",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/steepness-0.95/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tag-mixing-k-0.1",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/bet.ini",
+          "sha256": "c54086931db128f0af3f9caf8e7b57a5d0b22bb0c284298dccbebf5920a71df6",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.1/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tag-mixing-k-0.3",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/bet.ini",
+          "sha256": "141e76c104ff9e8fc9388898f64f61729730f129048e962d6a794f327657a3a1",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tag-mixing-k-0.3/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tau-1.006738",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.006738/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tau-1.2",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.2/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tau-1.4",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.4/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tau-1.6",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.6/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    },
+    {
+      "model": "tau-1.8",
+      "reused_git_files": [
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/bet.age_length",
+          "sha256": "426859b825bd815aa69c8d97c9dd93097027ed1eb6b9e444d88b69562097a00c",
+          "bytes": 1403841,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.age_length"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/bet.frq",
+          "sha256": "d0d84f0a498e6a62681f2a58ffc1ba53dab9e3d6af856b4ad1fd907196250004",
+          "bytes": 2932052,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.frq"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/bet.ini",
+          "sha256": "fbd064c3d0ccb4d2e1b9beb06fe3eacf0180677821e6a1773d20b308474d984e",
+          "bytes": 66791,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.ini"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/bet.reg_scaling",
+          "sha256": "5f047ddb4053d1f6df9ace18e85e440b11553de246d024ce8138b427f5f9f7e3",
+          "bytes": 1186,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.reg_scaling"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/bet.tag",
+          "sha256": "b140e66eb52f2b7e022ef2c562134f8bc9baf3dede18ce95283a001acd2b013f",
+          "bytes": 110051,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "bet.tag"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/doitall.sh",
+          "sha256": "408e3254b0a82c6e3935c36994bc718c6ce71f0e1e4dc5940847507d9c86adc6",
+          "bytes": 43368,
+          "mode": 493,
+          "role": "native_input_or_doitall",
+          "target_name": "doitall.sh"
+        },
+        {
+          "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+          "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+          "path": "models/tau-1.8/mfcl.cfg",
+          "sha256": "2ec8a291fae62c6f37541aec1de37444626d42b3290b371bb42b63d510034eae",
+          "bytes": 31,
+          "mode": 420,
+          "role": "native_input_or_doitall",
+          "target_name": "mfcl.cfg"
+        }
+      ]
+    }
+  ],
+  "shared_reused_git_files": [
+    {
+      "repository": "PacificCommunity/ofp-sam-bet-2026-jitter",
+      "commit": "bb3f4016b2d145f42c7a76072ed2b10b49aff71f",
+      "path": "data/diagnostic/mfcl/mfclo64",
+      "sha256": "f5bc1e232a86e51f920bce7271d8e0930d0b160e4d18dc46de44078f0fa24cd0",
+      "bytes": 34549392,
+      "mode": 493,
+      "role": "static_native_evaluation_engine_candidate"
+    },
+    {
+      "repository": "PacificCommunity/ofp-sam-bet-2026-diagnostic",
+      "commit": "81c11f06fcc7450f69b379160cbd77fbc636212b",
+      "path": "mfclo64",
+      "sha256": "8995f72019869863c1d1c0b4f44fc6a6268d1f79031f5bc79dc354ee10f0a63e",
+      "bytes": 9433720,
+      "mode": 493,
+      "role": "distinct_source_bundled_engine"
+    }
+  ],
+  "reuse_scope": "Pinned existing public Git blobs; none of these scientific file bytes is duplicated into the compact native packages.",
+  "limits_and_gaps": [
+    "Native evaluation/output-regeneration parity awaits actual authorized CI; source byte preservation alone does not prove parity.",
+    "Original external model-executed engine hash remains UNKNOWN; exact static candidate and distinct source-bundled engine hashes are preserved separately."
+  ]
+}

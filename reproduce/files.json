@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "family": "sensitivity",
+  "files": [
+    {
+      "path": "outputs/models/caal-0.5-sub-basin/final.par",
+      "sha256": "911069931d3fdf91cb93331301bbb9aa70dff1ccc466f46a3e2824c8aa68aff0",
+      "bytes": 2956577,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/caal-1.0-sub-basin/final.par",
+      "sha256": "af218dfc276114669c9da6e9a47189db046e79b95aa5948d28bf79143edcc8ad",
+      "bytes": 2956635,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/effort-creep-high/final.par",
+      "sha256": "1af944aa30d4e488686cdecb5b3432aeae7dfdffcfa27cc4fffd88ae69be9d81",
+      "bytes": 2956631,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/lorenzen-m-scalar-0.062/final.par",
+      "sha256": "b92808bba429d7819b46efc57454d1a492a2c28a01f57a2d40b37fb6c368db2e",
+      "bytes": 2956578,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/lorenzen-m-scalar-0.1/final.par",
+      "sha256": "9827672c1ebb98230dcad5bc43c0769533fd266558f84be8e79913a64f831a95",
+      "bytes": 2956632,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/pre-mixing-tag-reporting-inclusion/final.par",
+      "sha256": "f1c8178610067686447e7a3827e95ceed01607e5570514d14c4cdcf01671c247",
+      "bytes": 2956632,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/regional-scaling-whole-period/final.par",
+      "sha256": "2236d58d04dec9213c83ed87187f1617af89bd9d6809926c4c36fa4789abf7f4",
+      "bytes": 2956581,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/steepness-0.65/final.par",
+      "sha256": "e0281de31c1832e8d97f923eb38515a21ca0ba49ded0544865bd84a5323f64d4",
+      "bytes": 2956629,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/steepness-0.80/final.par",
+      "sha256": "7db4decd97101bfcf85e1ec0c7e2633329a1245409a1ff5f1d6799074ef20775",
+      "bytes": 2956592,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/steepness-0.95/final.par",
+      "sha256": "a50577dddfdbc924147785d39b5c8f7e9b8fc8c1da6f999a475da9f521086206",
+      "bytes": 2956632,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tag-mixing-k-0.1/final.par",
+      "sha256": "3958b20a9a5e70feecc2ca4d3a81c9b2b831648d967d18bccb9895305047291f",
+      "bytes": 2956525,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tag-mixing-k-0.3/final.par",
+      "sha256": "c044c7d5655139b293e97142ee23f45d3d7a3bcda767c13abeb245dd083856f4",
+      "bytes": 2956622,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tau-1.006738/final.par",
+      "sha256": "2499cc3b9609cf9d1533f6640d1118fddfd40e0fff712efe312c3d18d6284336",
+      "bytes": 2957142,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tau-1.2/final.par",
+      "sha256": "223c7116d4425f1a8228ca55369690c7eb84075ce999bfe90d9c719d67f27040",
+      "bytes": 2957170,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tau-1.4/final.par",
+      "sha256": "16d3f8beec7088c2a225a62a8f273d5b1550971bb976e0e95dbee3c2a7df7fbd",
+      "bytes": 2957152,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tau-1.6/final.par",
+      "sha256": "9f33967e3a1144c09df059ec09f4f96a96d37b5603c30e865d76d3fb9704a3c7",
+      "bytes": 2957218,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    },
+    {
+      "path": "outputs/models/tau-1.8/final.par",
+      "sha256": "0d7929f1d846e08f44fbcc0fba6da3df3c29b71c08166b3efea7b89cf37df8f1",
+      "bytes": 2957172,
+      "mode": 420,
+      "role": "last_PAR",
+      "source_git_pin": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "63267b676538c601a19f60a38cf2a179a30e4f20"
+      }
+    }
+  ],
+  "native_byte_scope": "Exact original native file contents preserved. One PAR may reuse a losslessly retained identical raw byte vector; source archives and recovery containers are not claimed to share an archive hash.",
+  "losslessly_recovered_native_file_count": 1,
+  "source_git_pin_scope": "Code revision that generated or supported these native file contents; generated files need not be tracked at their archive pathname."
+}

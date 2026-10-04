@@ -1,0 +1,2273 @@
+{
+  "schema_version": 1,
+  "scope": "17 completed sensitivity cases: exact selected original native REP sections for compact output-regeneration references; public original audit source pinned; no scheduler records",
+  "cases": [
+    {
+      "key": "caal-0.5-sub-basin",
+      "path": "caal-0.5-sub-basin/central.rep",
+      "bytes": 32725,
+      "sha256": "1984641e1d896f4ead7c06c865ca47ff2b4d5c28a4e995ace1ebcb895e5176c9",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847835,
+      "original_REP_sha256": "d3e8611625a7132fec05c417869a46f17dd6dfa7e7482997f7718a96f02067e0",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "caal-0.5-sub-basin",
+        "final_rep_sha256": "d3e8611625a7132fec05c417869a46f17dd6dfa7e7482997f7718a96f02067e0",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "36738295213ffd7cc22519d24e8c5ddb79913bf1432a330ddfba66c2ef0ccfbd",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2645509,
+          "bytes": 16125,
+          "sha256": "b0c56fd0ad68f460ea221db3a5c3c5a11595bd2e2fd0a5a356b98e787d0a3c5c",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "ef40aee8c2c2fe90d8113b285c5cd4791392bf5193bc9f782b96787bfad0157e",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "199997e83f2da304229d725c876add7b07883f766804517fc66318d80f8db238",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "caal-1.0-sub-basin",
+      "path": "caal-1.0-sub-basin/central.rep",
+      "bytes": 32835,
+      "sha256": "b57ae37a5e666c7a9a022c8c009c69a3a56b1f845964ef107156954442239d15",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847148,
+      "original_REP_sha256": "bf2f5fe517687b4690a1204fd8bb24c811aaf0776aaa6e845706841c846095c3",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "caal-1.0-sub-basin",
+        "final_rep_sha256": "bf2f5fe517687b4690a1204fd8bb24c811aaf0776aaa6e845706841c846095c3",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "eda679194889d4eb4418287767bd2edf9d3e35b0f58407948e68eb2e0c21053a",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644712,
+          "bytes": 16235,
+          "sha256": "2b28c6c7342240b10baebdeb26f06666c850e0a9bbbc512673bff36dac2b6776",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "8251776268d9df2480ad05dbe502551658e9a2d327dc3f0626e136920f4f1a8d",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "a8fa19b31b07a22525c4427dd04c042caf2be5503a6cfbe50f0fa112e008c2fc",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "effort-creep-high",
+      "path": "effort-creep-high/central.rep",
+      "bytes": 32843,
+      "sha256": "edfecddb7bb01809892e321b64c93127dcfcc4fb03a9ff27dbea11467479c7fa",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2846950,
+      "original_REP_sha256": "961ee20b17a5c1b7f15037f28b10b5c63ee2ddda4063390d6a941ef8133aad4f",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "effort-creep-high",
+        "final_rep_sha256": "961ee20b17a5c1b7f15037f28b10b5c63ee2ddda4063390d6a941ef8133aad4f",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "f330fe5347a73620a354e3478b2649449ca00c607fd44238e98e20c10c921772",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644506,
+          "bytes": 16243,
+          "sha256": "309a5f14e706c87e28502ca3373649048662631dcd8cfcf8d8519be4d7cdc658",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "0ee90a0001e33889ec5db992262b6edf3e9cc52dccf3d9da60fea51bf3f6e832",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "764dea2d7102ed755f0216f01619944558b9cb0c6f66a20c35137caa469c618a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "lorenzen-m-scalar-0.062",
+      "path": "lorenzen-m-scalar-0.062/central.rep",
+      "bytes": 32833,
+      "sha256": "fb01257461c0bd139d8a1c5471bedfff359116594b2f728292062ed9dae6f5ae",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847818,
+      "original_REP_sha256": "8392350e59724c3408c54ee62ace85f39669531cf1ababa20c898c1158c4796b",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "lorenzen-m-scalar-0.062",
+        "final_rep_sha256": "8392350e59724c3408c54ee62ace85f39669531cf1ababa20c898c1158c4796b",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "c437d62cede52bd1c4193d73731d8c83d2632acc39c096b4e3f9636b9ab698f4",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2645384,
+          "bytes": 16233,
+          "sha256": "d287c0991a96bdb28539398724d2b61ab8f6cc2009bf41779adec98380137003",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "5417309020df5c71eb7935cf06e1f3ab94416d6abfd326e4d369fc16c1dbe5d7",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "f9dc61da3f7a7c6137618e3b8e9ae74d36ae6c0e9bc2330329862c0c6e8b2346",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "lorenzen-m-scalar-0.1",
+      "path": "lorenzen-m-scalar-0.1/central.rep",
+      "bytes": 32803,
+      "sha256": "572166fe43b157adaf96cbb9d1d651a6b149e46205d8f7291ba4e9512d51fe4b",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2854338,
+      "original_REP_sha256": "624af5e72589fb40ccbb20025927db4f323c3a7f00183619e830e02105cd6568",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "lorenzen-m-scalar-0.1",
+        "final_rep_sha256": "624af5e72589fb40ccbb20025927db4f323c3a7f00183619e830e02105cd6568",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "3a4675d8418a7c7092cad7bd28138f0282dbaf4c50c34c6ec8b561cec7d5628a",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2651934,
+          "bytes": 16203,
+          "sha256": "7541758519ad469dc11599ee8d81ca15ddd5f28b4a4799dd3a24cfa5123ac7b1",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430055,
+          "bytes": 34,
+          "sha256": "ab21a4376f7e1f98bfd36df9adc008f0b401e5518ba35f0c3f9a0f2e8581d8c9",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429966,
+          "bytes": 33,
+          "sha256": "7ea89a93b3e4ac94579e62e4ef4373f4016b1476f8df0b5fcdd0b35f9a6b696f",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "pre-mixing-tag-reporting-inclusion",
+      "path": "pre-mixing-tag-reporting-inclusion/central.rep",
+      "bytes": 32818,
+      "sha256": "6018d923976c24da282131ecb00f06db4f643ecceadd7ad840104dfcb448d77d",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2846482,
+      "original_REP_sha256": "28f4ec67d242160930dfedb3bfee428bdc81c026e46415f8f18b62d7b0e8f240",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "pre-mixing-tag-reporting-inclusion",
+        "final_rep_sha256": "28f4ec67d242160930dfedb3bfee428bdc81c026e46415f8f18b62d7b0e8f240",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "5582a6fbd605849557aef7e0991cab1418ba19714ce5bd6be909336601c8eea6",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644063,
+          "bytes": 16218,
+          "sha256": "9999d4575d02ba231bb861fd973de225f8604ba2d6a6b70d182e4a42d524cfcf",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "8db5b07aa7b3f8a372a13a5a0e5124f7a56a071303656621b8374af6c4ace7e8",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "b41c8a3a8659e24321b1521065435805fd5a07abe8768df94261c1c7b907c537",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "regional-scaling-whole-period",
+      "path": "regional-scaling-whole-period/central.rep",
+      "bytes": 32830,
+      "sha256": "99a8b86fbd600e2997d8497bf6c891a3e4b0fd9384ca91acb28da5e3d3a28f27",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2849046,
+      "original_REP_sha256": "a521111ed254d70e24be8d2b3c6b1647fb7dd3d53f78213b1a6b796ed5df779e",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "regional-scaling-whole-period",
+        "final_rep_sha256": "a521111ed254d70e24be8d2b3c6b1647fb7dd3d53f78213b1a6b796ed5df779e",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "726f19c859616f9572dbdefb7eea6f2638d2b8437056c4bcc9ec468160b77ed3",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2646615,
+          "bytes": 16230,
+          "sha256": "cf69552ebe594b580596eb114e175490c4908f95e0f1e27c23a555ac93a44a27",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "d0c285500c4b3519cc54b26c37221a227036ba0a63ba12a373b432240b98df99",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "a0b0d280e8a36e270bf4707ad429d171cd89e8373d7367eb9071295e977ac612",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "steepness-0.65",
+      "path": "steepness-0.65/central.rep",
+      "bytes": 32820,
+      "sha256": "a72a214225c6a562277e12df7277778bac3c41a5e0b129e9a0b8c71a3ec9c3cf",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2842247,
+      "original_REP_sha256": "0af59a6cefcd52a76cbf9f503f7bbc29cebaf897e095930e29f029ba18b8a2e5",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "steepness-0.65",
+        "final_rep_sha256": "0af59a6cefcd52a76cbf9f503f7bbc29cebaf897e095930e29f029ba18b8a2e5",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "1e41ca90c3d74205adb3b85f9bfcdd77b45d4d6829988f5bdf87eceb06f72e6c",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2639826,
+          "bytes": 16220,
+          "sha256": "d508385974184085513ffd2c6486fc2387bff386c55d1c726a6def1d5d1a5602",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "01d575f55582b0d87fb7f2d6905c1eebda99aa20be124250662c0708d58776b2",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "770e6fe0dc7b54c4a5260e06a3847defe06bbf6d29e3939476b58907ff4f049b",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "steepness-0.80",
+      "path": "steepness-0.80/central.rep",
+      "bytes": 32844,
+      "sha256": "fc7b1a3f53795a44c65a6ec1c756f4dc446b738c6a884aa970799a888b7f34cf",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2844534,
+      "original_REP_sha256": "fce9565a84e48109a8c3e943df6a4e058a935b2f6936152c544ebe7e710a01b9",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "steepness-0.80",
+        "final_rep_sha256": "fce9565a84e48109a8c3e943df6a4e058a935b2f6936152c544ebe7e710a01b9",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "cfc5de64f335bc88945b269e095d80ca3586fae79c95ae844380f73488e4e465",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2642089,
+          "bytes": 16244,
+          "sha256": "d585847bd00202dbf16d1551ae91e1f7c68af1ccc710a1532499972017e7d083",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "7b8681678a751aed040c41ac0ad509d4a139f2bb1d1d478b42452fe6f5ca6940",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "7266eb36fdc74d496e30de332dfe585af66407576912433a3c1c963e613eb15d",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "steepness-0.95",
+      "path": "steepness-0.95/central.rep",
+      "bytes": 32835,
+      "sha256": "f9f2fa6ea45f4759d1dea4050e67a6f40c9ddaf86e389888162ae38621aca949",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2849394,
+      "original_REP_sha256": "31dface4d834611e9829dff337f32e44ece2e9e30b7db2e66ad681557a07592f",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "steepness-0.95",
+        "final_rep_sha256": "31dface4d834611e9829dff337f32e44ece2e9e30b7db2e66ad681557a07592f",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "cc5ea8becf716af38de222b20f8c2617176316c1bbbf74bbc4f9e547ec93b9c3",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2646958,
+          "bytes": 16235,
+          "sha256": "497be4be7e8165dd419a3318f3c5dc9cf2dceb6ed095c42616641d50ce955634",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "b04d0f8186e7c610c923536effd41992ef5b19591bba3d9d90a4aa0624514609",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "72337a06c0d70c5189b2c0a6c9794c33006a3395e02fbeaed253901122c77c62",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tag-mixing-k-0.1",
+      "path": "tag-mixing-k-0.1/central.rep",
+      "bytes": 32813,
+      "sha256": "49b837bddda2c21c640d1702fc92d91a081b92e7d21732110d848fef89a56ba2",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2849751,
+      "original_REP_sha256": "2b20df9403e2475e501fc461752cc9c8ae4d3789cc72f2f8b2a151bcc524bd71",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tag-mixing-k-0.1",
+        "final_rep_sha256": "2b20df9403e2475e501fc461752cc9c8ae4d3789cc72f2f8b2a151bcc524bd71",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "1ed74bdddc2b42898e0cf2dc99f48bbe8c50ef719790fb05ebe0a22b67b15ba6",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2647337,
+          "bytes": 16213,
+          "sha256": "1029377977c3ef387967abce8d5e4ed8126fd2ce5afdcbb734a8d2df2cdcdf1d",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "a37697ce795cf27ccb14d06c2a28026f00a755b35905a32b1f0aae7962891c2a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "8037166066f58552f96e3c55f9aeaba511d62a01a51bf8d12e989ef523016944",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tag-mixing-k-0.3",
+      "path": "tag-mixing-k-0.3/central.rep",
+      "bytes": 32822,
+      "sha256": "affcf113216884357757b362fc2227cac5081f49967853687cf0981279c30b02",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2846731,
+      "original_REP_sha256": "ceea044cf187478b6d339bd1fe2f45a6ccf0b506fadf5beb788c0b7a84ad9c44",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tag-mixing-k-0.3",
+        "final_rep_sha256": "ceea044cf187478b6d339bd1fe2f45a6ccf0b506fadf5beb788c0b7a84ad9c44",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "239286465073e1147e1266d26e206e785c6f05ee2d397006f53a212ebfa0355f",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644308,
+          "bytes": 16222,
+          "sha256": "0c64f6bef6dbe82aad337280f9d539f89c84389255912eaa29f46f2f9d70a0be",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "f159b75d81caa6e92637b9a33930a71f5b2c41674e150be184febdc92395a95c",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "c7caac70c7e7ff3e91bd86941995a12f3bb53d2a21ae1eef49bb8aaac5d12596",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tau-1.006738",
+      "path": "tau-1.006738/central.rep",
+      "bytes": 32828,
+      "sha256": "ec8bedba236a2dd876b68bb1f1aae07b9938b255c080d3830bda98e7696bfce3",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2854235,
+      "original_REP_sha256": "c3823dfb2f08435296fc8f6dc8503be132c05f858152dae778f6ba5a2500d4ac",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tau-1.006738",
+        "final_rep_sha256": "c3823dfb2f08435296fc8f6dc8503be132c05f858152dae778f6ba5a2500d4ac",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "5686003a207b1ccfa78ca5ee1473120a195ddd7cfc74356bde51c1be8ba52de6",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2651806,
+          "bytes": 16228,
+          "sha256": "95b837da25bb5571746a0c3803b19b01d51e9d07c81892a7a0daae36852b0cda",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "f85e09eb7acec4f1d536abfc21ea97c3879ae7ec5a8c9d112299ed0aff81d19a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "576d3eb52620569db04d9d71e214134dfed1c9ff0fbb9c6df17cff9d67fe6308",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tau-1.2",
+      "path": "tau-1.2/central.rep",
+      "bytes": 32806,
+      "sha256": "f71c4419f64359e40bb6f131f5934c7517836a593a8046f0dc7292e7d6378bc4",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2850730,
+      "original_REP_sha256": "2206a7fffd3acc20685b875896cc07b551bdcaecd2319a4912b1259ea4bf456e",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tau-1.2",
+        "final_rep_sha256": "2206a7fffd3acc20685b875896cc07b551bdcaecd2319a4912b1259ea4bf456e",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "c4558bb3fd21ee2995760b9dd238cff2f1a346a44eac42f6d17d8ec2b52d5a0d",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2648323,
+          "bytes": 16206,
+          "sha256": "2d77485e7d1662abfd86b434933f3170cc27c6bcbda8eeaf07479ac16d854135",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "eb55664a76c337ebbe454ab23be6f0d6658a036b6dd55151a5ebd0aabfcfb019",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "6d2cc3369417c9eb203692c2b2e44de0e49b2303c383bbd8bcf02b657d2250f9",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tau-1.4",
+      "path": "tau-1.4/central.rep",
+      "bytes": 32813,
+      "sha256": "c3b71fc080b67670d605c00d280009b19784d30a52706875d08eff0b45bdcbdf",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847383,
+      "original_REP_sha256": "a1a3bac719837577076b0e0bf8c6cce0516111ed605d3b8209552cb57ce780fe",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tau-1.4",
+        "final_rep_sha256": "a1a3bac719837577076b0e0bf8c6cce0516111ed605d3b8209552cb57ce780fe",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "e37bb5eb704a47568ddc15f7ad4d3830c39363e2c6d6878b12717e1acfa2cd9d",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644969,
+          "bytes": 16213,
+          "sha256": "805fe0a92de2fd0c3e3a4e8e8fbb35bb41f513dca9dab032572701e3fce1ad20",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "2eae34022cdaaf9ad259092df991d1ae66f33bb3398787d85fc91eba11b4d0e0",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "36595728e3bf81788361a4fde82f40684f79a58d03ae0c4ca6da63024c91a475",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tau-1.6",
+      "path": "tau-1.6/central.rep",
+      "bytes": 32831,
+      "sha256": "8835a982fad3ef7ef2a17ec3666d2794467a605a7ca9d17f144a821c671a6200",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847826,
+      "original_REP_sha256": "92d033c3ccc009db164454cf1267ba4786b284289d5a1ce5bd4ac02db4ef4c8f",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tau-1.6",
+        "final_rep_sha256": "92d033c3ccc009db164454cf1267ba4786b284289d5a1ce5bd4ac02db4ef4c8f",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "503b31dcc2afd141f6ae7b8a6e661c4fee78866a18ecf2988a1089c6698cd814",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2645394,
+          "bytes": 16231,
+          "sha256": "5c77716ce912f32d1b433d0d7e0c62798f2c9c4d4d556715b895f87448b1d85a",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "cc1d532e8c2813b307050541c7f0a8ef519da9aae5647f8a58976aeeae76c8ca",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "2e4eeb32d90d351bbadac86d58a00146a01998a5d325675a54c9ce5791d34805",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    },
+    {
+      "key": "tau-1.8",
+      "path": "tau-1.8/central.rep",
+      "bytes": 32821,
+      "sha256": "fe20f11bdec7754f866e1ecaffde75698288ff0fc0f68a6d432ef16bd32d2eaa",
+      "mode": 420,
+      "role": "exact selected central stock-output sections from original completed sensitivity REP; not full native REP",
+      "original_REP_name": "plot-11.par.rep",
+      "original_REP_bytes": 2847309,
+      "original_REP_sha256": "e64ef841f3d663ceb59894aaeab971296ec93dcf0f9f1d66e42ff260ed37bf11",
+      "source_public_audit": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "path": "data/sensitivity/completed-output-audit.csv",
+        "key": "tau-1.8",
+        "final_rep_sha256": "e64ef841f3d663ceb59894aaeab971296ec93dcf0f9f1d66e42ff260ed37bf11",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "git_blob_sha1": "6b630a74041628cd33faf6daa3eb2f636980694f",
+        "bytes": 5020,
+        "sha256": "8d3bbadf2c63c34b8444264826e15edfa166c24134c41f47610f7284557ebef9"
+      },
+      "selected_sections": [
+        {
+          "name": "Number of time periods",
+          "source_byte_offset": 139,
+          "bytes": 31,
+          "sha256": "6b5c5121fcef239d918279d143ec109a97fe153472d83672bca0878439d41454",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Year 1",
+          "source_byte_offset": 170,
+          "bytes": 16,
+          "sha256": "093b824b15e387aa6f8fca92a923ee70f43d7c16b50c31f382df215059e6808a",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of regions",
+          "source_byte_offset": 186,
+          "bytes": 24,
+          "sha256": "2b2f1b522babe6ba26926099477a2c311f87a142436c10f25b843dc33f308305",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of species",
+          "source_byte_offset": 210,
+          "bytes": 27,
+          "sha256": "4bb4e03fd79673047d7ec8bdfb5ed4e483b0b28e468b5b48a47e6cb686ddc4a3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of age classes",
+          "source_byte_offset": 294,
+          "bytes": 29,
+          "sha256": "031d1a927864c57f6ba05487dc822a395474ebdf3b0a29e3f9833503d16827ef",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Number of recruitments per year",
+          "source_byte_offset": 488,
+          "bytes": 38,
+          "sha256": "026338641241966f6ac9049e820cde576f03a853e8de1845e404ed30a3d100e3",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass",
+          "source_byte_offset": 2035379,
+          "bytes": 16368,
+          "sha256": "1b97278b574ce2c07310682fda12ce12bb23e84f3cecac70a60b43728ca92190",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass in absence of fishing",
+          "source_byte_offset": 2644887,
+          "bytes": 16221,
+          "sha256": "56e120d3fe0fd3197d844908694e9800a7249c4899ead367c672b6a9160ccfcb",
+          "shape": [
+            292,
+            5
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "Adult biomass at MSY",
+          "source_byte_offset": 2430054,
+          "bytes": 34,
+          "sha256": "f8f161a9cad1ee8c6d03b3a83ae93c8b6decbaccf51c1df4f19b5d76407e2209",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        },
+        {
+          "name": "F multiplier at MSY",
+          "source_byte_offset": 2429965,
+          "bytes": 33,
+          "sha256": "9d07c6e4ec12f994a0b9bb225194082b3b73ad59ed7aa452ef3915829270050d",
+          "shape": [
+            1,
+            1
+          ],
+          "bytes_scope": "exact original header and body bytes until next original header"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "These excerpts retain only selected stock sections; other original outputs are omitted",
+    "Selected sections are exact original bytes and hashes, with source fileSHA matching the public completed-output audit",
+    "Original execution engine SHA remainsUNKNOWN; these references do not prove it",
+    "No native evaluation/refit/scientific parity validation is performed by this extraction"
+  ]
+}

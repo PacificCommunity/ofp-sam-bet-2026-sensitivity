@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "family": "sensitivity",
+  "comparison": "Original native central REP dimensions, spawning biomass, no-fishing biomass and MSY quantities, plus annual series compared with unchanged original public CSV",
+  "objective_abs_tolerance": 1e-06,
+  "native_relative_tolerance": 1e-10,
+  "cases": {
+    "caal-0.5-sub-basin": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "911069931d3fdf91cb93331301bbb9aa70dff1ccc466f46a3e2824c8aa68aff0",
+      "reference_rep": {
+        "path": "reference/caal-0.5-sub-basin/central.rep",
+        "sha256": "1984641e1d896f4ead7c06c865ca47ff2b4d5c28a4e995ace1ebcb895e5176c9",
+        "bytes": 32725,
+        "original_full_rep_sha256": "d3e8611625a7132fec05c417869a46f17dd6dfa7e7482997f7718a96f02067e0",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "caal-1.0-sub-basin": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "af218dfc276114669c9da6e9a47189db046e79b95aa5948d28bf79143edcc8ad",
+      "reference_rep": {
+        "path": "reference/caal-1.0-sub-basin/central.rep",
+        "sha256": "b57ae37a5e666c7a9a022c8c009c69a3a56b1f845964ef107156954442239d15",
+        "bytes": 32835,
+        "original_full_rep_sha256": "bf2f5fe517687b4690a1204fd8bb24c811aaf0776aaa6e845706841c846095c3",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "effort-creep-high": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "1af944aa30d4e488686cdecb5b3432aeae7dfdffcfa27cc4fffd88ae69be9d81",
+      "reference_rep": {
+        "path": "reference/effort-creep-high/central.rep",
+        "sha256": "edfecddb7bb01809892e321b64c93127dcfcc4fb03a9ff27dbea11467479c7fa",
+        "bytes": 32843,
+        "original_full_rep_sha256": "961ee20b17a5c1b7f15037f28b10b5c63ee2ddda4063390d6a941ef8133aad4f",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "lorenzen-m-scalar-0.062": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "b92808bba429d7819b46efc57454d1a492a2c28a01f57a2d40b37fb6c368db2e",
+      "reference_rep": {
+        "path": "reference/lorenzen-m-scalar-0.062/central.rep",
+        "sha256": "fb01257461c0bd139d8a1c5471bedfff359116594b2f728292062ed9dae6f5ae",
+        "bytes": 32833,
+        "original_full_rep_sha256": "8392350e59724c3408c54ee62ace85f39669531cf1ababa20c898c1158c4796b",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "lorenzen-m-scalar-0.1": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "9827672c1ebb98230dcad5bc43c0769533fd266558f84be8e79913a64f831a95",
+      "reference_rep": {
+        "path": "reference/lorenzen-m-scalar-0.1/central.rep",
+        "sha256": "572166fe43b157adaf96cbb9d1d651a6b149e46205d8f7291ba4e9512d51fe4b",
+        "bytes": 32803,
+        "original_full_rep_sha256": "624af5e72589fb40ccbb20025927db4f323c3a7f00183619e830e02105cd6568",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "pre-mixing-tag-reporting-inclusion": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "f1c8178610067686447e7a3827e95ceed01607e5570514d14c4cdcf01671c247",
+      "reference_rep": {
+        "path": "reference/pre-mixing-tag-reporting-inclusion/central.rep",
+        "sha256": "6018d923976c24da282131ecb00f06db4f643ecceadd7ad840104dfcb448d77d",
+        "bytes": 32818,
+        "original_full_rep_sha256": "28f4ec67d242160930dfedb3bfee428bdc81c026e46415f8f18b62d7b0e8f240",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "regional-scaling-whole-period": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "2236d58d04dec9213c83ed87187f1617af89bd9d6809926c4c36fa4789abf7f4",
+      "reference_rep": {
+        "path": "reference/regional-scaling-whole-period/central.rep",
+        "sha256": "99a8b86fbd600e2997d8497bf6c891a3e4b0fd9384ca91acb28da5e3d3a28f27",
+        "bytes": 32830,
+        "original_full_rep_sha256": "a521111ed254d70e24be8d2b3c6b1647fb7dd3d53f78213b1a6b796ed5df779e",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "steepness-0.65": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "e0281de31c1832e8d97f923eb38515a21ca0ba49ded0544865bd84a5323f64d4",
+      "reference_rep": {
+        "path": "reference/steepness-0.65/central.rep",
+        "sha256": "a72a214225c6a562277e12df7277778bac3c41a5e0b129e9a0b8c71a3ec9c3cf",
+        "bytes": 32820,
+        "original_full_rep_sha256": "0af59a6cefcd52a76cbf9f503f7bbc29cebaf897e095930e29f029ba18b8a2e5",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "steepness-0.80": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "7db4decd97101bfcf85e1ec0c7e2633329a1245409a1ff5f1d6799074ef20775",
+      "reference_rep": {
+        "path": "reference/steepness-0.80/central.rep",
+        "sha256": "fc7b1a3f53795a44c65a6ec1c756f4dc446b738c6a884aa970799a888b7f34cf",
+        "bytes": 32844,
+        "original_full_rep_sha256": "fce9565a84e48109a8c3e943df6a4e058a935b2f6936152c544ebe7e710a01b9",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "steepness-0.95": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "a50577dddfdbc924147785d39b5c8f7e9b8fc8c1da6f999a475da9f521086206",
+      "reference_rep": {
+        "path": "reference/steepness-0.95/central.rep",
+        "sha256": "f9f2fa6ea45f4759d1dea4050e67a6f40c9ddaf86e389888162ae38621aca949",
+        "bytes": 32835,
+        "original_full_rep_sha256": "31dface4d834611e9829dff337f32e44ece2e9e30b7db2e66ad681557a07592f",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tag-mixing-k-0.1": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "3958b20a9a5e70feecc2ca4d3a81c9b2b831648d967d18bccb9895305047291f",
+      "reference_rep": {
+        "path": "reference/tag-mixing-k-0.1/central.rep",
+        "sha256": "49b837bddda2c21c640d1702fc92d91a081b92e7d21732110d848fef89a56ba2",
+        "bytes": 32813,
+        "original_full_rep_sha256": "2b20df9403e2475e501fc461752cc9c8ae4d3789cc72f2f8b2a151bcc524bd71",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tag-mixing-k-0.3": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "c044c7d5655139b293e97142ee23f45d3d7a3bcda767c13abeb245dd083856f4",
+      "reference_rep": {
+        "path": "reference/tag-mixing-k-0.3/central.rep",
+        "sha256": "affcf113216884357757b362fc2227cac5081f49967853687cf0981279c30b02",
+        "bytes": 32822,
+        "original_full_rep_sha256": "ceea044cf187478b6d339bd1fe2f45a6ccf0b506fadf5beb788c0b7a84ad9c44",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tau-1.006738": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "2499cc3b9609cf9d1533f6640d1118fddfd40e0fff712efe312c3d18d6284336",
+      "reference_rep": {
+        "path": "reference/tau-1.006738/central.rep",
+        "sha256": "ec8bedba236a2dd876b68bb1f1aae07b9938b255c080d3830bda98e7696bfce3",
+        "bytes": 32828,
+        "original_full_rep_sha256": "c3823dfb2f08435296fc8f6dc8503be132c05f858152dae778f6ba5a2500d4ac",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tau-1.2": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "223c7116d4425f1a8228ca55369690c7eb84075ce999bfe90d9c719d67f27040",
+      "reference_rep": {
+        "path": "reference/tau-1.2/central.rep",
+        "sha256": "f71c4419f64359e40bb6f131f5934c7517836a593a8046f0dc7292e7d6378bc4",
+        "bytes": 32806,
+        "original_full_rep_sha256": "2206a7fffd3acc20685b875896cc07b551bdcaecd2319a4912b1259ea4bf456e",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tau-1.4": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "16d3f8beec7088c2a225a62a8f273d5b1550971bb976e0e95dbee3c2a7df7fbd",
+      "reference_rep": {
+        "path": "reference/tau-1.4/central.rep",
+        "sha256": "c3b71fc080b67670d605c00d280009b19784d30a52706875d08eff0b45bdcbdf",
+        "bytes": 32813,
+        "original_full_rep_sha256": "a1a3bac719837577076b0e0bf8c6cce0516111ed605d3b8209552cb57ce780fe",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tau-1.6": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "9f33967e3a1144c09df059ec09f4f96a96d37b5603c30e865d76d3fb9704a3c7",
+      "reference_rep": {
+        "path": "reference/tau-1.6/central.rep",
+        "sha256": "8835a982fad3ef7ef2a17ec3666d2794467a605a7ca9d17f144a821c671a6200",
+        "bytes": 32831,
+        "original_full_rep_sha256": "92d033c3ccc009db164454cf1267ba4786b284289d5a1ce5bd4ac02db4ef4c8f",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    },
+    "tau-1.8": {
+      "mode": "reference-rep",
+      "annual_policy": "quarterly_biomass",
+      "series": {
+        "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+        "commit": "e2c29b692cc4b00faf21b89702018b7fab9e3eaa",
+        "path": "data/sensitivity/sensitivity-timeseries.csv",
+        "sha256": "147a50efdadab2f09c7c95a36df06260aad172902439231a50ea313bf102d540",
+        "bytes": 206442
+      },
+      "dimensions": {
+        "Number of time periods": 292,
+        "Year 1": 1952,
+        "Number of regions": 5,
+        "Number of species": 1,
+        "Number of age classes": 40,
+        "Number of recruitments per year": 4
+      },
+      "source_par_sha256": "0d7929f1d846e08f44fbcc0fba6da3df3c29b71c08166b3efea7b89cf37df8f1",
+      "reference_rep": {
+        "path": "reference/tau-1.8/central.rep",
+        "sha256": "fe20f11bdec7754f866e1ecaffde75698288ff0fc0f68a6d432ef16bd32d2eaa",
+        "bytes": 32821,
+        "original_full_rep_sha256": "e64ef841f3d663ceb59894aaeab971296ec93dcf0f9f1d66e42ff260ed37bf11",
+        "scope": "Exact original selected central sections, not full REP"
+      }
+    }
+  },
+  "aggregation_evidence": {
+    "native_sections": [
+      "Adult biomass",
+      "Adult biomass in absence of fishing"
+    ],
+    "annual_biomass": "sum all regions and all four quarters / 4 / 1000",
+    "depletion": "annual biomass / annual no-fishing biomass",
+    "source_limit": "Original sensitivity CSV builder imports externally derived CSVs; the original extractor was not recovered. Actual comparison of all17 native cases is required.",
+    "baseline_native_slots_source": {
+      "repository": "PacificCommunity/ofp-sam-bet-2026-report",
+      "commit": "d7f230f8fa54b8b6481a4f872f325624426d09a8",
+      "path": "figures_new/fishery-impact/inputs/reference.csv"
+    },
+    "baseline_years": 73,
+    "baseline_biomass_max_abs_difference": 0.0
+  }
+}
