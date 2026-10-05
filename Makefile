@@ -19,6 +19,7 @@ help:
 	@printf '%s\n' 'make verify                                      Check saved files' 'make results                                     Rebuild the cached report' 'make rerun CASE=all OUT=/tmp/bet-sensitivity       Regenerate saved native outputs' 'make refit CASE=steepness-0.80 OUT=/tmp/bet-refit   Fit one model from the start' 'Native runs require Linux x86-64; use a new OUT.'
 
 verify:
+	@python3 reproduce/hessian.py --verify
 	@python3 ci/verify-preserved-files.py
 	@python3 reproduce/restore.py --verify
 
@@ -36,3 +37,34 @@ results: report
 
 _check-output:
 	@python3 -c 'import os; from pathlib import Path; raw=os.environ.get("OUT",""); p=Path(raw); root=Path.cwd().resolve(); assert raw and p.is_absolute(), "Set OUT to an absolute, new directory"; assert not os.path.lexists(p), "OUT already exists"; q=p.resolve(); assert q != root and root not in q.parents, "OUT must be outside this repository"'
+
+export ARCHIVE
+.PHONY: hessian hessian-verify
+
+hessian:
+	@if [ -n "$$ARCHIVE" ]; then \
+		python3 reproduce/hessian.py --case "$$CASE" --out "$$OUT" --archive "$$ARCHIVE"; \
+	else \
+		python3 reproduce/hessian.py --case "$$CASE" --out "$$OUT"; \
+	fi
+
+hessian-verify:
+	@if [ -n "$$ARCHIVE" ]; then \
+		python3 reproduce/hessian.py --verify --case "$$CASE" --archive "$$ARCHIVE"; \
+	else \
+		python3 reproduce/hessian.py --verify; \
+	fi
+
+# Keep the existing hessian and hessian-verify targets; add these optional targets.
+export CASE OUT ARCHIVE
+.PHONY: hessian-stitch-plan hessian-stitch
+
+hessian-stitch-plan:
+	@python3 reproduce/hessian_stitch.py --plan --case "$$CASE"
+
+hessian-stitch:
+	@if [ -n "$$ARCHIVE" ]; then \
+		python3 reproduce/hessian_stitch.py --case "$$CASE" --out "$$OUT" --archive "$$ARCHIVE"; \
+	else \
+		python3 reproduce/hessian_stitch.py --case "$$CASE" --out "$$OUT"; \
+	fi

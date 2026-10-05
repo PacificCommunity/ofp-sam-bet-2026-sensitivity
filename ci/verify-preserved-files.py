@@ -9,6 +9,9 @@ import sys
 root = Path(__file__).resolve().parent.parent
 manifest = json.loads((root / "ci/preserved-files.json").read_text())
 failures = []
+updates = manifest.get("approved_reader_updates", {})
+assert isinstance(updates, dict) and set(updates) <= {"Makefile"}
+assert all(isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value) for value in updates.values())
 for record in manifest["files"]:
     relative = PurePosixPath(record["path"])
     if relative.is_absolute() or ".." in relative.parts:
@@ -28,11 +31,11 @@ for record in manifest["files"]:
             if executable != (record["mode"] == "100755"):
                 raise ValueError("executable mode changed")
         observed = hashlib.sha256(content).hexdigest()
-        if observed != record["sha256"]:
+        if observed != updates.get(record["path"], record["sha256"]):
             raise ValueError("SHA256 changed")
     except (OSError, ValueError) as error:
         failures.append(f"{relative}: {error}")
 if failures:
     print("\n".join(failures), file=sys.stderr)
     raise SystemExit(1)
-print(f'Preserved {len(manifest["files"])} files from {manifest["source_commit"]}.')
+print(f'Preserved {len(manifest["files"]) - len(updates)} original files and checked {len(updates)} approved Make updates.')

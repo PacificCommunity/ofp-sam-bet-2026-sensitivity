@@ -1,0 +1,469 @@
+{
+  "cases": {
+    "caal-0.5-sub-basin": {
+      "archive": {
+        "bytes": 30820256,
+        "sha256": "518ad7d3f759c2e447c833d766b754fac01eae7a4be603c3fc0549041a11e5b5",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/caal-0.5-sub-basin.tar.gz"
+      },
+      "final_par_sha256": "911069931d3fdf91cb93331301bbb9aa70dff1ccc466f46a3e2824c8aa68aff0",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "69549803a2b4fd0a5bebf0d2f3f334cbcee0ca4fa02c724088047952bf516cf5"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956577,
+          "sha256": "911069931d3fdf91cb93331301bbb9aa70dff1ccc466f46a3e2824c8aa68aff0"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "69549803a2b4fd0a5bebf0d2f3f334cbcee0ca4fa02c724088047952bf516cf5"
+        }
+      },
+      "model_id": "caal-0.5-sub-basin",
+      "pdh_status": "TRUE"
+    },
+    "lorenzen-m-scalar-0.062": {
+      "archive": {
+        "bytes": 30816797,
+        "sha256": "f57692d322d9b43e0cdc276f15d8ab6a3876bc26b6f9169d96fb245b2bf9df22",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/lorenzen-m-scalar-0.062.tar.gz"
+      },
+      "final_par_sha256": "b92808bba429d7819b46efc57454d1a492a2c28a01f57a2d40b37fb6c368db2e",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "4fbff5204f67aafac5e47d15841dcc43b826e800d3691350ffa0e9829aaacfdf"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956578,
+          "sha256": "b92808bba429d7819b46efc57454d1a492a2c28a01f57a2d40b37fb6c368db2e"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "4fbff5204f67aafac5e47d15841dcc43b826e800d3691350ffa0e9829aaacfdf"
+        }
+      },
+      "model_id": "lorenzen-m-scalar-0.062",
+      "pdh_status": "TRUE"
+    },
+    "lorenzen-m-scalar-0.1": {
+      "archive": {
+        "bytes": 30785479,
+        "sha256": "d2d38eb48fed941e4c687e6198211d2eb699df0f565f1eee79c0eeec725ef776",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/lorenzen-m-scalar-0.1.tar.gz"
+      },
+      "final_par_sha256": "9827672c1ebb98230dcad5bc43c0769533fd266558f84be8e79913a64f831a95",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "916ab74c8fff9cb3bc1edf0057597c44042862691ef8828a2ed5d831c8994ab6"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956632,
+          "sha256": "9827672c1ebb98230dcad5bc43c0769533fd266558f84be8e79913a64f831a95"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "916ab74c8fff9cb3bc1edf0057597c44042862691ef8828a2ed5d831c8994ab6"
+        }
+      },
+      "model_id": "lorenzen-m-scalar-0.1",
+      "pdh_status": "TRUE"
+    },
+    "pre-mixing-tag-reporting-inclusion": {
+      "archive": {
+        "bytes": 30830889,
+        "sha256": "952b3ee179990c6fc787fef5a891562cf10049a5e6e1de9ffdbadd4c8b07db01",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/pre-mixing-tag-reporting-inclusion.tar.gz"
+      },
+      "final_par_sha256": "f1c8178610067686447e7a3827e95ceed01607e5570514d14c4cdcf01671c247",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "464fb8788dad8d59eaa5323650252715db7192fc8faced4b7e0fd779750106bd"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956632,
+          "sha256": "f1c8178610067686447e7a3827e95ceed01607e5570514d14c4cdcf01671c247"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "464fb8788dad8d59eaa5323650252715db7192fc8faced4b7e0fd779750106bd"
+        }
+      },
+      "model_id": "pre-mixing-tag-reporting-inclusion",
+      "pdh_status": "TRUE"
+    },
+    "steepness-0.65": {
+      "archive": {
+        "bytes": 30814160,
+        "sha256": "da89dc7cdde6b6ce56b95187a5c301f1c08e3130ee2a1cddb2b03f80e47e95eb",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/steepness-0.65.tar.gz"
+      },
+      "final_par_sha256": "e0281de31c1832e8d97f923eb38515a21ca0ba49ded0544865bd84a5323f64d4",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "04031a3e7e18c2e1d538fa5cd6b59e6a7162cb2b48ed55ca2a190fc5044de07a"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956629,
+          "sha256": "e0281de31c1832e8d97f923eb38515a21ca0ba49ded0544865bd84a5323f64d4"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "04031a3e7e18c2e1d538fa5cd6b59e6a7162cb2b48ed55ca2a190fc5044de07a"
+        }
+      },
+      "model_id": "steepness-0.65",
+      "pdh_status": "TRUE"
+    },
+    "steepness-0.80": {
+      "archive": {
+        "bytes": 30814549,
+        "sha256": "0196a266057db71096c5eff7eeb1bf711d6e6ab05a7c3ace5a2d6578f0316a65",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/steepness-0.80.tar.gz"
+      },
+      "final_par_sha256": "7db4decd97101bfcf85e1ec0c7e2633329a1245409a1ff5f1d6799074ef20775",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "3b54ee3c2540446a5588058fb0aac317f1f1741ffadd35c77ae6a6a2259b7e9f"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956592,
+          "sha256": "7db4decd97101bfcf85e1ec0c7e2633329a1245409a1ff5f1d6799074ef20775"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "3b54ee3c2540446a5588058fb0aac317f1f1741ffadd35c77ae6a6a2259b7e9f"
+        }
+      },
+      "model_id": "steepness-0.80",
+      "pdh_status": "TRUE"
+    },
+    "steepness-0.95": {
+      "archive": {
+        "bytes": 30813749,
+        "sha256": "e0fd055b04059be4f665c2b440f40d93ec39cc435ba7d5ca3fef355acf032adf",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/steepness-0.95.tar.gz"
+      },
+      "final_par_sha256": "a50577dddfdbc924147785d39b5c8f7e9b8fc8c1da6f999a475da9f521086206",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "45842d2ae7767574278a7935132894f42a0f6c9e7bd22997257b632c10188d92"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956632,
+          "sha256": "a50577dddfdbc924147785d39b5c8f7e9b8fc8c1da6f999a475da9f521086206"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "45842d2ae7767574278a7935132894f42a0f6c9e7bd22997257b632c10188d92"
+        }
+      },
+      "model_id": "steepness-0.95",
+      "pdh_status": "TRUE"
+    },
+    "tag-mixing-k-0.1": {
+      "archive": {
+        "bytes": 30823278,
+        "sha256": "8e9ead99a1a976a7409bdf57121a72d299526be2b502b4960ecbd73233b0cdb1",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tag-mixing-k-0.1.tar.gz"
+      },
+      "final_par_sha256": "3958b20a9a5e70feecc2ca4d3a81c9b2b831648d967d18bccb9895305047291f",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "b71453600b23674baa634500d95cc12a1349e98a2fc4e242db404faa8d449a88"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956525,
+          "sha256": "3958b20a9a5e70feecc2ca4d3a81c9b2b831648d967d18bccb9895305047291f"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "b71453600b23674baa634500d95cc12a1349e98a2fc4e242db404faa8d449a88"
+        }
+      },
+      "model_id": "tag-mixing-k-0.1",
+      "pdh_status": "TRUE"
+    },
+    "tag-mixing-k-0.3": {
+      "archive": {
+        "bytes": 30810287,
+        "sha256": "7076553d157665ce6d1f7ce990c16ce6f6d4af62fd659c919a2a76fea4dbfe7b",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tag-mixing-k-0.3.tar.gz"
+      },
+      "final_par_sha256": "c044c7d5655139b293e97142ee23f45d3d7a3bcda767c13abeb245dd083856f4",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "1367c02f28da8142493482552f8f7dd43b2605cc58b82dcd309b1b7ea851447a"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956622,
+          "sha256": "c044c7d5655139b293e97142ee23f45d3d7a3bcda767c13abeb245dd083856f4"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "1367c02f28da8142493482552f8f7dd43b2605cc58b82dcd309b1b7ea851447a"
+        }
+      },
+      "model_id": "tag-mixing-k-0.3",
+      "pdh_status": "TRUE"
+    },
+    "tau-1.006738": {
+      "archive": {
+        "bytes": 30784388,
+        "sha256": "1930c0c61cfc848ad01a1caa6442099ceef25578d6c19b45effee7a94c7c0cb9",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tau-1.006738.tar.gz"
+      },
+      "final_par_sha256": "2499cc3b9609cf9d1533f6640d1118fddfd40e0fff712efe312c3d18d6284336",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "cadd86fad24fa063e6f33a9d9bd1433a6c3157bb9863ca5120c73cd57a12dc05"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2957142,
+          "sha256": "2499cc3b9609cf9d1533f6640d1118fddfd40e0fff712efe312c3d18d6284336"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "cadd86fad24fa063e6f33a9d9bd1433a6c3157bb9863ca5120c73cd57a12dc05"
+        }
+      },
+      "model_id": "tau-1.006738",
+      "pdh_status": "TRUE"
+    },
+    "tau-1.2": {
+      "archive": {
+        "bytes": 30797807,
+        "sha256": "623e5104b222ad8d43ecac109b929dc57b4c5cbd981d04b3c97eeec45ffa7e87",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tau-1.2.tar.gz"
+      },
+      "final_par_sha256": "223c7116d4425f1a8228ca55369690c7eb84075ce999bfe90d9c719d67f27040",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "d7bc56cf43f33d77b38b576d576a69051f0e05c3e23843a689e4b7d809713f55"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2957170,
+          "sha256": "223c7116d4425f1a8228ca55369690c7eb84075ce999bfe90d9c719d67f27040"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "d7bc56cf43f33d77b38b576d576a69051f0e05c3e23843a689e4b7d809713f55"
+        }
+      },
+      "model_id": "tau-1.2",
+      "pdh_status": "TRUE"
+    },
+    "tau-1.4": {
+      "archive": {
+        "bytes": 30818592,
+        "sha256": "b4e5732d9189b5b227d3dc54e9451d8f1a15185804f04e416ad6a721dc1deab2",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tau-1.4.tar.gz"
+      },
+      "final_par_sha256": "16d3f8beec7088c2a225a62a8f273d5b1550971bb976e0e95dbee3c2a7df7fbd",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "5e5b7b861131fe64eb50ea833b88fa71028dc4684de2e843d7183e66552705d5"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2957152,
+          "sha256": "16d3f8beec7088c2a225a62a8f273d5b1550971bb976e0e95dbee3c2a7df7fbd"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "5e5b7b861131fe64eb50ea833b88fa71028dc4684de2e843d7183e66552705d5"
+        }
+      },
+      "model_id": "tau-1.4",
+      "pdh_status": "TRUE"
+    },
+    "tau-1.6": {
+      "archive": {
+        "bytes": 30813093,
+        "sha256": "759154bf44b6bef0501a2a08103e6ed79ca4ca1aeaa2a588d69b5726df1135f8",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tau-1.6.tar.gz"
+      },
+      "final_par_sha256": "9f33967e3a1144c09df059ec09f4f96a96d37b5603c30e865d76d3fb9704a3c7",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "8dc504974294114b44a77fff8d78faca083a4bf81060cbc14de7f75963fadb71"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2957218,
+          "sha256": "9f33967e3a1144c09df059ec09f4f96a96d37b5603c30e865d76d3fb9704a3c7"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "8dc504974294114b44a77fff8d78faca083a4bf81060cbc14de7f75963fadb71"
+        }
+      },
+      "model_id": "tau-1.6",
+      "pdh_status": "TRUE"
+    },
+    "tau-1.8": {
+      "archive": {
+        "bytes": 30811939,
+        "sha256": "ad8b1c420534b306216b9873ce716a127f0cbd2932c4e176d5e6be663d5bdc1d",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/tau-1.8.tar.gz"
+      },
+      "final_par_sha256": "0d7929f1d846e08f44fbcc0fba6da3df3c29b71c08166b3efea7b89cf37df8f1",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "4d3f2f032f9139697b432c936f32c4c8133f00f563ded0508171f34ae20b43cc"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2957172,
+          "sha256": "0d7929f1d846e08f44fbcc0fba6da3df3c29b71c08166b3efea7b89cf37df8f1"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "4d3f2f032f9139697b432c936f32c4c8133f00f563ded0508171f34ae20b43cc"
+        }
+      },
+      "model_id": "tau-1.8",
+      "pdh_status": "TRUE"
+    }
+  },
+  "classification": "PUBLIC",
+  "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+  "schema_version": 1
+}

@@ -17,6 +17,13 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
+      - name: Check saved Hessian restoration
+        run: |
+          make hessian-verify
+          python3 -m unittest discover -s reproduce -p 'test_hessian*.py' -v
+          make hessian-stitch-plan CASE=steepness-0.80
+          make hessian CASE=steepness-0.80 OUT="$RUNNER_TEMP/bet-hessian"
+          make hessian-stitch CASE=steepness-0.80 OUT="$RUNNER_TEMP/bet-hessian-stitch"
       - name: Check Make entry points without executing models
         run: python3 ci/check-make-entrypoints.py
       - name: Verify preserved assessment files
