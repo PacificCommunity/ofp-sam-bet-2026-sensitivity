@@ -558,6 +558,15 @@ def restore(entry, manifest, out, archive=None):
         parents.close()
 
 
+def select_case(data, selector):
+    if selector in data["cases"]:
+        return selector
+    matches = [key for key, entry in data["cases"].items()
+               if entry["model_id"] == selector]
+    require(len(matches) == 1, "choose a case or unique model ID listed in hessians.json")
+    return matches[0]
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=Path(__file__).parent / "hessians.json")
@@ -571,7 +580,7 @@ def main(argv=None):
         if args.verify and not args.case and not args.archive and not args.out:
             print("Manifest verified: " + str(len(data["cases"])) + " cases")
             return 0
-        require(args.case in data["cases"], "choose a case listed in hessians.json")
+        args.case = select_case(data, args.case)
         entry = data["cases"][args.case]
         if args.verify:
             require(args.archive is not None and args.out is None,

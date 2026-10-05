@@ -112,6 +112,25 @@ class SavedHessianTests(unittest.TestCase):
         self.assertEqual(result, 1, error)
         self.assertFalse(self.out.exists(), "OUT was reserved before archive validation")
 
+    def test_cli_restores_by_original_model_id(self):
+        result, stdout, stderr = self.call("--case", "original-model-005",
+                                           "--out", str(self.out),
+                                           "--archive", str(self.archive))
+        self.assertEqual((result, stderr), (0, ""))
+        for name, body in self.bodies.items():
+            self.assertEqual((self.out / name).read_bytes(), body)
+        self.assertIn("ensemble-005", stdout)
+
+    def test_cli_refuses_ambiguous_model_id_before_output(self):
+        self.data["cases"]["ensemble-006"] = copy.deepcopy(self.entry)
+        self.save()
+        result, _, stderr = self.call("--case", "original-model-005",
+                                      "--out", str(self.out),
+                                      "--archive", str(self.archive))
+        self.assertEqual(result, 1)
+        self.assertIn("unique model ID", stderr)
+        self.assertFalse(self.out.exists())
+
     def test_manifest_only_never_downloads(self):
         with patch.object(h.urllib.request, "build_opener", side_effect=AssertionError("network")):
             result, output, _ = self.call("--verify")

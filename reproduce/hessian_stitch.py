@@ -319,7 +319,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         manifest, data = h.read_manifest(HERE / "hessians.json")
-        h.require(args.case in data["cases"], "choose a case listed in hessians.json")
+        args.case = h.select_case(data, args.case)
         entry = data["cases"][args.case]
         if args.plan:
             h.require(args.out is None and args.archive is None, "plan takes only CASE")
