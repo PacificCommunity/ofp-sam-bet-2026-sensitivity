@@ -33,6 +33,72 @@
       "model_id": "caal-0.5-sub-basin",
       "pdh_status": "TRUE"
     },
+    "caal-1.0-sub-basin": {
+      "archive": {
+        "bytes": 30809067,
+        "sha256": "71fd37cb4bb99d9b7eb0eb4dd3cf092a9d0f60aec64e00e104a3263c86d2c384",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/caal-1.0-sub-basin.tar.gz"
+      },
+      "final_par_sha256": "af218dfc276114669c9da6e9a47189db046e79b95aa5948d28bf79143edcc8ad",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "413d252e1e7ccf0240b29218494cc9731ea9b53531d51dd69024dbca9aa731b8"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956635,
+          "sha256": "af218dfc276114669c9da6e9a47189db046e79b95aa5948d28bf79143edcc8ad"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "413d252e1e7ccf0240b29218494cc9731ea9b53531d51dd69024dbca9aa731b8"
+        }
+      },
+      "model_id": "caal-1.0-sub-basin",
+      "pdh_status": "TRUE"
+    },
+    "effort-creep-high": {
+      "archive": {
+        "bytes": 30812622,
+        "sha256": "1e8ec8694ff16fb1cf104b20b42dfd9e50090d912c0df4c2aeb58e6e90d9479d",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/effort-creep-high.tar.gz"
+      },
+      "final_par_sha256": "1af944aa30d4e488686cdecb5b3432aeae7dfdffcfa27cc4fffd88ae69be9d81",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "d604303d376f651f363c98115180e73db9ed54a47ebb6876c3d9b4b2f3f27708"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956631,
+          "sha256": "1af944aa30d4e488686cdecb5b3432aeae7dfdffcfa27cc4fffd88ae69be9d81"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "d604303d376f651f363c98115180e73db9ed54a47ebb6876c3d9b4b2f3f27708"
+        }
+      },
+      "model_id": "effort-creep-high",
+      "pdh_status": "TRUE"
+    },
     "lorenzen-m-scalar-0.062": {
       "archive": {
         "bytes": 30816797,
@@ -130,6 +196,39 @@
         }
       },
       "model_id": "pre-mixing-tag-reporting-inclusion",
+      "pdh_status": "TRUE"
+    },
+    "regional-scaling-whole-period": {
+      "archive": {
+        "bytes": 30777828,
+        "sha256": "7d9717937da1f5c17da4b08f1d6cb9e336c431b948d1b95ee91c831c54f32c52",
+        "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/regional-scaling-whole-period.tar.gz"
+      },
+      "final_par_sha256": "2236d58d04dec9213c83ed87187f1617af89bd9d6809926c4c36fa4789abf7f4",
+      "hessian_parts": [
+        {
+          "bytes_hex": "cd07000001000000cd070000",
+          "n_parameter": 1997,
+          "path": "parts/part_1/bet.hes",
+          "row_bounds": [
+            1,
+            1997
+          ],
+          "sha256": "60041755299bf649e1c200f1210c421fd6bcb19f02733c0fd59c0f63d077a4d9"
+        }
+      ],
+      "kind": "native_parts",
+      "members": {
+        "final.par": {
+          "bytes": 2956581,
+          "sha256": "2236d58d04dec9213c83ed87187f1617af89bd9d6809926c4c36fa4789abf7f4"
+        },
+        "parts/part_1/bet.hes": {
+          "bytes": 31904084,
+          "sha256": "60041755299bf649e1c200f1210c421fd6bcb19f02733c0fd59c0f63d077a4d9"
+        }
+      },
+      "model_id": "regional-scaling-whole-period",
       "pdh_status": "TRUE"
     },
     "steepness-0.65": {

@@ -11,19 +11,36 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
       - name: Check saved Hessian restoration
+        shell: bash
         run: |
           make hessian-verify
           python3 -m unittest discover -s reproduce -p 'test_hessian*.py' -v
-          make hessian-stitch-plan CASE=steepness-0.80
-          make hessian CASE=steepness-0.80 OUT="$RUNNER_TEMP/bet-hessian"
-          make hessian-stitch CASE=steepness-0.80 OUT="$RUNNER_TEMP/bet-hessian-stitch"
+          python3 -c 'import json; d=json.load(open("reproduce/hessians.json")); print("\n".join(k+"\t"+v.get("kind","matrix") for k,v in sorted(d["cases"].items())))' > "$RUNNER_TEMP/bet-hessian-cases.tsv"
+          mkdir -p "$RUNNER_TEMP/bet-hessian-cases" "$RUNNER_TEMP/bet-hessian-cli-logs"
+          failed=0
+          while IFS=$'\t' read -r case kind; do
+            echo "::group::Saved Hessian $case"
+            if [ "$kind" = native_parts ]; then
+              target=hessian-stitch
+            else
+              target=hessian
+            fi
+            if make "$target" CASE="$case" OUT="$RUNNER_TEMP/bet-hessian-cases/$case" > "$RUNNER_TEMP/bet-hessian-cli-logs/$case.log" 2>&1; then
+              echo "Verified $case"
+            else
+              tail -n 80 "$RUNNER_TEMP/bet-hessian-cli-logs/$case.log"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done < "$RUNNER_TEMP/bet-hessian-cases.tsv"
+          test "$failed" -eq 0
       - name: Check Make entry points without executing models
         run: python3 ci/check-make-entrypoints.py
       - name: Verify preserved assessment files
@@ -36,6 +53,34 @@ jobs:
           python3 ci/run-in-scratch.py Rscript scripts/validate-sensitivities.R
           python3 ci/verify-preserved-files.py
           git diff --exit-code
+      - name: Collect Hessian checks and short logs
+        if: always()
+        shell: bash
+        run: |
+          receipt_dir="$RUNNER_TEMP/bet-hessian-receipts"
+          mkdir -p "$receipt_dir"
+          shopt -s nullglob
+          for result_dir in "$RUNNER_TEMP"/bet-hessian-cases/*; do
+            [ -d "$result_dir" ] || continue
+            case_id="$(basename "$result_dir")"
+            if [ -f "$result_dir/stitch.json" ]; then
+              cp "$result_dir/stitch.json" "$receipt_dir/$case_id-stitch.json"
+            fi
+            if [ -f "$result_dir/stitched/mfcl_stitch_log.txt" ]; then
+              tail -c 65536 "$result_dir/stitched/mfcl_stitch_log.txt" > "$receipt_dir/$case_id-mfcl.log"
+            fi
+          done
+          for log in "$RUNNER_TEMP"/bet-hessian-cli-logs/*.log; do
+            tail -c 65536 "$log" > "$receipt_dir/$(basename "$log")"
+          done
+      - name: Retain Hessian checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: saved-sensitivity-hessian-checks
+          path: ${{ runner.temp }}/bet-hessian-receipts/*
+          if-no-files-found: warn
+          retention-days: 14
 
   native:
     name: Regenerate saved sensitivity fits
