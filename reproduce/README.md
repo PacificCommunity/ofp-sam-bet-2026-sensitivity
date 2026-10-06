@@ -54,3 +54,23 @@ make hessian-stitch CASE=steepness-0.80 OUT=/tmp/bet-hessian-stitch
 This uses switch `145=11`; original parts and PAR remain alongside the derived
 `stitched/` files and `stitch.json` checks. The historical executable hash and
 byte equality to the historical merged matrix are unconfirmed.
+
+To calculate native derivatives again, use this recorded historical recipe.
+Give each part a new directory with the matching `make restore` inputs,
+executable and `final.par`. For a new fit, run `make refit` above and use its
+last PAR as `final.par`. Check the parameter layout before reusing that case's
+inclusive `row_bounds` in [hessians.json](hessians.json).
+
+```sh
+./mfclo64 bet.frq final.par hessian.par \
+  -switch 3 1 145 1 1 223 FIRSTROW 1 224 LASTROW
+```
+
+Replace `FIRSTROW` and `LASTROW` with those bounds; repeat for every part.
+Each writes `bet.hes` with `145=1`. `make hessian-stitch` uses saved parts only.
+This derivative calculation has not been tested by CI.
+
+Original records say `completed` with `nonzero_status`. The scanner labels them
+`failed` for "Only one non zero slot in this sample", sometimes with tag reporting
+warnings during mixing. These labels do not establish convergence; the published
+PDH indicators remain unchanged.
