@@ -433,6 +433,8 @@ def validate_tar(archive, entry, scratch):
                         "unexpected or duplicate tar member")
                 pin = members[info.name]
                 require(info.size == pin["bytes"], "tar member size differs")
+                require("mode" not in pin or info.mode == pin["mode"],
+                        "tar member mode differs")
                 seen.add(info.name)
                 digest = hashlib.sha256()
                 remaining = info.size

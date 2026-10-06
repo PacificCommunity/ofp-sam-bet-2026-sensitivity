@@ -107,3 +107,18 @@ jobs:
             ${{ runner.temp }}/bet-native/*/native-check.json
           if-no-files-found: error
           retention-days: 14
+
+  native-logs:
+    name: Verify original native MFCL logs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check log archive safety without executing models
+        run: python3 -m unittest discover -s reproduce -p 'test_native_logs.py' -v
+      - name: Download and restore the original derivative traces
+        shell: bash
+        run: |
+          make hessian-logs-verify
+          make hessian-logs OUT="$RUNNER_TEMP/bet-native-mfcl-logs"
+          git diff --exit-code

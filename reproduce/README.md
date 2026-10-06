@@ -74,3 +74,19 @@ Original records say `completed` with `nonzero_status`. The scanner labels them
 `failed` for "Only one non zero slot in this sample", sometimes with tag reporting
 warnings during mixing. These labels do not establish convergence; the published
 PDH indicators remain unchanged.
+
+## Original derivative logs
+
+The optional archive keeps all 17 original native MFCL derivative logs,
+including likelihood, penalty and row-progress traces. Restore them without
+running MFCL:
+
+```sh
+make hessian-logs OUT=/absolute/bet-native-mfcl-logs
+```
+
+Files are arranged as `CASE/part_N/mfcl_hessian_log.txt`.
+[native-logs.json](native-logs.json) records exact file hashes and matches each
+part to the saved Hessian row bounds. Original execution-directory lines remain
+in the logs. To check a downloaded archive, use
+`make hessian-logs-verify ARCHIVE=/absolute/archive.tar.gz`.

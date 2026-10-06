@@ -1,0 +1,218 @@
+{
+  "archive": {
+    "bytes": 5805971,
+    "sha256": "37960b116d066261af3b4ab783c605949b7c5f10610fdd789482c67f7eda6a99",
+    "url": "https://github.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/releases/download/bet2026-hessians-20261006/sensitivity-native-mfcl-logs-20261006.tar.gz"
+  },
+  "classification": "PUBLIC",
+  "hessians_sha256": "afb0c876d1d62cbe57453508e14c593f6eabcaaf0d5797a26e7faeedfaa64a97",
+  "kind": "native_logs",
+  "members": {
+    "caal-0.5-sub-basin/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9510033,
+      "mode": 420,
+      "model_id": "caal-0.5-sub-basin",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "ea2e48e37e794a6e97ebf9175e22ed4268be32b7d9f9c5c7466ce0e946f3785c"
+    },
+    "caal-1.0-sub-basin/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502053,
+      "mode": 420,
+      "model_id": "caal-1.0-sub-basin",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "7731f08c6fe57d94a8d04f99353d4bfb4402a325c7f40250a3aacf91dbf6d5a4"
+    },
+    "effort-creep-high/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502053,
+      "mode": 420,
+      "model_id": "effort-creep-high",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "f1bebac40f0a2777713db1b2f57853d6142323c14c5cad5ba26d930fa3c184b5"
+    },
+    "lorenzen-m-scalar-0.062/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502053,
+      "mode": 420,
+      "model_id": "lorenzen-m-scalar-0.062",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "63022cc4d680b6b821c07f19eafa0ceb443840b00427fc867f89de0539db203d"
+    },
+    "lorenzen-m-scalar-0.1/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502063,
+      "mode": 420,
+      "model_id": "lorenzen-m-scalar-0.1",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "08983023e0f2ead6be445d90dbbd7c353cdd44faef6526b62cf0083a3133e3db"
+    },
+    "pre-mixing-tag-reporting-inclusion/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9521069,
+      "mode": 420,
+      "model_id": "pre-mixing-tag-reporting-inclusion",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "eefcad94694af07a70ea1cde1e973fea14b2b92d0bd161e1349227305c741d36"
+    },
+    "regional-scaling-whole-period/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502057,
+      "mode": 420,
+      "model_id": "regional-scaling-whole-period",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "a7069b88944385abbd24115a48cf087b0227c8eeb23405fbb24c2aeeba8a9388"
+    },
+    "steepness-0.65/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502050,
+      "mode": 420,
+      "model_id": "steepness-0.65",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "01a01ca7d781f9f989ad9b289a17b6e1006e61f58dcd4893309aa5564812a9bc"
+    },
+    "steepness-0.80/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502048,
+      "mode": 420,
+      "model_id": "steepness-0.80",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "260aca3f54ca52837211a308918fbf9bca9e662473509897330b52df9243c609"
+    },
+    "steepness-0.95/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502053,
+      "mode": 420,
+      "model_id": "steepness-0.95",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "c9d7de6e993016e7f64cc3f7aa30f81df3311236596410c0dbfeebd3453bf522"
+    },
+    "tag-mixing-k-0.1/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9509810,
+      "mode": 420,
+      "model_id": "tag-mixing-k-0.1",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "11688795b30caaad06a02a9b0fd28d0d9786c9757dce8f58d6c87820613c4fa0"
+    },
+    "tag-mixing-k-0.3/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9511387,
+      "mode": 420,
+      "model_id": "tag-mixing-k-0.3",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "f75252bd9792bdbcf29c2ceb7bb26dda52bc66ca67513636da5c95b77a0c0d95"
+    },
+    "tau-1.006738/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502040,
+      "mode": 420,
+      "model_id": "tau-1.006738",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "a79fab01ede7e2d03caaa35a3597522e64522bee743370be3b2493a0f962a1a4"
+    },
+    "tau-1.2/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502034,
+      "mode": 420,
+      "model_id": "tau-1.2",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "30fb07f7f9a4c2613f9488adf22a6bc84ec67dcd274b26b91fe1e22406af4a32"
+    },
+    "tau-1.4/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502036,
+      "mode": 420,
+      "model_id": "tau-1.4",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "4554262e5d2f15701dd010bef314a0cf890ed5a5b943cbec6d79ea649ce2b4f1"
+    },
+    "tau-1.6/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502035,
+      "mode": 420,
+      "model_id": "tau-1.6",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "6cae79259cd6cd19c7a554994be7d69364a74ebe9973eebcc4f6f64cc3c32234"
+    },
+    "tau-1.8/part_1/mfcl_hessian_log.txt": {
+      "bytes": 9502041,
+      "mode": 420,
+      "model_id": "tau-1.8",
+      "n_parameter": 1997,
+      "part": 1,
+      "row_bounds": [
+        1,
+        1997
+      ],
+      "sha256": "16a641477265645077e9070759fe3d3d76017f643ea97cf56d72db4546b1d329"
+    }
+  },
+  "repository": "PacificCommunity/ofp-sam-bet-2026-sensitivity",
+  "schema_version": 1
+}
