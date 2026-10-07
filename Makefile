@@ -12,31 +12,21 @@ validate:
 
 CASE ?= all
 OUT ?=
+RSCRIPT ?= Rscript
 export CASE OUT
-.PHONY: help verify rerun restore refit results _check-output
+.PHONY: verify rerun restore refit results prepare list rerun-help
 
-help:
-	@printf '%s\n' 'make verify                                      Check saved files' 'make results                                     Rebuild the cached report' 'make rerun CASE=all OUT=/tmp/bet-sensitivity       Regenerate saved native outputs' 'make refit CASE=steepness-0.80 OUT=/tmp/bet-refit   Fit one model from the start' 'Native runs require Linux x86-64; use a new OUT.'
+help rerun-help:
+	@printf '%s\n' 'make list' 'make verify' 'make prepare CASE=CASE OUT=/absolute/new-folder' 'make rerun CASE=CASE OUT=/absolute/new-folder' 'make refit CASE=CASE OUT=/absolute/new-folder' 'Use CASE=all for saved-model preparation or evaluation. Native runs require Linux x86-64.'
 
-verify:
-	@python3 reproduce/hessian.py --verify
-	@python3 ci/verify-preserved-files.py
-	@python3 reproduce/restore.py --verify
+list verify:
+	@"$(RSCRIPT)" reproduce/run-final.R "$@"
 
-rerun: verify _check-output
-	@python3 reproduce/run-native.py "$$CASE" "$$OUT"
+prepare restore rerun refit:
+	@"$(RSCRIPT)" reproduce/run-final.R "$@" "$$CASE" "$$OUT"
 
-restore: verify _check-output
-	@python3 reproduce/restore.py "$$CASE" "$$OUT"
-
-refit: verify _check-output
-	@test -f "models/$$CASE/doitall.sh" || { echo 'Choose one model, e.g. CASE=steepness-0.80.' >&2; exit 2; }
-	@./scripts/run-sensitivity "$$CASE" "$$OUT"
-
-results: report
-
-_check-output:
-	@python3 -c 'import os; from pathlib import Path; raw=os.environ.get("OUT",""); p=Path(raw); root=Path.cwd().resolve(); assert raw and p.is_absolute(), "Set OUT to an absolute, new directory"; assert not os.path.lexists(p), "OUT already exists"; q=p.resolve(); assert q != root and root not in q.parents, "OUT must be outside this repository"'
+results:
+	@./run-report
 
 export ARCHIVE
 .PHONY: hessian hessian-verify
@@ -85,3 +75,8 @@ hessian-logs-verify:
 	else \
 		python3 reproduce/native_logs.py --verify; \
 	fi
+
+.PHONY: verify-source
+verify: verify-source
+verify-source:
+	@sha256sum --quiet -c ci/PRESERVED.sha256

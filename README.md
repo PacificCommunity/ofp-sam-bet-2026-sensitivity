@@ -22,15 +22,15 @@ make results
 make rerun CASE=steepness-0.80 OUT=/tmp/bet-steepness
 ```
 
-The checks verify the saved files; `results` rebuilds the cached report.
-On 64-bit x86 Linux, `rerun` regenerates detailed native outputs using the
-original fitted PAR and a function-evaluation ceiling of 1. Use `CASE=all`
-for all 17 fits. Choose a new output directory each time.
-The saved PARs, original central REP sections and input checksums are retained
-in `reproduce/`.
+`verify` checks the self-contained [native bundle](reproduce/standalone.zip).
+`results` rebuilds the cached report. `rerun` evaluates the original final PAR
+on Linux x86-64, checks the native zero counters, objective and reference values,
+and writes detailed outputs to a fresh OUT. Use `CASE=all` for all 17 fits.
 
-For a full fit, use `make refit CASE=steepness-0.65 OUT=/tmp/bet-refit`.
-See [native reruns](reproduce/README.md) for model keys and verification.
+Only base R and system archive/hash tools are needed to list, verify or prepare
+files. `make prepare CASE=steepness-0.80 OUT=/tmp/bet-inputs` restores a working
+copy without executing MFCL. `make refit CASE=steepness-0.80 OUT=/tmp/bet-refit`
+runs the original complete fit. See [native reruns](reproduce/README.md).
 
 See [design, validation and reproduction details](docs/reproduction.md) and
 [provenance](PROVENANCE.md). The former

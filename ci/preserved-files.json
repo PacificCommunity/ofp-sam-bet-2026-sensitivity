@@ -43,8 +43,8 @@
     {
       "path": "README.md",
       "mode": "100644",
-      "git_blob": "e7ac192dce40851bddb0e3e7c8e3aa624cc7dc83",
-      "sha256": "7d4e4c328bef5cf2df2fa40e34050c60aa70bcdb68549b991ba8be3c5b3bdf9a"
+      "git_blob": "2ef6c8db4d85ba77fcd8b4b3f06ba424d1aa7d0c",
+      "sha256": "d55d891b9ceb544ca5ffb45312edb650a1c88b25453683a67381b27dc8a5e40e"
     },
     {
       "path": "data/SHA256SUMS",
@@ -2070,6 +2070,23 @@
     }
   ],
   "approved_reader_updates": {
-    "Makefile": "0837e53599a88e917cdccf9f0a9cc64d01d7ec6823609f4c2dd18f102869b5b6"
-  }
+    "Makefile": "8f357db6b28ddf3907b177ba0c35bddd96d222cca6d97a881c58efe23c4c8fc7"
+  },
+  "approved_additions": [
+    {
+      "path": "reproduce/run-final.R",
+      "mode": "100644",
+      "sha256": "2fe384d56f66f30d6cbbb9cb43619b4cda9fa4d533c98e5b65cee57cb01009fe"
+    },
+    {
+      "path": "reproduce/standalone.zip",
+      "mode": "100644",
+      "sha256": "8707ad505363f95757ed35414efccf5c39c9b0646eb0f63e2179a9f8710e5dfa"
+    },
+    {
+      "path": "reproduce/standalone.sha256",
+      "mode": "100644",
+      "sha256": "b17a128e0d4ce990381779c1afbbe47a970dd06991bc04746fc8375fcba3fc62"
+    }
+  ]
 }

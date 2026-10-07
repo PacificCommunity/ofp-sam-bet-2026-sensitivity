@@ -1,31 +1,47 @@
 # Saved sensitivity fits
 
-[Download native.tar.gz](https://raw.githubusercontent.com/PacificCommunity/ofp-sam-bet-2026-sensitivity/main/reproduce/native.tar.gz). It is included in a normal clone;
-[files.json](files.json) lists the archived files and checksums.
+[standalone.zip](standalone.zip) is included in a normal clone. It contains
+17 original final PARs, native inputs, `doitall.sh`, required nested fitting
+settings, compact reference values and shared MFCL engines. The native archive
+uses ordinary named files, with no Python reader or runtime.
 
-The small archive retains all 17 original final PARs. Their six native inputs
-and `doitall.sh` reuse the frozen case files in this repository; the MFCL
-executable comes from a checksum-verified public Git file.
-
-On 64-bit x86 Linux, from the repository root:
+From the repository root:
 
 ```sh
+make list
 make verify
-make rerun CASE=all OUT=/tmp/bet-sensitivity
+make prepare CASE=steepness-0.80 OUT=/tmp/bet-inputs
+make rerun CASE=steepness-0.80 OUT=/tmp/bet-native
 ```
 
-Choose a case such as `steepness-0.80` instead of `all` for one fit. Each run
-uses a function-evaluation ceiling of 1, preserves every input, checks the saved objective
-and compares native biomass and MSY quantities with the original REP sections,
-plus annual biomass and depletion with the original public CSV. Detailed native outputs stay in the new folder.
+Choose a fresh absolute OUT. Preparation and verification use base R plus system
+archive/hash tools. `rerun` requires Linux x86-64: it uses the original ceiling-one
+controls `1 1 1` and `1 246 1`, checks the reported zero iteration/function
+counters, and compares the saved objective, case-specific parameter count,
+dimensions and central REP values. Detailed outputs stay in OUT.
+Use `CASE=all` for every saved case.
 
-`make verify` checks saved bytes without running MFCL. For a full fit, use
-`make refit CASE=steepness-0.80 OUT=/tmp/bet-refit`; the original runner stages the nested configuration and selectivity
-files required by `doitall.sh`.
+For a full fit:
 
-The annual comparison matches all 1,241 saved rows across the 17 fits.
-The original CSV extractor and historical executed binary hash remain
-unconfirmed. `validation.json` records the checks and source hashes.
+```sh
+make refit CASE=steepness-0.80 OUT=/tmp/bet-refit
+```
+
+This runs the preserved `doitall.sh` from the saved inputs. It is a longer fit,
+not part of the saved-PAR CI checks. `models.csv` records each engine and the
+refit-dependency status; unsupported full-fit cases refuse to run.
+
+The ZIP can also be unzipped and used independently with its own Makefile.
+`FILES.csv`, `models.csv` and `CONTENTS.sha256` bind the native files and reference
+values. The original [native.tar.gz](native.tar.gz), [closure](closure.json) and
+[validation policies](validation.json) remain available for provenance.
+Historical externally executed binary identities remain unconfirmed.
+Published report data and HTML links are unchanged.
+
+The annual comparison retains all 1,241 original rows: quarterly region sums
+divided by four and 1,000, with depletion as annual SB/SBF0. The original CSV
+extractor remains unconfirmed; the retained native references provide the
+direct numerical comparison.
 
 ## Saved Hessians
 
