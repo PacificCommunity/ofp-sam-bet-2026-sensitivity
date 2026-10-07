@@ -105,7 +105,7 @@ jobs:
           unzip -q reproduce/standalone.zip -d "$RUNNER_TEMP/reader-kit"
           kit="$RUNNER_TEMP/reader-kit/bet-2026-sensitivity-standalone"
           make --no-print-directory -C "$kit" verify
-          Rscript -e 'x <- read.csv(commandArgs(TRUE)[1])$case; stopifnot(length(x) == 17L, !anyDuplicated(x)); cat(x[(seq_along(x)-1L) %% 3L == as.integer(commandArgs(TRUE)[2])], sep="\n")' "$kit/models.csv" "${{ matrix.shard }}" > "$RUNNER_TEMP/native-cases.txt"
+          Rscript -e 'x <- read.csv(commandArgs(TRUE)[1])$model; stopifnot(length(x) == 17L, !anyDuplicated(x)); cat(x[(seq_along(x)-1L) %% 3L == as.integer(commandArgs(TRUE)[2])], sep="\n")' "$kit/models.csv" "${{ matrix.shard }}" > "$RUNNER_TEMP/native-cases.txt"
           mkdir "$RUNNER_TEMP/bet-native"
           while IFS= read -r case; do
             make --no-print-directory -C "$kit" rerun CASE="$case" OUT="$RUNNER_TEMP/bet-native/$case"
