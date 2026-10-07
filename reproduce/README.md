@@ -16,8 +16,9 @@ make rerun CASE=steepness-0.80 OUT=/tmp/bet-native
 
 Choose a fresh absolute OUT. Preparation and verification use base R plus system
 archive/hash tools. `rerun` requires Linux x86-64: it uses the original ceiling-one
-controls `1 1 1` and `1 246 1`, checks the reported zero iteration/function
-counters, and compares the saved objective, case-specific parameter count,
+controls `1 1 1`, `1 50 0` and `1 246 1`. The evaluation convergence
+criterion is 1; any nonzero iteration/function counter fails the check. It
+compares the saved objective, case-specific parameter count,
 dimensions and central REP values. Detailed outputs stay in OUT.
 Use `CASE=all` for every saved case.
 

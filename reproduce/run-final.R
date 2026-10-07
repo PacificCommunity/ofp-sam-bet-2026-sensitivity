@@ -6,7 +6,7 @@ require_true <- function(x, ...) if (!isTRUE(x)) fail(...)
 family <- "sensitivity"
 reader_checkout <- NULL
 expected_models <- c("caal-0.5-sub-basin","caal-1.0-sub-basin","effort-creep-high","lorenzen-m-scalar-0.062","lorenzen-m-scalar-0.1","pre-mixing-tag-reporting-inclusion","regional-scaling-whole-period","steepness-0.65","steepness-0.80","steepness-0.95","tag-mixing-k-0.1","tag-mixing-k-0.3","tau-1.006738","tau-1.2","tau-1.4","tau-1.6","tau-1.8")
-controls <- c("1 1 1", "1 246 1")
+controls <- c("1 1 1", "1 50 0", "1 246 1")
 dimension_labels <- c("Number of time periods", "Year 1", "Number of regions", "Number of species", "Number of age classes", "Number of recruitments per year")
 central_labels <- c(dimension_labels, "Adult biomass", "Adult biomass in absence of fishing", "Adult biomass at MSY", "F multiplier at MSY")
 exists_path <- function(path) {
@@ -154,9 +154,14 @@ native_log <- function(path, parameters) {
   lines <- readLines(path, warn = FALSE)
   limits <- grep("^[[:space:]]*optfile\\.cpp[[:space:]]+", lines, value = TRUE)
   observed <- 0L
+  convergence_controls <- 0L
   for (line in limits) {
     values <- strsplit(trimws(sub("^[[:space:]]*optfile\\.cpp[[:space:]]+", "", line)), "[[:space:]]+")[[1L]]
     require_true(length(values) >= 3L && all(grepl("^[-+]?[0-9]+$",values[1:3])), "Malformed native control.")
+    if (identical(as.numeric(values[1:2]), c(1,50))) {
+      require_true(as.numeric(values[3L]) == 0, "Evaluation convergence control differs.")
+      convergence_controls <- convergence_controls+1L
+    }
     if (identical(as.numeric(values[1:2]), c(1,1))) {
       require_true(as.numeric(values[3L]) == 1, "Native ceiling differs from one."); observed <- observed+1L
     }
@@ -164,10 +169,11 @@ native_log <- function(path, parameters) {
   counters <- lines[grepl("variables;", lines, fixed=TRUE) & grepl("function[[:space:]]+evaluation",lines)]
   pattern <- "^[[:space:]]*([0-9]+)[[:space:]]+variables;[[:space:]]+iteration[[:space:]]+([0-9]+);[[:space:]]+function[[:space:]]+evaluation[[:space:]]+([0-9]+)[[:space:]]*$"
   for (line in counters) {
-    match <- regmatches(line,regexec(pattern,line))[[1L]]
+    counter_line <- sub("^[[:space:]]*Initial statistics:[[:space:]]*", "", line)
+    match <- regmatches(counter_line,regexec(pattern,counter_line))[[1L]]
     require_true(length(match)==4L && identical(as.numeric(match[2:4]), c(parameters,0,0)), "Native parameter/iteration/function counter differs.")
   }
-  require_true(observed>0 && length(counters)>0, "Native ceiling/zero-counter evidence absent.")
+  require_true(observed>0 && convergence_controls==1L && length(counters)>0, "Native controls/zero-counter evidence absent.")
   objectives <- grep("^[[:space:]]*Total func[[:space:]]+[^[:space:]]+[[:space:]]*$",lines,value=TRUE)
   require_true(length(objectives)>0, "Native objective absent.")
   objective <- suppressWarnings(as.numeric(trimws(sub("^[[:space:]]*Total func[[:space:]]+", "", objectives[1L]))))
