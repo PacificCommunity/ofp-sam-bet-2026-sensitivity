@@ -33,16 +33,16 @@ export ARCHIVE
 
 hessian:
 	@if [ -n "$$ARCHIVE" ]; then \
-		python3 reproduce/hessian.py --case "$$CASE" --out "$$OUT" --archive "$$ARCHIVE"; \
+		$(RSCRIPT) reproduce/hessian.R --case "$$CASE" --out "$$OUT" --archive "$$ARCHIVE"; \
 	else \
-		python3 reproduce/hessian.py --case "$$CASE" --out "$$OUT"; \
+		$(RSCRIPT) reproduce/hessian.R --case "$$CASE" --out "$$OUT"; \
 	fi
 
 hessian-verify:
 	@if [ -n "$$ARCHIVE" ]; then \
-		python3 reproduce/hessian.py --verify --case "$$CASE" --archive "$$ARCHIVE"; \
+		$(RSCRIPT) reproduce/hessian.R --verify --case "$$CASE" --archive "$$ARCHIVE"; \
 	else \
-		python3 reproduce/hessian.py --verify; \
+		$(RSCRIPT) reproduce/hessian.R --verify; \
 	fi
 
 # Keep the existing hessian and hessian-verify targets; add these optional targets.
@@ -64,16 +64,16 @@ hessian-stitch:
 
 hessian-logs:
 	@if [ -n "$$ARCHIVE" ]; then \
-		python3 reproduce/native_logs.py --out "$$OUT" --archive "$$ARCHIVE"; \
+		$(RSCRIPT) reproduce/native_logs.R --out "$$OUT" --archive "$$ARCHIVE"; \
 	else \
-		python3 reproduce/native_logs.py --out "$$OUT"; \
+		$(RSCRIPT) reproduce/native_logs.R --out "$$OUT"; \
 	fi
 
 hessian-logs-verify:
 	@if [ -n "$$ARCHIVE" ]; then \
-		python3 reproduce/native_logs.py --verify --archive "$$ARCHIVE"; \
+		$(RSCRIPT) reproduce/native_logs.R --verify --archive "$$ARCHIVE"; \
 	else \
-		python3 reproduce/native_logs.py --verify; \
+		$(RSCRIPT) reproduce/native_logs.R --verify; \
 	fi
 
 .PHONY: verify-source

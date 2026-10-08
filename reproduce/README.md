@@ -46,7 +46,8 @@ direct numerical comparison.
 
 ## Saved Hessians
 
-The optional Hessian and derivative-log commands below require Python 3.
+Hessian and derivative-log restoration uses base R plus curl, stat and a SHA256 tool.
+These commands restore saved files and do not run MFCL or calculate derivatives.
 
 [Model index](hessian-index.csv) lists the original Hessian files, final PARs and
 checksums. Download only the required case:
@@ -62,7 +63,7 @@ the manifest; pass `CASE=... ARCHIVE=/absolute/model.tar.gz` to verify an offlin
 All 17 cases include their original Hessian parts and final PAR. The index
 retains the published PDH indicators.
 
-To assemble the saved parts with the pinned MFCL executable on
+Optional native part assembly uses Python 3 and the pinned MFCL executable on
 Linux x86-64:
 
 ```sh

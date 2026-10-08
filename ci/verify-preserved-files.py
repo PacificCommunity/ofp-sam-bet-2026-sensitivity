@@ -12,7 +12,10 @@ failures = []
 updates = manifest.get("approved_reader_updates", {})
 assert isinstance(updates, dict) and set(updates) <= {"Makefile"}
 assert all(isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value) for value in updates.values())
-for record in manifest["files"]:
+additions = manifest.get("approved_additions", [])
+assert isinstance(additions, list)
+assert len({record["path"] for record in manifest["files"] + additions}) == len(manifest["files"]) + len(additions)
+for record in manifest["files"] + additions:
     relative = PurePosixPath(record["path"])
     if relative.is_absolute() or ".." in relative.parts:
         failures.append(f"Invalid preserved path: {relative}")
@@ -38,4 +41,4 @@ for record in manifest["files"]:
 if failures:
     print("\n".join(failures), file=sys.stderr)
     raise SystemExit(1)
-print(f'Preserved {len(manifest["files"]) - len(updates)} original files and checked {len(updates)} approved Make updates.')
+print(f'Preserved {len(manifest["files"]) - len(updates)} original files, checked {len(updates)} approved Make updates and {len(additions)} preserved additions.')
